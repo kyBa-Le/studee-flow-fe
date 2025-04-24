@@ -1,70 +1,150 @@
-# Getting Started with Create React App
+## 📁 Project Structure – React App
+This document explains the structure of the src folder in this React project, clarifying the purpose and sample usage of each subdirectory.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 📂 assets/
+Role:
+Contains static resources such as images, fonts, SVGs, and possibly CSS files.
 
-## Available Scripts
+Why We Need It:
+Centralizes all static and visual assets for easy management and import across the app.
 
-In the project directory, you can run:
+Sample Structure:
 
-### `npm start`
+```
+assets/
+├── images/
+│   └── logo.png
+├── fonts/
+│   └── Roboto-Regular.ttf
+└── styles/
+    └── global.css
+```
+Sample Usage:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+import logo from '../assets/images/logo.png';
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+<img src={logo} alt="Logo" />
+```
 
-### `npm test`
+### 📂 components/
+Houses all the reusable UI and logic building blocks.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 📁 layouts/
+Role:
+Defines application layouts used across different pages (e.g., main layout, auth layout).
 
-### `npm run build`
+Why We Need It:
+Keeps layout logic reusable and separate from content logic.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Sample Usage:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+// components/layouts/MainLayout.jsx
+const MainLayout = ({ children }) => (
+  <div>
+    <Header />
+    <main>{children}</main>
+    <Footer />
+  </div>
+);
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 📁 ui/
+Role:
+Holds low-level UI components like buttons, inputs, modals, etc.
 
-### `npm run eject`
+Why We Need It:
+Promotes UI consistency and reuse across the application.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Sample Usage:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+// components/ui/Button.jsx
+const Button = ({ label, onClick }) => (
+  <button onClick={onClick}>{label}</button>
+);
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 📁 utils/
+Role:
+Houses utility/helper components related to rendering logic or state management helpers.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Why We Need It:
+Keeps non-visual helpers modular and testable.
 
-## Learn More
+Sample Usage:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+// components/utils/ProtectedRoute.jsx
+import { Navigate } from 'react-router-dom';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const ProtectedRoute = ({ children, isAuthenticated }) =>
+  isAuthenticated ? children : <Navigate to="/login" />;
+```
 
-### Code Splitting
+### 📂 pages/
+Each folder here represents a route/view in the application.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 📁 Home/ and 📁 Login/
+Role:
+Contain logic and UI for their respective routes.
 
-### Analyzing the Bundle Size
+Why We Need It:
+Encapsulates route-specific logic and makes each page self-contained.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Sample Usage:
 
-### Making a Progressive Web App
+```
+// pages/Home/index.jsx
+const Home = () => (
+  <div>
+    <h1>Welcome Home!</h1>
+    <p>This is the main landing page.</p>
+  </div>
+);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 📂 routes/
+Role:
+Defines the routing configuration for the application using react-router-dom.
 
-### Advanced Configuration
+Why We Need It:
+Centralizes route management, making navigation structure easier to modify and maintain.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Sample Usage:
 
-### Deployment
+```
+// routes/index.jsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from '../pages/Home';
+import Login from '../pages/Login';
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+const AppRoutes = () => (
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+    </Routes>
+  </BrowserRouter>
+);
+```
 
-### `npm run build` fails to minify
+### 📂 services/
+Role:
+Manages all API calls and external services integrations.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Why We Need It:
+Keeps data-fetching logic decoupled from UI for scalability and easier testing.
+
+Sample Usage:
+
+```
+// services/authService.js
+import axios from 'axios';
+```
+
+export const login = (email, password) => 
+  axios.post('/api/login', { email, password });
+### ✅ Summary
+This structure keeps code modular, scalable, and maintainable. Each folder has a clear responsibility, aligning with the Separation of Concerns principle in software development.
