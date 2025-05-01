@@ -1,0 +1,177 @@
+.teacher-management-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 50px 110px 50px 110px;
+    box-sizing: border-box;
+    background-color: var(--admin-grey-background-color);
+}
+
+
+.add-and-search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1410px;
+}
+
+#add-button {
+    width: 110px;
+    height: 45px;
+    border-radius: 40px;
+    background-color: var(--button-blue-background-color);
+    border: 0;
+    color: white;
+}
+
+#search-box {
+    border-radius: 40px;
+    * {
+        border-radius: 40px;
+    }
+    display: flex;
+    justify-content:  end;
+    width: 430px;
+    height: 40px;
+    background-color: white;
+    input {
+        width: 90%;
+        outline: none;
+    }
+    #search-icon {
+        width: 7%;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-self: center;
+        flex-direction: column;
+    }
+}
+
+#search-box input {
+    border: none;
+}
+
+.main-content-container {
+    width: 1410px;
+    height: 855px;
+    margin-top: 30px;
+    background-color: white;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
+
+.view-all-teacher-table {
+    padding-top: 40px;
+    width: 100%;
+    tbody {
+        max-height: 650px;
+        overflow-y: scroll;  
+    }  
+}
+
+.view-all-teacher-table thead tr td {
+    font-weight: bold;
+    font-size: 24px;
+    color: #5d75c5;
+    text-align: left;
+}
+
+.col-id {
+  width: 5%;
+}
+.col-name {
+  width: 15%;
+}
+.col-gender {
+  width: 10%;
+}
+.col-email {
+  width: 30%;
+}
+.col-date {
+  width: 25%;
+}
+.col-action {
+  width: 15%;
+}
+
+td.col-action {
+    button {
+        width: 90px;
+        height: 40px;
+        border: none;
+        color: white;
+        border-radius: 10px;
+    }
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+    }
+    .button-edit {
+        background-color: var(--button-blue-background-color);
+    }
+    .button-remove {
+        background-color: var(--button-red-background-color);
+    }
+}
+
+.view-all-teacher-table td,
+.view-all-teacher-table th {
+  border-bottom: 1px solid #ccc;
+  padding: 20px 0;
+}
+
+.view-all-teacher-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.main-content-container {
+    padding: 40px 50px;
+}
+
+.table-scroll-container {
+  max-height: 650px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.pagination-place {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  height: 40px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.pagination-container {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  gap: 1vw;
+  margin-right: 20px;
+}
+
+.pagination-buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 5%;
+  button {
+    width: 40px;
+    height: 40px;
+    background-color: #B6E2EF;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    font-weight: 24px;
+  }
+  button.active {
+    background-color: var(--button-blue-background-color);
+  }
+}
