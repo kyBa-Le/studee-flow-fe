@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../../assests/styles/Login.css';
+import './style.css';
 import { login } from '../../../services/AuthService';
 
 const Login = () => {
@@ -9,8 +9,10 @@ const Login = () => {
   
   function handleLogin(event) {
     event.preventDefault();
+
     const email = event.target.email.value;
     const password = event.target.password.value;
+    
     login(email, password)
       .then((response) => {
         console.log('Login successful:', response);
@@ -60,12 +62,12 @@ const Login = () => {
             </div>
             {errorMessage && (
               <div
-                className="text-center mb-3 fw-semibold d-flex align-items-center justify-content-center"
+                className="text-center mb-3 d-flex align-items-center justify-content-center"
                 style={{
-                  color: '#721c24',
+                  color: 'red',
                 }}
               >
-                <span style={{ fontSize: '18px', marginRight: '8px' }}>❗</span>
+                <span style={{ fontSize: '12px', marginRight: '8px' }}>❗</span>
                 {errorMessage}
               </div>
             )}
