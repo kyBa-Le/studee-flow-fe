@@ -1,16 +1,40 @@
 import React from 'react';
+import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../../../assests/styles/Login.css';
+import { login } from '../../../services/AuthService';
 
 const Login = () => {
+  const [errorMessage, setErrorMessage] = useState('');
+  
+  function handleLogin(event) {
+    event.preventDefault();
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    login(email, password)
+      .then((response) => {
+        console.log('Login successful:', response);
+        let token = response.access_token;
+        localStorage.setItem('token', token);
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        console.error('Login failed:', error);
+        setErrorMessage('Email or password is incorrect!');
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 2000);
+      });
+    console.log('Login button clicked');
+  }
+
   return (
     <div className="login-container">
       <div className="login-box">
         {/* LEFT SIDE */}
         <div className="login-left">
           <h5 className="login-title">Login Account</h5>
-
-          <form>
+          <form onSubmit={handleLogin}>
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email
@@ -34,7 +58,17 @@ const Login = () => {
                 className="form-control login-input"
               />
             </div>
-
+            {errorMessage && (
+              <div
+                className="text-center mb-3 fw-semibold d-flex align-items-center justify-content-center"
+                style={{
+                  color: '#721c24',
+                }}
+              >
+                <span style={{ fontSize: '18px', marginRight: '8px' }}>❗</span>
+                {errorMessage}
+              </div>
+            )}
             <div className="d-flex justify-content-between align-items-center mb-4 login-options">
               <div className="form-check">
                 <input
