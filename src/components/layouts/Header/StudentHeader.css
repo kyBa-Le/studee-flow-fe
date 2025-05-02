@@ -7,6 +7,7 @@
     box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.1);
     width: 100vw;
     position: fixed;
+    z-index: 2;
 
 }
 .student-header-content {
@@ -27,9 +28,13 @@
     margin: 0;
     li {
         cursor: pointer;
-    }
-    li:hover {
-        color: #FE9A3B;
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        a:hover {
+            color: #FE9A3B;
+        } 
     }
 }
 .help-notification-icon {
