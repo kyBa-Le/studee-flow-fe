@@ -1,26 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import { ClassroomService } from "../../../services/ClassroomService";
 
 const Home = () => {
+  const [classes, setClasses] = useState([]);
+
   useEffect(() => {
     if (window.feather) {
-      window.feather.replace(); 
+      window.feather.replace();
     }
+  }, [classes]);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await ClassroomService.getAllClassrooms();
+        setClasses(response);
+      } catch (error) {
+        console.error("Failed to fetch classes:", error);
+      }
+    };
+
+    fetchClasses();
   }, []);
 
-  const classes = [
-    { name: 'PNV25A', color: 'bg-purple-100' },
-    { name: 'PNV25B', color: 'bg-purple-100' },
-    { name: 'PNV26A', color: 'bg-blue-100' },
-    { name: 'PNV26B', color: 'bg-blue-100' },
-    { name: 'PNV27A', color: 'bg-green-100' },
-    { name: 'PNV27B', color: 'bg-green-100' },
-    { name: 'PNV27B', color: 'bg-green-100' },
-    { name: 'PNV27B', color: 'bg-green-100' },
-    { name: 'PNV27B', color: 'bg-green-100' },
-  ];
-
   return (
-    <div style={{ backgroundColor: '#f5f5f5', height: '100vh' }}>
+    <div style={{ backgroundColor: "#f5f5f5", height: "100vh" }}>
       {/* Header */}
       <header className="bg-white shadow-sm px-6 py-4 border-b">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -29,8 +33,12 @@ const Home = () => {
             <span className="font-bold text-orange-500">StudeeFlow</span>
           </div>
           <nav className="space-x-24 text-sm">
-            <a href="#" className="text-gray-500 hover:text-orange-500">Home</a>
-            <a href="#" className="text-gray-500 hover:text-orange-500">Profile</a>
+            <a href="#" className="text-gray-500 hover:text-orange-500">
+              Home
+            </a>
+            <a href="#" className="text-gray-500 hover:text-orange-500">
+              Profile
+            </a>
           </nav>
           <div className="flex items-center gap-4">
             <i data-feather="help-circle" className="w-5 h-5"></i>
@@ -63,20 +71,28 @@ const Home = () => {
 
             {/* Class Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
-              {classes.map((cls, idx) => (
-                <div
-                  key={idx}
-                  className={`${cls.color} p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px]`}
-                >
-                  <h3 className="font-semibold text-lg mb-2">{cls.name}</h3>
-                  <div className="flex items-center text-sm gap-3">
-                    <i data-feather="users" className="w-4 h-4"></i>
-                    <span>20 students</span>
-                    <i data-feather="monitor" className="w-4 h-4 ml-4"></i>
-                    <span>2 teachers</span>
+              {classes.length > 0 ? (
+                classes.map((cls, idx) => (
+                  <div
+                    key={idx}
+                    className={`${
+                      cls.color || "bg-purple-100"
+                    } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px]`}
+                  >
+                    <h3 className="font-semibold text-lg mb-2">{cls.name}</h3>
+                    <div className="flex items-center text-sm gap-3">
+                      <i data-feather="users" className="w-4 h-4"></i>
+                      <span>20 students</span>
+                      <i data-feather="monitor" className="w-4 h-4 ml-4"></i>
+                      <span>2 teachers</span>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="text-center col-span-full text-gray-500">
+                  No classrooms found.
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </section>
@@ -84,4 +100,5 @@ const Home = () => {
     </div>
   );
 };
+
 export default Home;
