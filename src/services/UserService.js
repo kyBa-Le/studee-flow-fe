@@ -1,1 +1,10 @@
-// This folder is to store service to interact with specific backend resource
+import apiClient from './apiClient';
+export async function getUser() {
+    try {
+        const response = await apiClient.get('/api/user');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;
+    }
+}
