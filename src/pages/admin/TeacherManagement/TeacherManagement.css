@@ -68,9 +68,20 @@
     padding-top: 40px;
     width: 100%;
     tbody {
-        max-height: 650px;
-        overflow-y: scroll;  
-    }  
+      display: block;
+      height: 650px;
+      overflow-y: scroll;
+      tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        height: 65px;
+      }
+      td {
+        height: 65px;
+        vertical-align: center;
+      }
+}  
 }
 
 .view-all-teacher-table thead tr td {
