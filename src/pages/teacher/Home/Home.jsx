@@ -77,9 +77,9 @@ const Home = () => {
                     key={idx}
                     className={`${
                       cls.color || "bg-purple-100"
-                    } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px]`}
+                    } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px] h-[135px]`}
                   >
-                    <h3 className="font-semibold text-lg mb-2">{cls.name}</h3>
+                    <h3 className="font-semibold text-lg mb-5 pt-3">{cls.name}</h3>
                     <div className="flex items-center text-sm gap-3">
                       <i data-feather="users" className="w-4 h-4"></i>
                       <span>20 students</span>
