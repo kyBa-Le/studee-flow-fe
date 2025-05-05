@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ClassroomService } from "../../../services/ClassroomService";
+import { getAllClassrooms } from "../../../services/ClassroomService";
 
 const Home = () => {
   const [classes, setClasses] = useState([]);
@@ -13,7 +13,7 @@ const Home = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await ClassroomService.getAllClassrooms();
+        const response = await getAllClassrooms();
         setClasses(response);
       } catch (error) {
         console.error("Failed to fetch classes:", error);
@@ -52,7 +52,7 @@ const Home = () => {
       {/* Main Content */}
       <main>
         <section className="max-w-7xl mx-auto px-6 py-10">
-          <div className="bg-white p-8 rounded-xl shadow px-[65px]">
+          <div className="bg-white p-8 rounded-xl shadow px-[65px] h-[600px]">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <h2 className="text-lg font-semibold">All classes</h2>
 
@@ -79,7 +79,7 @@ const Home = () => {
                       cls.color || "bg-purple-100"
                     } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px] h-[135px]`}
                   >
-                    <h3 className="font-semibold text-lg mb-5 pt-3">{cls.name}</h3>
+                    <h3 className="font-semibold text-lg mb-5 pt-3">{cls.class_name}</h3>
                     <div className="flex items-center text-sm gap-3">
                       <i data-feather="users" className="w-4 h-4"></i>
                       <span>20 students</span>
