@@ -1,11 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
+import { AppRoutes } from './routes/AppRoutes';
 import './assests/global.css';
-import { TeacherManagement } from './pages/admin/TeacherManagement/TeacherManagement';
 
 function App() {
   return (
     <>
+      <AppRoutes/>
     </>
   );
 }
