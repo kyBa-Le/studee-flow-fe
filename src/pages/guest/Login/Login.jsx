@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './style.css';
+import './Login.css';
 import { login } from '../../../services/AuthService';
 
 const Login = () => {
