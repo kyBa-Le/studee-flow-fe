@@ -6,7 +6,6 @@ import { TeacherManagement } from './pages/admin/TeacherManagement/TeacherManage
 function App() {
   return (
     <>
-      <TeacherManagement />
     </>
   );
 }

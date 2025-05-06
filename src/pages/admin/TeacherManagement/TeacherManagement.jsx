@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./TeacherManagement.css";
-import { getAllTeachers } from "../../../services/UserService";
+import { getAllTeachers } from '../../../services/UserService';
 import { useEffect, useState } from "react";
 
 export function TeacherManagement() {
@@ -8,23 +8,49 @@ export function TeacherManagement() {
     const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [centerButton, setCenterButton] = useState(1);
 
     useEffect(() => {
         const fetchTeachers = async () => {
             try {
                 setLoading(true);
-                const fetchedTeachers = await getAllTeachers();
-                setTeachers(fetchedTeachers);
+                const response = await getAllTeachers({ size: 10, page: currentPage });
+                setTotalPages(response.last_page);
+                setTeachers(response.data);
             } catch (error) {
                 setError(error);
-                console.log("Error fetching teachers:", error);
-                setTeachers([]);
             } finally {
                 setLoading(false);
             }
         };
         fetchTeachers();
-    }, []);
+    }, [currentPage]);
+
+    function renderPaginationButtons() {
+        const startPage = Math.max(1, centerButton - 1);
+        const endPage = Math.min(totalPages, centerButton + 1);
+        const pageButtons = [];
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons.push(
+                <button
+                    key={i}
+                    className={`page-button ${currentPage === i ? "active" : ""}`}
+                    onClick={() => setCurrentPage(i)}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return pageButtons;
+    }
+
+    function handleArrowClick(direction) {
+        let newCenter = centerButton + direction;
+        newCenter = Math.max(1, Math.min(totalPages, newCenter));
+        setCenterButton(newCenter);
+    }
 
     if (loading) {
         return <div className="d-flex justify-content-center align-items-center vh-100"><i className="fa-solid fa-spinner fa-spin"></i></div>;
@@ -34,11 +60,10 @@ export function TeacherManagement() {
         return <div className="text-center text-danger d-flex justify-content-center align-items-center vh-100">Opp !_! We got an error! Please try again.</div>;
     }
 
-
     return (
         <div className="teacher-management-container">
 
-            {/* Place of add button and search box */}
+            {/* Add button and search box */}
             <div className="add-and-search-container">
                 <button id="add-button">+ Add</button>
                 <form id="search-box">
@@ -49,7 +74,7 @@ export function TeacherManagement() {
                 </form>
             </div>
 
-            {/* Place of main content */}
+            {/* Main content */}
             <div className="main-content-container">
                 <table className="view-all-teacher-table">
                     <thead>
@@ -92,15 +117,15 @@ export function TeacherManagement() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination */}
                 <div className="pagination-place">
                     <div className="pagination-container">
-                        <i className="fa-solid fa-angles-left"></i>
+                        <i className="fa-solid fa-angles-left" onClick={() => handleArrowClick(-3)}></i>
                         <div className="pagination-buttons">
-                            <button className="active">1</button>
-                            <button>2</button>
-                            <button>3</button>
+                            {renderPaginationButtons()}
                         </div>
-                        <i className="fa-solid fa-angles-right"></i>
+                        <i className="fa-solid fa-angles-right" onClick={() => handleArrowClick(3)}></i>
                     </div>
                 </div>
             </div>
