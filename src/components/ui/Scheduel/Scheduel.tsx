@@ -9,6 +9,9 @@ import {
   ViewDirective,
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
+import { registerLicense } from '@syncfusion/ej2-base';
+
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
 const Schedule = () => {
   const [events, setEvents] = useState<any[]>([]);
