@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./TeacherManagement.css";
 import { getAllTeachers } from '../../../services/UserService';
 import { useEffect, useState } from "react";
+import { FormAddTeacher } from './FormAddTeacher';
 
 export function TeacherManagement() {
 
@@ -11,6 +12,7 @@ export function TeacherManagement() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [centerButton, setCenterButton] = useState(1);
+    const [showAddTeacher, setShowAddTeacher] = useState(false);
 
     useEffect(() => {
         const fetchTeachers = async () => {
@@ -52,6 +54,10 @@ export function TeacherManagement() {
         setCenterButton(newCenter);
     }
 
+    function toggleAddTeacherForm() {
+        setShowAddTeacher(prev => !prev);
+    }
+
     if (loading) {
         return <div className="d-flex justify-content-center align-items-center vh-100"><i className="fa-solid fa-spinner fa-spin"></i></div>;
     }
@@ -65,7 +71,7 @@ export function TeacherManagement() {
 
             {/* Add button and search box */}
             <div className="add-and-search-container">
-                <button id="add-button">+ Add</button>
+                <button id="add-button" onClick={()=>{toggleAddTeacherForm()}}>+ Add</button>
                 <form id="search-box">
                     <input type="text" placeholder="Search ..." />
                     <div id="search-icon">
@@ -73,7 +79,7 @@ export function TeacherManagement() {
                     </div>
                 </form>
             </div>
-
+            {showAddTeacher && <FormAddTeacher onCancel={toggleAddTeacherForm}/>}
             {/* Main content */}
             <div className="main-content-container">
                 <table className="view-all-teacher-table">
