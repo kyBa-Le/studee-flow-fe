@@ -25,7 +25,6 @@ export function ProtectedRoute({ children, allowedRoles }) {
     if (isLoading) {
         return <div><Loading/></div>;
     }
-    console.log(user)
     if (!user || !allowedRoles.includes(user.role)) {
         return <Navigate to="/login" replace />;
     }

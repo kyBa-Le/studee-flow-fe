@@ -117,3 +117,10 @@
     padding: 1.5rem;
   }
 }
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: red;
+}

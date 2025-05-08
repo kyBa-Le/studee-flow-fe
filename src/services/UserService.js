@@ -20,3 +20,13 @@ export async function getUser() {
         throw error;
     }
 }
+
+export async function createUser(user) {
+    try {
+        const response = await apiClient.post("/api/users", user);
+        return response;
+    } catch (error) {
+        console.log("Error posting user data: ", error);
+        throw error;
+    }
+}

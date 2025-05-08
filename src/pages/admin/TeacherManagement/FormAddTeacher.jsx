@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import "./FormAddTeacher.css"
+import { createUser } from "../../../services/UserService"
 
 export function FormAddTeacher({onCancel}) {
     const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ export function FormAddTeacher({onCancel}) {
     })
 
     const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState("");
+    const [emailError, setEmailError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -21,10 +24,24 @@ export function FormAddTeacher({onCancel}) {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // Here you would typically send the data to your backend
-        console.log("Form submitted:", formData)
+        const user = {
+            full_name: formData.fullName,
+            email: formData.email,
+            password: formData.password,
+            confirm_password: formData.confirmPassword,
+            role: "teacher"
+        };
+        try {
+            let response = await createUser(user);
+            console.log(response);
+            onCancel(true);
+        } catch (error) {
+            if (error.status == 422) {
+                setEmailError(error.response.data.message);
+            }
+        }
     }
 
     const togglePasswordVisibility = () => {
@@ -61,6 +78,7 @@ export function FormAddTeacher({onCancel}) {
                         className="form-input"
                     />
                 </div>
+                <div className="error">{emailError}</div>
 
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
@@ -99,6 +117,7 @@ export function FormAddTeacher({onCancel}) {
                         className="form-input"
                     />
                 </div>
+                <div className="error">{error}</div>
 
                 <div className="button-group">
                     <button type="button" onClick={ onCancel } className="cancel-button">

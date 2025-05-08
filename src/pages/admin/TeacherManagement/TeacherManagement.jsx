@@ -14,20 +14,24 @@ export function TeacherManagement() {
     const [centerButton, setCenterButton] = useState(1);
     const [showAddTeacher, setShowAddTeacher] = useState(false);
 
+    async function fetchTeachers(page = currentPage) {
+        try {
+            setLoading(true);
+            const response = await getAllTeachers({ size: 10, page });
+            setTotalPages(response.last_page);
+            setTeachers(response.data);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+
     useEffect(() => {
-        const fetchTeachers = async () => {
-            try {
-                setLoading(true);
-                const response = await getAllTeachers({ size: 10, page: currentPage });
-                setTotalPages(response.last_page);
-                setTeachers(response.data);
-            } catch (error) {
-                setError(error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchTeachers();
+        if (!showAddTeacher) {
+            fetchTeachers();
+        }
     }, [currentPage]);
 
     function renderPaginationButtons() {
@@ -54,8 +58,16 @@ export function TeacherManagement() {
         setCenterButton(newCenter);
     }
 
-    function toggleAddTeacherForm() {
-        setShowAddTeacher(prev => !prev);
+    function toggleAddTeacherForm(isReload = false) {
+        setShowAddTeacher(prev => {
+            const next = !prev;
+
+            if (!next && isReload) {
+                fetchTeachers();
+            }
+
+            return next;
+        });
     }
 
     if (loading) {
