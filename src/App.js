@@ -1,10 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
-import CreateStudentForm from './pages/admin/CreateStudentForm';
+import { CreateStudentsForm } from './pages/admin/CreateStudentsForm';
+import CreateStudentForm from './pages/admin/CreateStudentForm.css';
 
 function App() {
   return (
-    <CreateStudentForm></CreateStudentForm>
+    <CreateStudentsForm></CreateStudentsForm>
   );
 }
 
