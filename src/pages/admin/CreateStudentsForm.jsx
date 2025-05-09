@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { getAllClassrooms } from '../../services/ClassroomService';
 import './CreateStudentsForm.css';
 
 export function CreateStudentsForm() {
     const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [classroom, setClassroom] = useState('');
+    const [classroom_id, setClassroom] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [classes, setClasses] = useState([]);
     const [studentList, setStudentList] = useState([]);
     const [emailError, setEmailError] = useState('');
     const [editingStudent, setEditingStudent] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
       const fetchClasses = async () => {
@@ -18,7 +20,7 @@ export function CreateStudentsForm() {
           const response = await getAllClassrooms();
           setClasses(response);
           if (response.length > 0) {
-            setClassroom(response[0].classroom); 
+            setClassroom(response[0].class_name); 
           }
         } catch (error) {
           console.error("Failed to fetch classes:", error);
@@ -28,30 +30,36 @@ export function CreateStudentsForm() {
       fetchClasses();
     }, []);
     
-    const handleAddEmail = () => {
-      if (currentEmail) {
-        const isDuplicate = studentList.some(
-            (student, idx) => student.email === currentEmail && idx !== editingStudent?.index
-        );
+   const handleAddEmail = () => {
+    const emailCandidates = currentEmail
+        .split(/[\s,;]+/)
+        .map(e => e.trim())
+        .filter(e => e);
+
+    const newStudents = [];
+    const errors = [];
+
+    emailCandidates.forEach(email => {
+        const isDuplicate = studentList.some(student => student.email === email);
         if (isDuplicate) {
-            setEmailError('Email already exists in the list!');
-            return;
-        }
-    
-        if (editingStudent !== null) {
-            const updatedList = [...studentList];
-            updatedList[editingStudent.index] = { email: currentEmail, password };
-            setStudentList(updatedList);
-            setEditingStudent(null);
+            errors.push(email);
         } else {
-            setStudentList([...studentList, { email: currentEmail, password }]);
+            newStudents.push({ email, password });
         }
-    
-        setCurrentEmail('');
-        setPassword('');
+    });
+
+    if (errors.length > 0) {
+        setEmailError(`Duplicate email(s): ${errors.join(', ')}`);
+    } else {
         setEmailError('');
-      }    
-    };
+    }
+
+    if (newStudents.length > 0) {
+        setStudentList(prev => [...prev, ...newStudents]);
+        setCurrentEmail('');
+    }
+};
+
 
     const handleEditStudent = (index) => {
       setEditingStudent({ index, email: studentList[index].email, password: studentList[index].password });
@@ -79,11 +87,39 @@ export function CreateStudentsForm() {
           setEditingStudent(null);
         }
     };
+    const createBulkStudents = async (data) => {
+      try {
+        const response = await axios.post('/api/users/bulk', data);
+        return response.data;
+      } catch (error) {
+        throw new Error('Error creating students');
+      }
+    };
 
-    const handleCreate = () => {
-        console.log('Student List:', studentList);
-        console.log('Default Password:', password);
-        console.log('Classroom:', classroom);
+    const handleCreate = async () => {
+      if (studentList.length === 0) {
+        alert("Please add at least one student.");
+        return;
+      }
+      setLoading(true); 
+      try {
+        const payload = {
+          emails: studentList.map(student => student.email),
+          password,
+          classroom_id,
+        };
+
+        const response = await createBulkStudents(payload);
+        console.log('Create success:', response);
+        alert('Students created successfully!');
+        handleCancel(); 
+
+      } catch (error) {
+        console.error('Failed to create students:', error);
+        alert('Failed to create students!');
+      } finally {
+        setLoading(false);
+      }
     };
 
     const handleCancel = () => {
@@ -92,7 +128,7 @@ export function CreateStudentsForm() {
         setStudentList([]);
         setEditingStudent(null);
         if (classes.length > 0) {
-            setClassroom(classes[0].classroom);
+            setClassroom(classes[0].class_name);
         }
     };
 
@@ -112,16 +148,17 @@ export function CreateStudentsForm() {
                       <div className="form-group">
                           <label htmlFor="email">Email address</label>
                           <input
-                              type="email"
-                              id="email"
-                              value={currentEmail}
-                              onChange={(e) => {
-                                  setCurrentEmail(e.target.value);
-                                  setEmailError(''); 
-                              }}
-                              placeholder="Email address"
-                              className={emailError ? 'input-error' : ''}
+                            type="email"
+                            id="email"
+                            value={currentEmail}
+                            onChange={(e) => {
+                                setCurrentEmail(e.target.value);
+                                setEmailError('');
+                            }}
+                            placeholder="Email address (multiple separated by space/comma/semicolon)"
+                            className={emailError ? 'input-error' : ''}
                           />
+
                           {emailError && <p className="error-text">{emailError}</p>}
                           <div className="add-btn-create-student-accounts">
                               <button type="button" onClick={handleAddEmail} className="add-button">
@@ -154,12 +191,12 @@ export function CreateStudentsForm() {
                               <div className="select-container">
                                   <select
                                       id="classroom"
-                                      value={classroom}
+                                      value={classroom_id}
                                       onChange={(e) => setClassroom(e.target.value)}
                                   >
                                       {classes.map((cls) => (
-                                          <option key={cls.id} value={cls.classroom}>
-                                              {cls.classroom}
+                                          <option key={cls.id} value={cls.class_name}>
+                                              {cls.class_name}
                                           </option>
                                       ))}
                                   </select>
@@ -265,9 +302,9 @@ export function CreateStudentsForm() {
                     <button type="button" onClick={handleCancel} className="cancel-button">
                       Cancel
                     </button>
-                    <button type="button" onClick={handleCreate} className="create-button">
-                      Create
-                    </button>
+                     <button type="button" onClick={handleCreate} className="create-button" disabled={loading}>
+                        {loading ? 'Creating...' : 'Create'} 
+                      </button>
                   </div>
                 </div>
                 </div>
