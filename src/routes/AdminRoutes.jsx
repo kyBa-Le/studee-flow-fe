@@ -1,9 +1,9 @@
 import { Route } from "react-router-dom";
-import Home from '../pages/student/Home/Home';
 import { ProtectedRoute } from "./ProtectedRoutes";
+import { TeacherManagement } from "../pages/admin/TeacherManagement/TeacherManagement";
 
 const adminRoutes = [
-    {path: '/admin/teacher-management', element: <Home /> },
+    {path: '/admin/teachers-management', element: < TeacherManagement/> },
 ]
 export function AdminRoutes() {
     return (
