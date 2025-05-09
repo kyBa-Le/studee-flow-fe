@@ -1,6 +1,6 @@
 import { Route } from "react-router-dom";
-import { TeacherHome } from "../pages/teacher/Home";
 import { ProtectedRoute } from "./ProtectedRoutes";
+import { TeacherHome } from "../pages/teacher/Home/TeacherHome";
 
 const teacherRoutes = [
     { path: '/teacher/home', element: <TeacherHome /> },

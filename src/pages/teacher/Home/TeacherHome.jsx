@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllClassrooms } from "../../../services/ClassroomService";
 
-const Home = () => {
+export function TeacherHome () {
   const [classes, setClasses] = useState([]);
 
   useEffect(() => {
@@ -33,10 +33,10 @@ const Home = () => {
             <span className="font-bold text-orange-500">StudeeFlow</span>
           </div>
           <nav className="space-x-24 text-sm">
-            <a href="#" className="text-gray-500 hover:text-orange-500">
+            <a href="#" className="text-gray-500 hover:text-orange-500 no-underline">
               Home
             </a>
-            <a href="#" className="text-gray-500 hover:text-orange-500">
+            <a href="#" className="text-gray-500 hover:text-orange-500 no-underline">
               Profile
             </a>
           </nav>
@@ -79,7 +79,7 @@ const Home = () => {
                       cls.color || "bg-purple-100"
                     } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px] h-[135px]`}
                   >
-                    <h3 className="font-semibold text-lg mb-5 pt-3">{cls.class_name}</h3>
+                    <h3 className="font-semibold text-lg">{cls.class_name}</h3>
                     <div className="flex items-center text-sm gap-3">
                       <i data-feather="users" className="w-4 h-4"></i>
                       <span>20 students</span>
@@ -100,5 +100,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
