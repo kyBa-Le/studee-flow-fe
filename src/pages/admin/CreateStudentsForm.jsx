@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { createBulkStudents } from '../../services/UserService';
 import { getAllClassrooms } from '../../services/ClassroomService';
 import './CreateStudentsForm.css';
 
 export function CreateStudentsForm() {
     const [currentEmail, setCurrentEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [classroom_id, setClassroom] = useState('');
+    const [classroomId, setClassroomId] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [classes, setClasses] = useState([]);
     const [studentList, setStudentList] = useState([]);
@@ -20,7 +20,7 @@ export function CreateStudentsForm() {
           const response = await getAllClassrooms();
           setClasses(response);
           if (response.length > 0) {
-            setClassroom(response[0].class_name); 
+            setClassroomId(response[0].class_name); 
           }
         } catch (error) {
           console.error("Failed to fetch classes:", error);
@@ -29,7 +29,22 @@ export function CreateStudentsForm() {
     
       fetchClasses();
     }, []);
-    
+
+    useEffect(() => {
+    const uploadStudents = async () => {
+      try {
+        const response = await createBulkStudents(data);
+        console.log('Students uploaded successfully:', response);
+      } catch (error) {
+        console.error('Failed to upload students:', error);
+      }
+    };
+
+    if (data && data.length > 0) {
+      uploadStudents();
+    }
+  }, [data]);
+
    const handleAddEmail = () => {
     const emailCandidates = currentEmail
         .split(/[\s,;]+/)
@@ -60,7 +75,6 @@ export function CreateStudentsForm() {
     }
 };
 
-
     const handleEditStudent = (index) => {
       setEditingStudent({ index, email: studentList[index].email, password: studentList[index].password });
     };  
@@ -87,14 +101,6 @@ export function CreateStudentsForm() {
           setEditingStudent(null);
         }
     };
-    const createBulkStudents = async (data) => {
-      try {
-        const response = await axios.post('/api/users/bulk', data);
-        return response.data;
-      } catch (error) {
-        throw new Error('Error creating students');
-      }
-    };
 
     const handleCreate = async () => {
       if (studentList.length === 0) {
@@ -106,7 +112,7 @@ export function CreateStudentsForm() {
         const payload = {
           emails: studentList.map(student => student.email),
           password,
-          classroom_id,
+          classroomId,
         };
 
         const response = await createBulkStudents(payload);
@@ -128,7 +134,7 @@ export function CreateStudentsForm() {
         setStudentList([]);
         setEditingStudent(null);
         if (classes.length > 0) {
-            setClassroom(classes[0].class_name);
+            setClassroomId(classes[0].class_name);
         }
     };
 
@@ -191,8 +197,8 @@ export function CreateStudentsForm() {
                               <div className="select-container">
                                   <select
                                       id="classroom"
-                                      value={classroom_id}
-                                      onChange={(e) => setClassroom(e.target.value)}
+                                      value={classroomId}
+                                      onChange={(e) => setClassroomId(e.target.value)}
                                   >
                                       {classes.map((cls) => (
                                           <option key={cls.id} value={cls.class_name}>
