@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getAllStudents } from '../../../services/UserService';
 import './StudentManagement.css';
+import { useNavigate } from 'react-router-dom';
 
 export function StudentManagement() {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,9 +36,9 @@ export function StudentManagement() {
   }
 
   return (
-    <div className="student-table">
+    <div className="student-table vw-100">
       <div className="student-table__header">
-        <button className="student-table__add-button">+ Add students</button>
+        <button className="student-table__add-button" onClick={() => { navigate("/admin/create-student-accounts")}}>+ Add students</button>
         <input type="text" className="student-table__search" placeholder="Search ..." />
       </div>
 

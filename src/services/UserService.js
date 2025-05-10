@@ -40,9 +40,9 @@ export async function getAllStudents(page = 1, limit = 5) {
   }
 }
 
-export async function createBu lkStudents(data) {
+export async function createBulkStudents(data) {
   try {
-    const response = await apiClient.post('/api/students/bulk', data);
+    const response = await apiClient.post('/api/admin/students/bulk', data);
     return response.data;
   } catch (error) {
     console.error('Error creating students:', error);

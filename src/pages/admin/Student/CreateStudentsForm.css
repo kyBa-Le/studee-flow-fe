@@ -224,39 +224,39 @@ input:-webkit-autofill:active {
   overflow-x: auto;
 }
 
-.student-table {
+.student-table-form {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #dee2e6;
   table-layout: auto;
 }
 
-.student-table th,
-.student-table td {
+.student-table-form th,
+.student-table-form td {
   padding: 12px;
   border-bottom: 1px solid #dee2e6;
   text-align: center;
   font-size: 14px;
 }
 
-.student-table th {
+.student-table-form th {
   background-color: #f8f9fa;
   font-weight: bold;
 }
 
-.student-table tbody tr:nth-child(even) {
+.student-table-form tbody tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-.student-table td.email-cell,
-.student-table td.password-cell {
+.student-table-form td.email-cell,
+.student-table-form td.password-cell {
   white-space: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
 }
 
-.student-table th:nth-child(4), 
-.student-table td:nth-child(4) { 
+.student-table-form th:nth-child(4), 
+.student-table-form td:nth-child(4) { 
     width: 170px; 
     text-align: center; 
 }
