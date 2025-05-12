@@ -30,23 +30,8 @@ export function CreateStudentsForm() {
     fetchClasses();
   }, []);
 
-  //   useEffect(() => {
-  //   const uploadStudents = async () => {
-  //     try {
-  //       const response = await createBulkStudents(data);
-  //       console.log('Students uploaded successfully:', response);
-  //     } catch (error) {
-  //       console.error('Failed to upload students:', error);
-  //     }
-  //   };
-
-  //   if (data && data.length > 0) {
-  //     uploadStudents();
-  //   }
-  // }, [data]);
-
   const handleAddEmail = () => {
-      const emailCandidates = currentEmail
+    const emailCandidates = currentEmail
       .split(/[\s,;]+/)
       .map(e => e.trim())
       .filter(e => e);

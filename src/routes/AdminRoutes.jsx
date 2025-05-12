@@ -1,8 +1,7 @@
 import { Route } from "react-router-dom";
-import Home from '../pages/student/Home/Home';
-import { CreateStudentsForm } from "../pages/admin/Student/CreateStudentsForm";
+import { CreateStudentsForm } from "../pages/admin/StudentManagement/CreateStudentsForm";
 import { ProtectedRoute } from "./ProtectedRoutes";
-import { StudentManagement } from "../pages/admin/Student/StudentManagement";
+import { StudentManagement } from "../pages/admin/StudentManagement/StudentManagement";
 import { TeacherManagement } from "../pages/admin/TeacherManagement/TeacherManagement";
 import { AdminLayout } from "../components/layouts/MainLayouts/AdminLayout";
 

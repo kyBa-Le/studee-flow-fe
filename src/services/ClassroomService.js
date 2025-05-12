@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 export async function getAllClassrooms() {
     try {
-      const response = await apiClient.get("/api/classrooms");
+      const response = await apiClient.get("/api/user/teacher/classrooms");
       return response.data;
     } catch (error) {
       console.error("Error while fetching classrooms:", error);

@@ -4,7 +4,7 @@ import Banner from '../../../assests/images/Banner.png';
 import SmileGreen from '../../../assests/images/smile_icon_green.png';
 import SmileBlue from '../../../assests/images/smile_icon_blue.png';
 import Certificate from '../../../assests/images/Certificate.png';
-import Scheduel from '../../../components/ui/Scheduel/Scheduel.tsx';
+import Scheduel from '../../../components/ui/Schedule/Schedule.tsx';
 import { getUser } from '../../../services/UserService';
 import "./Home.css";
 

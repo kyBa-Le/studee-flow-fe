@@ -54,10 +54,10 @@ export function StudentManagement() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student) => (
+            {students?.map((student) => (
               <tr className="student-table__row" key={student.id}>
                 <td className="student-table__cell">{student.id}</td>
-                <td className="student-table__cell student-table__cell--bold">{student.name}</td>
+                <td className="student-table__cell student-table__cell">{student.full_name}</td>
                 <td className="student-table__cell">
                   <select className="student-table__status-select" defaultValue={student.status}>
                     <option value="Active">Active</option>
