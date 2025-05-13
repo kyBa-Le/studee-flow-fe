@@ -30,3 +30,22 @@ export async function createUser(user) {
         throw error;
     }
 }
+export async function getAllStudents(page = 1, limit = 5) {
+  try {
+    const response = await apiClient.get(`/api/admin/students`);
+    return response;
+  } catch (error) {
+    console.error('Error fetching student list:', error);
+    throw error;
+  }
+}
+
+export async function createBulkStudents(data) {
+  try {
+    const response = await apiClient.post('/api/admin/students/bulk', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating students:', error);
+    throw error;
+  }
+}

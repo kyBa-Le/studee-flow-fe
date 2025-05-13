@@ -16,7 +16,7 @@ export function HomeRedirect() {
 
                 switch (user.role) {
                     case 'admin':
-                        navigate('/admin/teachers-management');
+                        navigate('/admin/teacher-management');
                         break;
                     case 'teacher':
                         navigate('/teacher/home');

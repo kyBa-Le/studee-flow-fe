@@ -1,0 +1,388 @@
+.modal-create-student-accounts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-create-student-accounts-container {
+  background-color: #fff;
+  border-radius: 8px;
+  width: 800px;
+  height: 550px; 
+  overflow: hidden; 
+  padding: 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column; 
+}
+
+.modal-create-student-accounts-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+}
+
+.title-create-student-accounts {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.body-create-student-accounts {
+  padding: 0 16px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 5px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-group input[type="email"],
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #333 !important;
+}
+
+.form-group input[type="email"]:focus,
+.form-group select:focus {
+  border-color: #2AB9E2; 
+}
+
+.input-error {
+  border-color: red !important;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+
+.add-btn-create-student-accounts {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.add-button {
+  background-color: #2AB9E2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  height: 30px;
+  line-height: 25px; 
+  cursor: pointer;
+  transition: all 0.3s 0s ease-in-out;
+  display: inline-flex; 
+  align-items: center;
+  justify-content: center; 
+}
+
+.add-button:hover {
+  background-color: #7cd1e8;
+  transform: scale(1.05);
+  transition: all 0.3s 0s ease-in-out;
+}
+
+.form-password-classroom {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-password-classroom .form-group {
+  flex: 1;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-field {
+  width: 100%;
+  padding: 10px 40px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.password-input-field:focus {
+  border-color: #2AB9E2;
+}
+
+.password-toggle-button {
+  position: absolute;
+  right: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #6c757d;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.password-toggle-button:hover {
+  background-color: #f0f0f0;
+  color: #495057;
+}
+
+.password-toggle-button i {
+  font-size: 16px;
+}
+
+.select-container {
+  position: relative;
+  width: 100%;
+}
+
+.select-container select {
+  appearance: none;
+  padding-right: 30px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.select-container select:focus {
+  border-color: #2AB9E2;
+}
+
+.select-container i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333;
+  pointer-events: none;
+}
+
+.student-list {
+  margin-top: 24px;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.student-list h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.student-list-table {
+  overflow-x: auto;
+}
+
+.student-table-form {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #dee2e6;
+  table-layout: auto;
+}
+
+.student-table-form th,
+.student-table-form td {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  text-align: center;
+  font-size: 14px;
+}
+
+.student-table-form th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.student-table-form tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.student-table-form td.email-cell,
+.student-table-form td.password-cell {
+  white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.student-table-form th:nth-child(4), 
+.student-table-form td:nth-child(4) { 
+    width: 170px; 
+    text-align: center; 
+}
+
+.action-buttons {
+  display: flex; 
+  gap: 10px; 
+  justify-content: center; 
+}
+
+.action-buttons .edit-button,
+.action-buttons .delete-button {
+  border: none;
+  border-radius: 20px;
+  width: 50px; 
+  height: 25px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s 0s ease-in-out;
+  color: white;
+}
+
+.action-buttons .edit-button i,
+.action-buttons .delete-button i {
+  font-size: 14px;
+}
+
+.edit-button {
+  background-color: #2AB9E2;
+}
+
+.edit-button:hover {
+  background-color: #71d4f0;
+}
+
+.delete-button {
+  background-color: #DC3545;
+}
+
+.delete-button:hover {
+  background-color: #ed6e7b;
+}
+
+.footer-create-student-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.footer-create-student-accounts button {
+  padding: 5px 40px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.total-display {
+  text-align:end;
+  font-size: 14px;
+  padding: 0px 16px 0 0;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: auto; 
+  padding: 0px 16px 0 0;
+}
+
+.cancel-button {
+  background-color: #DC3545;
+  color: white;
+  border: none;
+}
+
+.cancel-button:hover {
+  background-color: #ed6e7b;
+  transform: scale(1.05);
+  transition: all 0.3s 0s ease-in-out;
+}
+
+.create-button {
+  background-color: #2AB9E2;
+  color: white;
+  border: none;
+}
+
+.create-button:hover {
+  background-color: #71d4f0;
+  transform: scale(1.05);
+  transition: all 0.3s 0s ease-in-out;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 8px 12px; 
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+input:focus {
+  outline: none;
+  box-shadow: none;
+  border: 1px solid #2AB9E2; 
+}
+
+.save-edit-button,
+.cancel-edit-button {
+  background-color: #ffff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.save-edit-button {
+  color:#2AB9E2;
+}
+
+.cancel-edit-button {
+  color:#DC3545;
+}
