@@ -1,9 +1,33 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Logout } from "../../utils/Logout";
+import "./AdminSideBar.css";
 
-export default function AdminSideBar() {
+const menuItems = [
+  { path: "/admin/student-management", icon: "user", label: "Students" },
+  { path: "/admin/teacher-management", icon: "users", label: "Teachers" },
+  { path: "/admin/notification", icon: "bell", label: "Notifications" },
+  { path: "/admin/classroom-management", icon: "folder", label: "Classrooms" },
+];
+
+const SidebarItem = ({ path, icon, label, currentPath, onClick }) => {
+  const isActive = currentPath === path;
+  return (
+    <div
+      onClick={() => onClick(path)}
+      className={`flex items-center gap-3 cursor-pointer text-gray-700 hover:text-[#FE9C3B] ${isActive ? "is-active" : ""}`}
+      style={{ fontSize: "16px" }}
+    >
+      <i data-feather={icon} className="w-4 h-4"></i>
+      <span>{label}</span>
+    </div>
+  );
+};
+
+export function AdminSideBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     if (window.feather) {
       window.feather.replace();
@@ -15,30 +39,26 @@ export default function AdminSideBar() {
   };
 
   return (
-    <div className="h-screen bg-gray-100 flex">
+    <div className="bg-gray-100 flex">
       <div className="bg-white w-56 flex flex-col justify-between items-start p-6 shadow-md">
         {/* Menu Items */}
         <div className="space-y-8">
-          <div onClick={() => handleChangePage("/admin/student-management")} className="flex items-center gap-3 cursor-pointer text-sm text-gray-700 hover:text-[#FE9C3B]">
-            <i data-feather="user" className="w-4 h-4"></i>
-            <span>Students</span>
-          </div>
-          <div onClick={() => handleChangePage("/admin/teacher-management")} className="flex items-center gap-3 cursor-pointer text-sm text-gray-700 hover:text-[#FE9C3B]">
-            <i data-feather="users" className="w-4 h-4"></i>
-            <span>Teachers</span>
-          </div>
-          <div onClick={() => handleChangePage("/admin/notification")} className="flex items-center gap-3 cursor-pointer text-sm text-gray-700 hover:text-[#FE9C3B]">
-            <i data-feather="bell" className="w-4 h-4"></i>
-            <span>Notifications</span>
-          </div>
-          <div onClick={() => handleChangePage("/admin/classroom-management")} className="flex items-center gap-3 cursor-pointer text-sm text-gray-700 hover:text-[#FE9C3B]">
-            <i data-feather="folder" className="w-4 h-4"></i>
-            <span>Classrooms</span>
-          </div>
+          {menuItems.map((item) => (
+            <SidebarItem
+              key={item.path}
+              {...item}
+              currentPath={location.pathname}
+              onClick={handleChangePage}
+            />
+          ))}
         </div>
 
         {/* Logout */}
-        <div onClick={Logout} className="flex items-center gap-3 cursor-pointer text-sm text-gray-700 hover:text-red-500">
+        <div
+          onClick={Logout}
+          className="flex items-center gap-3 cursor-pointer text-gray-700 hover:text-red-500"
+          style={{ fontSize: "16px" }}
+        >
           <i data-feather="log-out" className="w-4 h-4"></i>
           <span>Logout</span>
         </div>
