@@ -1,8 +1,6 @@
 .semester-goal-container {
   display: flex;
   flex-direction: column;
-  background-color: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -10,6 +8,7 @@
 .semester-goal {
   max-width: 1533px;
   padding: 130px 98px 70px 98px;
+  background-color: #f5f5f56c;
 }
 
 .semester-goal-btn {
@@ -17,34 +16,65 @@ display: flex;
 justify-content: end;
 }
 
-.semester-goal-btn-select,
+.semester-goal-btn-select {
+  position: relative;
+}
+
+.semester-goal-btn-select select {
+  background-color: #2AB9E2;
+  color:#ffffff;
+  appearance: none;
+  border-radius: 25px;
+  padding: 10px 35px 10px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.semester-goal-btn-select i {
+  position: absolute;
+  pointer-events: none;
+  color: white;
+  right: 16px;
+  top: 35%;
+  transform: translateY(-50%);
+  transform: rotate(90deg); 
+}
+
+.semester-goal-btn-submit:hover 
+.semester-goal-btn-select:hover select {
+  background-color: #71d4f0;
+  transform: scale(1.05);
+  transition: all 0.3s 0s ease-in-out;
+}
+
 .semester-goal-btn-submit {
   background-color: #2AB9E2;
   color: white;
   border-radius: 25px;
   padding: 10px 20px;
   border: none;
+} 
+
+.semester-goal-btn-select select option {
+  background-color: white; 
+  color: black;  
+  border: 1px solid black;         
 }
 
-.semester-goal-btn-select:hover,
-.semester-goal-btn-submit:hover {
-  background-color: #71d4f0;
-  transform: scale(1.05);
-  transition: all 0.3s 0s ease-in-out;
-}
-
-.icon-select {
-  transform: rotate(90deg); 
-  padding-right: 5px;
-  background-position: right 12px center; 
-}
+.semester-goal-btn-select select option:hover {
+  color:#ffffff;
+} 
 
 .semester-goal-content {
   border: 1px solid white;
   box-shadow: 0 0 10px rgba(241, 234, 234, 0.863);
-  padding: 2px 20px 20px 20px;
+  padding: 10px 30px 60px 30px;
   border-radius: 10px;
   margin: 35px 0 35px 0;
+  background-color: white;
 }
 
 .semester-goal-header {
@@ -80,12 +110,31 @@ justify-content: end;
 }
 
 .semester-goal-cell.title {
+   display: flex;
   background-color: #ffffff;
   font-weight: 600;
   text-align: center;
+  align-items: center; 
+  justify-content: center; 
 }
 
 .header-row .semester-goal-cell {
   background-color: #d4e6f9;
   font-weight: 600;
+}
+
+.semester-goal-cell textarea {
+  width: 100%;             
+  resize: none;                
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.input-is-achieved {
+  display: none;
 }

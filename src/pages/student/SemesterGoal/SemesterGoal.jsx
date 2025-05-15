@@ -19,7 +19,6 @@ export function SemesterGoal() {
         const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
         const currentSemester = semesterRes.data[0];
         setSelectedSemester(currentSemester.name);
-
         const subjectsRes = await getAllSubjects(classroomId);
         setSubjects(subjectsRes.data);
 
@@ -32,21 +31,27 @@ export function SemesterGoal() {
 
     fetchData();
   }, []);
+  const autoResize = (e) => {
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
 
   return (
     <div className="semester-goal-container">
       <div className="semester-goal">
         <div className="semester-goal-btn">
-          <select
-            className="semester-goal-btn-select"
-            value={selectedSemester}
-            onChange={(e) => setSelectedSemester(e.target.value)}
-          >
-            <option value="1">Semester 1</option>
-            <option value="2">Semester 2</option>
-            <option value="3">Semester 3</option>
-            <option value="4">Semester 4</option>
-          </select>
+          <div className="semester-goal-btn-select">
+            <select
+              value={selectedSemester}
+              onChange={(e) => setSelectedSemester(e.target.value)}
+            >
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+            </select>
+            <i className="icon-semester fa-solid fa-angle-right"></i>
+          </div>
         </div>
         <div className="semester-goal-content">
           <div className="semester-goal-content-in">
@@ -81,20 +86,20 @@ export function SemesterGoal() {
                   </div>
                   <div className="semester-goal-cell">
                     <textarea
+                      onInput={autoResize}
                       defaultValue={semesterGoals[index]?.teacher_goals || ""}
-                      placeholder="Enter expectation for teacher"
                     />
                   </div>
                   <div className="semester-goal-cell">
                     <textarea
+                      onInput={autoResize}
                       defaultValue={semesterGoals[index]?.course_goals || ""}
-                      placeholder="Enter expectation for course"
                     />
                   </div>
                   <div className="semester-goal-cell">
                     <textarea
+                      onInput={autoResize}
                       defaultValue={semesterGoals[index]?.self_goals || ""}
-                      placeholder="Enter expectation for yourself"
                     />
                   </div>
                 </div>
