@@ -176,3 +176,16 @@ td.col-action {
     background-color: var(--button-blue-background-color);
   }
 }
+
+.loading-row {
+  height: 100%;
+}
+
+.full-height-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 100%;
+  text-align: center;
+}
