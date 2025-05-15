@@ -52,7 +52,7 @@ export function SemesterGoal() {
                         </div>
                         {subjects.map((cls, index) => (
                             <div key={index} className="semester-goal-row">
-                            <div className="semester-goal-cell title">{cls.subject}</div>
+                            <div className="semester-goal-cell title">{cls.subject_name}</div>
                             <div className="semester-goal-cell">
                                 <textarea placeholder="Enter expectation for teacher" />
                             </div>
