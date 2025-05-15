@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createBulkStudents } from '../../../services/UserService';
-import { getAllClassrooms } from '../../../services/ClassroomService';
+import { getAllClassrooms } from '../../../services/UserService';
 import './CreateStudentsForm.css';
 
 export function CreateStudentsForm() {
