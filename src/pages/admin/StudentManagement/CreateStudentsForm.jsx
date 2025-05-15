@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createBulkStudents } from '../../../services/UserService';
-import { getAllClassrooms } from '../../../services/ClassroomService';
+import { getAllClassrooms } from '../../../services/UserService';
 import './CreateStudentsForm.css';
 
 export function CreateStudentsForm() {
@@ -18,7 +18,7 @@ export function CreateStudentsForm() {
     const fetchClasses = async () => {
       try {
         const response = await getAllClassrooms();
-        setClasses(response);
+        setClasses(response.data);
         if (response.length > 0) {
           setClassroomId(response[0].class_name);
         }
@@ -44,7 +44,11 @@ export function CreateStudentsForm() {
       if (isDuplicate) {
         errors.push(email);
       } else {
-        newStudents.push({ email, password });
+        if (password != "") {
+          newStudents.push({ email, password });
+        } else {
+          alert("Please add the password!");
+        }
       }
     });
 
@@ -101,7 +105,7 @@ export function CreateStudentsForm() {
       };
 
       const response = await createBulkStudents(payload);
-      console.log('Create success:', response);
+      console.log('Create success:', response.data);
       alert('Students created successfully!');
       handleCancel();
 
@@ -131,7 +135,7 @@ export function CreateStudentsForm() {
           <div className="body-create-student-accounts">
             <div className="form-group">
               <label htmlFor="email">Email address</label>
-              <input
+              <input required
                 type="email"
                 id="email"
                 value={currentEmail}
@@ -154,7 +158,7 @@ export function CreateStudentsForm() {
               <div className="form-group">
                 <label htmlFor="password">Default password</label>
                 <div className="password-input-container">
-                  <input
+                  <input required
                     type={showPassword ? 'text' : 'password'}
                     id="password"
                     value={password}

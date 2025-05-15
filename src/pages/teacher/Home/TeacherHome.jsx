@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllClassrooms } from "../../../services/ClassroomService";
 
-export function TeacherHome () {
+export function TeacherHome() {
   const [classes, setClasses] = useState([]);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ export function TeacherHome () {
     const fetchClasses = async () => {
       try {
         const response = await getAllClassrooms();
-        setClasses(response);
+        setClasses(response.data);
       } catch (error) {
         console.error("Failed to fetch classes:", error);
       }
@@ -51,10 +51,10 @@ export function TeacherHome () {
 
       {/* Main Content */}
       <main>
-        <section className="max-w-7xl mx-auto px-6 py-10">
-          <div className="bg-white p-8 rounded-xl shadow px-[65px] h-[600px]">
+        <section className="max-w-[90vw] mx-auto px-6 py-10">
+          <div className="bg-white p-8 rounded-xl shadow px-[65px] h-[80vh]">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
-              <h2 className="text-lg font-semibold">All classes</h2>
+              <h2 className="text-[24px] font-semibold" style={{ color: "#5F5F64"}}>All classes</h2>
 
               {/* Search Box */}
               <div className="relative w-96">
@@ -74,12 +74,12 @@ export function TeacherHome () {
               {classes.length > 0 ? (
                 classes.map((cls, idx) => (
                   <div
+                    style={{aspectRatio: 2.5}}
                     key={idx}
-                    className={`${
-                      cls.color || "bg-purple-100"
-                    } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[330px] h-[135px]`}
+                    className={`${cls.color || "bg-purple-100"
+                      } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer`}
                   >
-                    <h3 className="font-semibold text-lg">{cls.class_name}</h3>
+                    <h3 className="font-semibold text-[30px] pb-4" style={{ color: "#5E3078" }}>{cls.class_name}</h3>
                     <div className="flex items-center text-sm gap-3">
                       <i data-feather="users" className="w-4 h-4"></i>
                       <span>20 students</span>

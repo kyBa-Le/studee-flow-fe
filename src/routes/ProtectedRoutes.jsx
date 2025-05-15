@@ -11,7 +11,7 @@ export function ProtectedRoute({ children, allowedRoles }) {
         const fetchUser = async () => {
             try {
                 const res = await getUser();
-                setUser(res);
+                setUser(res.data);
             } catch (e) {
                 setUser(null);
             } finally {
