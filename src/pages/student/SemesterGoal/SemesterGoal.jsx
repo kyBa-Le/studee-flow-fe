@@ -20,21 +20,28 @@ export function SemesterGoal() {
         fetchSubjects();
       }, []);
 
+        const autoResize = (e) => {
+            e.target.style.height = "auto"; 
+            e.target.style.height = `${e.target.scrollHeight}px`; 
+        };
+
  return (
     <div className="semester-goal-container">
         <div className="semester-goal">
             <div className="semester-goal-btn">
-                <select
-                    className="semester-goal-btn-select"
-                    value={selectedSemester}
-                    onChange={(e) => setSelectedSemester(e.target.value)}
-                >
-                    <option value="1">Semester 1</option>
-                    <option value="2">Semester 2</option>
-                    <option value="3">Semester 3</option>
-                    <option value="4">Semester 4</option>
-                </select>
+                <div className="semester-goal-btn-select">
+                    <select
+                        value={selectedSemester}
+                        onChange={(e) => setSelectedSemester(e.target.value)}
+                    >
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                    </select>
+                    <i class="icon-semester fa-solid fa-angle-right"></i>
                 </div>
+            </div>
             <div className="semester-goal-content">
                 <div className="semester-goal-content-in">
                      <div className="semester-goal-header">
@@ -51,18 +58,19 @@ export function SemesterGoal() {
                             <div className="semester-goal-cell">What I expect from myself</div>
                         </div>
                         {subjects.map((cls, index) => (
-                            <div key={index} className="semester-goal-row">
-                            <div className="semester-goal-cell title">{cls.subject_name}</div>
-                            <div className="semester-goal-cell">
-                                <textarea placeholder="Enter expectation for teacher" />
-                            </div>
-                            <div className="semester-goal-cell">
-                                <textarea placeholder="Enter expectation for course" />
-                            </div>
-                            <div className="semester-goal-cell">
-                                <textarea placeholder="Enter expectation for yourself" />
-                            </div>
-                            </div>
+                            <form key={index} className="semester-goal-row">
+                                <input className='input-is-achieved' name='is_achieved' value={false}/>
+                                <div className="semester-goal-cell title">{cls.subject_name}</div>
+                                <div className="semester-goal-cell">
+                                    <textarea name="teacher_goals" onInput={autoResize} placeholder="" />
+                                </div>
+                                <div className="semester-goal-cell">
+                                    <textarea name="course_goals" onInput={autoResize} placeholder="" />
+                                </div>
+                                <div className="semester-goal-cell">
+                                    <textarea name="self_goals" onInput={autoResize} placeholder="" />
+                                </div>
+                            </form>
                         ))}
                     </div>
                 </div>
