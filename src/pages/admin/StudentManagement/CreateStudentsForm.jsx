@@ -105,7 +105,7 @@ export function CreateStudentsForm() {
       };
 
       const response = await createBulkStudents(payload);
-      console.log('Create success:', response);
+      console.log('Create success:', response.data);
       alert('Students created successfully!');
       handleCancel();
 
