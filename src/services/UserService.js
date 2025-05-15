@@ -32,7 +32,7 @@ export async function createUser(user) {
 }
 export async function getAllStudents(page = 1, limit = 5) {
   try {
-    const response = await apiClient.get(`/api/admin/students`);
+    const response = await apiClient.get(`/api/students`);
     return response;
   } catch (error) {
     console.error('Error fetching student list:', error);
@@ -42,7 +42,7 @@ export async function getAllStudents(page = 1, limit = 5) {
 
 export async function createBulkStudents(data) {
   try {
-    const response = await apiClient.post('/api/admin/students/bulk', data);
+    const response = await apiClient.post('/api/students/bulk', data);
     return response.data;
   } catch (error) {
     console.error('Error creating students:', error);
