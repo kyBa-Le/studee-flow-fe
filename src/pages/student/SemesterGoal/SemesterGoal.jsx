@@ -25,13 +25,12 @@ export function SemesterGoal() {
         const currentSemester = semesterRes.data[0];
         setSelectedSemester(currentSemester.name);
 
-        const [subjectsRes, goalsRes] = await Promise.all([
-          getAllSubjects(classroomId),
-          getSemesterGoalsByUser(currentSemester.id),
-        ]);
+        const subjects = (await getAllSubjects(classroomId)).data;
+        setSubjects(subjects);
 
-        setSubjects(subjectsRes.data);
-        setSemesterGoals(goalsRes.data);
+        const semesterGoals = (await getSemesterGoalsByUser(currentSemester.id)).data;
+        setSemesterGoals(semesterGoals);
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
