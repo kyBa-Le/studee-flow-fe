@@ -37,6 +37,9 @@
         } 
     }
 }
+.header-navigation li.active a {
+  color: #FE9A3B;
+}
 .help-notification-icon {
     display: flex;
     width: 10%;
