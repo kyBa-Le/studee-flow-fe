@@ -18,7 +18,7 @@ export function SemesterGoal() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await getUser();
+        const user = (await getUser()).data;
         const classroomId = user.student_classroom_id;
 
         const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
@@ -49,7 +49,7 @@ export function SemesterGoal() {
 
   const handleSubmit = async () => {
     try {
-      const user = await getUser();
+      const user = (await getUser()).data;
       const studentId = user.id;
       const classroomId = user.student_classroom_id;
 
