@@ -13,8 +13,7 @@ export async function getAllTeachers(params = {}) {
 
 export async function getUser() {
     try {
-        const response = await apiClient.get('/api/user');
-        return response.data;
+        return await apiClient.get('/api/user');
     } catch (error) {
         console.error('Error fetching user data:', error);
         throw error;
@@ -23,8 +22,7 @@ export async function getUser() {
 
 export async function createUser(user) {
     try {
-        const response = await apiClient.post("/api/users", user);
-        return response;
+        return await apiClient.post("/api/users", user);
     } catch (error) {
         console.log("Error posting user data: ", error);
         throw error;
@@ -32,8 +30,7 @@ export async function createUser(user) {
 }
 export async function getAllStudents(page = 1, limit = 5) {
   try {
-    const response = await apiClient.get(`/api/admin/students`);
-    return response;
+    return await apiClient.get(`/api/students`);
   } catch (error) {
     console.error('Error fetching student list:', error);
     throw error;
@@ -42,10 +39,18 @@ export async function getAllStudents(page = 1, limit = 5) {
 
 export async function createBulkStudents(data) {
   try {
-    const response = await apiClient.post('/api/admin/students/bulk', data);
-    return response.data;
+    return await apiClient.post('/api/students/bulk', data);
   } catch (error) {
     console.error('Error creating students:', error);
     throw error;
+  }
+}
+
+export async function getAllClassrooms() {
+  try {
+    return await apiClient.get("/api/classrooms");
+  } catch (error) {
+    console.error("Error while fetching classrooms:", error);
+    return [];
   }
 }

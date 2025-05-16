@@ -8,7 +8,8 @@ export function HomeRedirect() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const user = await getUser();
+                const response = await getUser();
+                const user = response.data;
                 if (!user) {
                     navigate('/login');
                     return;
@@ -35,7 +36,5 @@ export function HomeRedirect() {
         fetchUser();
     }, [navigate]);
 
-    return (
-        null
-    );
+    return null;
 }

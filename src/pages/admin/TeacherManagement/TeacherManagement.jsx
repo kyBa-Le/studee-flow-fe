@@ -3,6 +3,7 @@ import "./TeacherManagement.css";
 import { getAllTeachers } from '../../../services/UserService';
 import { useEffect, useState } from "react";
 import { FormAddTeacher } from './FormAddTeacher';
+import { LoadingData } from '../../../components/ui/Loading/LoadingData';
 
 export function TeacherManagement() {
 
@@ -70,10 +71,6 @@ export function TeacherManagement() {
         });
     }
 
-    if (loading) {
-        return <div className="d-flex justify-content-center align-items-center vh-100"><i className="fa-solid fa-spinner fa-spin"></i></div>;
-    }
-
     if (error) {
         return <div className="text-center text-danger d-flex justify-content-center align-items-center vh-100">Opp !_! We got an error! Please try again.</div>;
     }
@@ -109,7 +106,13 @@ export function TeacherManagement() {
                 <div className="table-scroll-container">
                     <table className="view-all-teacher-table">
                         <tbody>
-                            {teachers.length === 0 ? (
+                            {loading ? (
+                                <tr className="loading-row">
+                                    <td colSpan="6">
+                                        <LoadingData content='Loading teachers' />
+                                    </td>
+                              </tr>
+                            ) : teachers.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="text-center text-danger">
                                         No teachers found.

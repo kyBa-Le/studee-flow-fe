@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllStudents } from '../../../services/UserService';
 import './StudentManagement.css';
 import { useNavigate } from 'react-router-dom';
+import { LoadingData } from '../../../components/ui/Loading/LoadingData';
 
 export function StudentManagement() {
   const navigate = useNavigate();
@@ -31,14 +32,10 @@ export function StudentManagement() {
     }
   };
 
-  if (loading) {
-    return <div className="d-flex justify-content-center align-items-center vh-100"><i className="fa-solid fa-spinner fa-spin"></i></div>;
-  }
-
   return (
     <div className="student-table vw-100">
       <div className="student-table__header">
-        <button className="student-table__add-button" onClick={() => { navigate("/admin/create-student-accounts")}}>+ Add students</button>
+        <button className="student-table__add-button" onClick={() => { navigate("/admin/create-student-accounts") }}>+ Add students</button>
         <input type="text" className="student-table__search" placeholder="Search ..." />
       </div>
 
@@ -54,23 +51,30 @@ export function StudentManagement() {
             </tr>
           </thead>
           <tbody>
-            {students?.map((student) => (
-              <tr className="student-table__row" key={student.id}>
-                <td className="student-table__cell">{student.id}</td>
-                <td className="student-table__cell student-table__cell">{student.full_name}</td>
-                <td className="student-table__cell">
-                  <select className="student-table__status-select" defaultValue={student.status}>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </td>
-                <td className="student-table__cell">{student.email}</td>
-                <td className="student-table__cell">
-                  <button className="student-table__action student-table__action--edit">✏️</button>
-                  <button className="student-table__action student-table__action--delete">🗑️</button>
+            {loading ? (
+              <tr className="loading-row">
+                <td colSpan="6">
+                  <LoadingData content='Loading students' />
                 </td>
               </tr>
-            ))}
+            ) :
+              students?.map((student) => (
+                <tr className="student-table__row" key={student.id}>
+                  <td className="student-table__cell">{student.id}</td>
+                  <td className="student-table__cell student-table__cell">{student.full_name}</td>
+                  <td className="student-table__cell">
+                    <select className="student-table__status-select" defaultValue={student.status}>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                  </td>
+                  <td className="student-table__cell">{student.email}</td>
+                  <td className="student-table__cell">
+                    <button className="student-table__action student-table__action--edit">✏️</button>
+                    <button className="student-table__action student-table__action--delete">🗑️</button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
 

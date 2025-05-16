@@ -4,10 +4,12 @@ import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoutes";
 import { SelfStudy } from "../pages/student/LearningJournal/SelfStudy";
 import { LearningJournalLayout } from "../pages/student/LearningJournal/LearningJournalLayout";
+import { SemesterGoal } from "../pages/student/SemesterGoal/SemesterGoal";
 
 const studentRoutes = [
     {path: '/student/home', element: <Home/> },
-    {path: '/student/learning-journal', element: <LearningJournalLayout><SelfStudy/></LearningJournalLayout> },
+    {path: '/student/learning-journal', element: <LearningJournalLayout></LearningJournalLayout> },
+     {path: '/student/semester-goal', element: <SemesterGoal/> },
 ]
 export function StudentRoutes() {
     return studentRoutes.map(({ path, element }) => (
