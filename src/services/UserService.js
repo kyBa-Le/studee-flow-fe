@@ -8,7 +8,7 @@ import apiClient from "./apiClient";
 export async function getAllTeachers(params = {}) {
     const query = new URLSearchParams(params).toString();
     const response = await apiClient.get("/api/teachers?" + query);
-    return response.data;
+    return response;
 }
 
 export async function getUser() {

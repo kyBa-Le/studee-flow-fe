@@ -18,20 +18,19 @@ export function SemesterGoal() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = await getUser();
+        const user = (await getUser()).data;
         const classroomId = user.student_classroom_id;
 
         const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
         const currentSemester = semesterRes.data[0];
         setSelectedSemester(currentSemester.name);
 
-        const [subjectsRes, goalsRes] = await Promise.all([
-          getAllSubjects(classroomId),
-          getSemesterGoalsByUser(currentSemester.id),
-        ]);
+        const subjects = (await getAllSubjects(classroomId)).data;
+        setSubjects(subjects);
 
-        setSubjects(subjectsRes.data);
-        setSemesterGoals(goalsRes.data);
+        const semesterGoals = (await getSemesterGoalsByUser(currentSemester.id)).data;
+        setSemesterGoals(semesterGoals);
+
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -49,7 +48,7 @@ export function SemesterGoal() {
 
   const handleSubmit = async () => {
     try {
-      const user = await getUser();
+      const user = (await getUser()).data;
       const studentId = user.id;
       const classroomId = user.student_classroom_id;
 

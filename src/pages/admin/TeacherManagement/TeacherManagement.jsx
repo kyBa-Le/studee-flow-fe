@@ -18,7 +18,7 @@ export function TeacherManagement() {
     async function fetchTeachers(page = currentPage) {
         try {
             setLoading(true);
-            const response = await getAllTeachers({ size: 10, page });
+            const response = (await getAllTeachers({ size: 10, page })).data;
             setTotalPages(response.last_page);
             setTeachers(response.data);
         } catch (error) {
