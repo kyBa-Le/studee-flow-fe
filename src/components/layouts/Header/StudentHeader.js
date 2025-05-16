@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './StudentHeader.css';
 import Logo from "../../../assests/images/Logo.png";
 import { getUser } from '../../../services/UserService';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function StudentHeader() {
     const [user, setUser] = useState({});
-  
+    const location = useLocation();
+    
     useEffect(() => {
       getUser()
         .then(response => {
@@ -15,6 +16,13 @@ function StudentHeader() {
         .catch(error => console.error('Error fetching User:', error));
     }, []);
 
+  const navItems = [
+    { path: '/student/home', label: 'Home' },
+    { path: '/student/learning-journal', label: 'Learning journal' },
+    { path: '/student/semester-goal', label: 'Semester goal' },
+    { path: '/student/achievement', label: 'Achievement' }
+  ];
+
   return (
     <div className='student-header-container'>
       <div className='student-header-content'>
@@ -22,10 +30,11 @@ function StudentHeader() {
           <img src={Logo} alt="Logo" />
         </Link>
         <ul className='header-navigation'>
-          <li><Link to='/student/home'>Home</Link></li>
-          <li><Link to='/student/learning-journal'>Learning journal</Link></li>
-          <li><Link to='/student/semester-goal'>Semester goal</Link></li>
-          <li><Link to='/student/achievement'>Achievement</Link></li>
+          {navItems.map(item => (
+            <li key={item.path} className={location.pathname === item.path ? 'active' : ''}>
+              <Link to={item.path}>{item.label}</Link>
+            </li>
+          ))}
         </ul>
         <div className='help-notification-icon'>
           <div className='profile-wrapper'>
