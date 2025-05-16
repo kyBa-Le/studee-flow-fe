@@ -16,7 +16,7 @@ const Login = () => {
     login(email, password)
       .then((response) => {
         console.log('Login successful:', response);
-        let token = response.access_token;
+        let token = response.data.access_token;
         localStorage.setItem('token', token);
         window.location.href = '/';
       })

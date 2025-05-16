@@ -16,12 +16,12 @@ function Home() {
   useEffect(() => {
     getUser()
       .then(response => {
-        setUser(response); 
+        setUser(response.data);
       })
       .catch(error => console.error('Error fetching User:', error));
     getAchievement()
       .then(response => {
-        setAchievements(response); 
+        setAchievements(response.data);
       })
       .catch(error => console.error('Error fetching achievements:', error));
   }, []);

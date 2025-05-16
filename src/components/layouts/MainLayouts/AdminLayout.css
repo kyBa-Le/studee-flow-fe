@@ -1,0 +1,7 @@
+.admin-layout {
+    max-width: 100vw;
+    min-height: 100vh;
+}
+.admin-content {
+    height: 100%;
+}

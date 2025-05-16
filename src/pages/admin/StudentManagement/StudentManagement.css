@@ -2,7 +2,6 @@
   padding: 24px;
   background-color: #f7f7f7;
   font-family: sans-serif;
-  min-height: 100vh;
 }
 
 .student-table__header {
@@ -31,7 +30,7 @@
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .student-table__table {
@@ -99,4 +98,49 @@
 .student-table__page--active {
   background-color: #00aaff;
   color: white;
+}
+
+.student-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.student-table__table thead {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.student-table__table tbody {
+  display: block;
+  height: 65vh;
+  overflow-y: auto;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.student-table__row {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.student-table__cell {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+.student-table__table tbody .loading-row {
+  height: inherit;
+  width: 100%;
+  td {
+    width: 90vw;
+  }
+}
+
+.student-table__table thead th {
+  padding: 20px 35px;
 }
