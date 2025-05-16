@@ -1,0 +1,192 @@
+.student-selfstudy-container {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.student-selfstudy {
+  max-width: 1533px;
+  padding: 130px 98px 70px 98px;
+  background-color: #f5f5f56c;
+}
+
+.student-selfstudy-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.student-selfstudy-headerr {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+.student-selfstudy-title-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -73px;
+}
+.student-selfstudy-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 0; 
+}
+.student-selfstudy-titles{
+    text-align: center;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+.student-selfstudy-tabs {
+  display: flex;
+}
+
+.student-selfstudy-tab {
+  padding: 8px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.student-selfstudy-tab.active {
+  background-color: #2CB9E2;
+  color: white;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.student-selfstudy-tab.inactive {
+  background-color: white;
+  color: #2CB9E2;
+  border: 1px solid #2CB9E2;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.student-selfstudy-week-selector {
+  position: relative;
+}
+
+.student-selfstudy-week-selector select {
+  background-color: #2CB9E2;
+  color:#ffffff;
+  appearance: none;
+  border-radius: 25px;
+  padding: 10px 35px 10px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: none;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+}
+.student-selfstudy-week-selector option {
+  background-color: white; 
+  color: black;  
+  border: 1px solid black;         
+}
+
+.student-selfstudy-week-selector option:hover {
+  color:#ffffff;
+}
+
+.student-selfstudy-week-selector:hover select {
+  background-color: #71d4f0;
+  transform: scale(1.05);
+  transition: all 0.3s 0s ease-in-out;
+}
+
+.student-selfstudy-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  pointer-events: none;
+}
+
+.student-selfstudy-title {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.student-selfstudy-goals {
+  display: flex;
+  gap: 10px;
+  color: white;
+}
+
+.student-selfstudy-goal {
+  flex: 1;
+  background-color: #2CB9E2;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.student-selfstudy-table-container {
+  overflow-x: auto;
+}
+
+.student-selfstudy-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.student-selfstudy-row {
+  display: flex;
+  width: 100%;
+}
+
+.student-selfstudy-cell {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  word-break: break-word;
+  font-size: 14px;
+  border: 1px solid #ccc;
+
+}
+
+.student-selfstudy-cell.header {
+  background-color: #DCEEFC;
+  font-weight: 600;
+  white-space: pre-wrap;
+}
+
+.student-selfstudy-submit {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.student-selfstudy-submit-btn {
+  background-color: #2CB9E2;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.student-selfstudy-goal-content{
+  border: 1px solid white;
+  box-shadow: 0 0 10px rgba(241, 234, 234, 0.863);
+  padding: 10px 30px 60px 30px;
+  border-radius: 10px;
+  margin: 35px 0 35px 0;
+  background-color: white;
+}
+
+.student-selfstudy-goal-section{
+  max-width: 100%;
+  padding: 10px 60px;
+}
