@@ -6,24 +6,7 @@ import { InClass } from "./InClass";
 
 export function LearningJournalLayout({ children }) {
   const [selectedWeek, setSelectedWeek] = useState("1");
-  const [goalIndex, setGoalIndex] = useState(0);
   const [isSelf, setIsSelf] = useState(true);
-
-  const goals = [
-    "I can listen to the text and apply it to choose the answer in TOEIC.",
-    "I can quickly identify and apply tenses.",
-    "I can use passive and active voice in correct contexts.",
-    "I can identify keywords in listening sections.",
-    "I can summarize a short TOEIC paragraph.",
-  ];
-
-  const handlePrev = () => {
-    setGoalIndex((prev) => Math.max(prev - 1, 0));
-  };
-
-  const handleNext = () => {
-    setGoalIndex((prev) => Math.min(prev + 1, goals.length - 3));
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,7 +19,7 @@ export function LearningJournalLayout({ children }) {
 
   return (
     <div className="student-selfstudy-container">
-      <form className="student-selfstudy" onSubmit={handleSubmit}>
+      <div className="student-selfstudy" onSubmit={handleSubmit}>
         <div className="student-selfstudy-headerr">
           <div className="student-selfstudy-week-selector">
             <select
@@ -64,24 +47,11 @@ export function LearningJournalLayout({ children }) {
           </div>
 
           <div className="student-selfstudy-goal-section">
-            <div
-              className="student-selfstudy-goals-row"
-              style={{ display: "flex", alignItems: "center", gap: 16 }}
-            >
-              <i
-                className="bi bi-chevron-compact-left"
-                style={{ fontSize: 15, cursor: "pointer" }}
-                onClick={handlePrev}
-              ></i>
+            
 
-              {<WeeklyGoal goals={goals} goalIndex={goalIndex} />}
+              {<WeeklyGoal weekId={1} />}
 
-              <i
-                className="bi bi-chevron-compact-right"
-                style={{ fontSize: 15, cursor: "pointer" }}
-                onClick={handleNext}
-              ></i>
-            </div>
+              
           </div>
 
           <hr />
@@ -120,7 +90,7 @@ export function LearningJournalLayout({ children }) {
             Submit
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
