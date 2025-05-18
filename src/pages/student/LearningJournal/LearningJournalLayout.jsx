@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./LearningJournal.css";
 import { WeeklyGoal } from "./WeeklyGoal";
 import { SelfStudy } from "./SelfStudy";
@@ -28,30 +28,10 @@ export function LearningJournalLayout() {
     fetchWeeks();
   }, []);
 
-  const goals = [
-    "I can listen to the text and apply it to choose the answer in TOEIC.",
-    "I can quickly identify and apply tenses.",
-    "I can use passive and active voice in correct contexts.",
-    "I can identify keywords in listening sections.",
-    "I can summarize a short TOEIC paragraph.",
-  ];
-
-  const handlePrev = () => {
-    setGoalIndex((prev) => Math.max(prev - 1, 0));
-  };
-
-  const handleNext = () => {
-    setGoalIndex((prev) => Math.min(prev + 1, goals.length - 3));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted!");
-  };
 
   return (
     <div className="learning-journal-container">
-      <form className="learning-journal" onSubmit={handleSubmit}>
+      <div className="learning-journal">
         <div className="learning-journal-headerr">
           <div className="learning-journal-week-selector">
             <select
@@ -77,25 +57,10 @@ export function LearningJournalLayout() {
             </div>
           </div>
 
-          <div className="student-selfstudy-goal-section">
-            <div
-              className="student-selfstudy-goals-row"
-              style={{ display: "flex", alignItems: "center", gap: 16 }}
-            >
-              <i
-                className="bi bi-chevron-compact-left"
-                style={{ fontSize: 15, cursor: "pointer" }}
-                onClick={handlePrev}
-              ></i>
+          <div className="learning-journal-goal-section">
 
-              <WeeklyGoal goals={goals} goalIndex={goalIndex} />
+              <WeeklyGoal weekId={1} goalIndex={goalIndex} />
 
-              <i
-                className="bi bi-chevron-compact-right"
-                style={{ fontSize: 15, cursor: "pointer" }}
-                onClick={handleNext}
-              ></i>
-            </div>
           </div>
 
           <hr />
@@ -135,7 +100,7 @@ export function LearningJournalLayout() {
             Submit
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

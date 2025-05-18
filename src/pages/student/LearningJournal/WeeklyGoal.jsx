@@ -63,7 +63,7 @@ export function WeeklyGoal({ weekId }) {
 
   return (
     <div
-      className="student-selfstudy-goals-row"
+      className="learning-journal-goals-row"
       style={{ display: "flex", alignItems: "center", gap: 16 }}
     >
       <i
@@ -71,11 +71,11 @@ export function WeeklyGoal({ weekId }) {
         style={{ fontSize: 15, cursor: "pointer" }}
         onClick={handlePrev}
       ></i>
-      <div className="student-selfstudy-goals" style={{ flex: 1 }}>
+      <div className="learning-journal-goals" style={{ flex: 1 }}>
         {weeklyGoals.slice(goalIndex, goalIndex + 3).map((goal, index) => (
           <form onSubmit={handleSubmit}
             key={goal.id}
-            className="student-selfstudy-goal"
+            className="learning-journal-goal"
           >
             <input type="number" name="goal_id" style={{ display: 'none' }} aria-hidden="true" value={goal.id} />
             <input
