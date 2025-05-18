@@ -1,150 +1,209 @@
+import React, { useEffect, useState } from "react";
+import { getAllSubjects } from "../../../services/SubjectService";
+import { getUser } from "../../../services/UserService";
+import { getWeeklySelfStudyJournalOfStudent } from "../../../services/SelfStudyService";
+import { getAllWeek } from "../../../services/WeekService";
+
 export function SelfStudy() {
+  const [subjects, setSubjects] = useState([]);
+  const [selfStudies, setSelfStudies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [weeks, setWeeks] = useState([]);
+  const [currentWeek, setCurrentWeek] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user = await getUser();
+        const studentId = user.data.id;
+        const classroomId = user.data.student_classroom_id;
+
+        const [subjectsResponse, weekResponse] = await Promise.all([
+          getAllSubjects(classroomId),
+          getAllWeek(),
+        ]);
+
+        setSubjects(subjectsResponse.data);
+
+        const sortedWeeks = weekResponse.data.sort(
+          (a, b) => new Date(b.end_date) - new Date(a.end_date)
+        );
+        setWeeks(sortedWeeks);
+        console.log("hello ",sortedWeeks)
+        if (sortedWeeks.length > 0) {
+          setCurrentWeek(sortedWeeks[0]);
+          const studies = await getWeeklySelfStudyJournalOfStudent(
+            studentId,
+            sortedWeeks[0].id
+          );
+          setSelfStudies(studies.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  const cellStyle = { width: "100%", resize: "none", outline: "none" };
+  const selectStyle = { width: "100%", outline: "none" };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="student-selfstudy-table-container">
-      <div className="student-selfstudy-table">
-        <div className="student-selfstudy-row header-row">
-          <div className="student-selfstudy-cell header">Date</div>
-          <div className="student-selfstudy-cell header">Skills/Module</div>
-          <div className="student-selfstudy-cell header">
-            My lesson What did I learn today?
+    <div className="learning-journal-table-container">
+      <div className="learning-journal-table">
+        {/* Header */}
+        <div className="learning-journal-row header-row">
+          <div className="learning-journal-cell header">Date</div>
+          <div className="learning-journal-cell header">Skills/Module</div>
+          <div className="learning-journal-cell header">
+            My lesson - What did I learn today?
           </div>
-          <div className="student-selfstudy-cell header">Time allocation</div>
-          <div className="student-selfstudy-cell header">Learning resources</div>
-          <div className="student-selfstudy-cell header">Learning activities</div>
-          <div className="student-selfstudy-cell header">Concentration</div>
-          <div className="student-selfstudy-cell header">Plan &amp; follow plan</div>
-          <div className="student-selfstudy-cell header">
-            Evaluation of my work What was positive about my work and what did not work so well?
+          <div className="learning-journal-cell header">Time allocation</div>
+          <div className="learning-journal-cell header">Learning resources</div>
+          <div className="learning-journal-cell header">
+            Learning activities
           </div>
-          <div className="student-selfstudy-cell header">
-            Reinforcing learning What do I do to go over what I have learned and to reinforce it?
+          <div className="learning-journal-cell header">Concentration</div>
+          <div className="learning-journal-cell header">Plan & follow plan</div>
+          <div className="learning-journal-cell header">
+            Evaluation of my work
           </div>
-          <div className="student-selfstudy-cell header">Notes</div>
+          <div className="learning-journal-cell header">
+            Reinforcing learning
+          </div>
+          <div className="learning-journal-cell header">Notes</div>
         </div>
 
-        {/* Row 1 */}
-        <div className="student-selfstudy-row">
-          <div className="student-selfstudy-cell">
-            <textarea name="date_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-12 Feb
-            </textarea>
+        {selfStudies.length > 0 ? (
+          selfStudies.map((study, index) => (
+            <div className="learning-journal-row" key={study.id}>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`date_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={new Date(study.date).toLocaleDateString(
+                    "en-GB"
+                  )}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                <select
+                  name={`skill_${index}`}
+                  defaultValue={study.subject_id}
+                  style={selectStyle}
+                >
+                  {subjects.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.subject_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`lesson_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.lesson}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`time_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.time_allocation}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                {study.learning_resources.startsWith("http") ? (
+                  <a
+                    href={study.learning_resources}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {study.learning_resources}
+                  </a>
+                ) : (
+                  <textarea
+                    name={`resource_${index}`}
+                    rows="2"
+                    style={cellStyle}
+                    defaultValue={study.learning_resources}
+                  />
+                )}
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`activity_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.learning_activities}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                <select
+                  name={`concentration_${index}`}
+                  defaultValue={study.concentration}
+                  style={selectStyle}
+                >
+                  <option value="1">Not sure</option>
+                  <option value="0">No</option>
+                  <option value="2">Yes</option>
+                </select>
+              </div>
+              <div className="learning-journal-cell">
+                <select
+                  name={`plan_${index}`}
+                  defaultValue={study.is_follow_plan ? "true" : "false"}
+                  style={selectStyle}
+                >
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`evaluation_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.evaluation}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`reinforce_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.reinforcing_learning}
+                />
+              </div>
+              <div className="learning-journal-cell">
+                <textarea
+                  name={`notes_${index}`}
+                  rows="2"
+                  style={cellStyle}
+                  defaultValue={study.notes}
+                />
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="learning-journal-row">
+            <div className="learning-journal-cell" colSpan="11">
+              No self-study records found for this week.
+            </div>
           </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="skill_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-TOEIC
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="lesson_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-vocabulary
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="time_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-1h
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <a href="https://www.youtube.com/" target="_blank" rel="noreferrer">
-              Youtube
-            </a>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="activity_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-Do exercises on word recognition
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <select name="concentration_0" defaultValue="Not sure">
-              <option value="Not sure">Not sure</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
-            </select>
-          </div>
-          <div className="student-selfstudy-cell">
-            <select name="plan_0" defaultValue="Yes">
-              <option value="Not sure">Not sure</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
-            </select>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="evaluation_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-Understand nouns, verbs and adverbs
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="reinforce_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-Still have difficulty identifying and filling in words correctly
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="notes_0" rows="2" style={{ width: '100%', resize: 'none' }}>
-No
-            </textarea>
-          </div>
-        </div>
-
-        {/* Row 2 */}
-        <div className="student-selfstudy-row">
-          <div className="student-selfstudy-cell">
-            <textarea name="date_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-13 Feb
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="skill_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-IT English
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="lesson_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-Grammar - Part of speech (N, adj)
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="time_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-3h
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="resource_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-Youtube
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="activity_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-Learn IT related vocabulary
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <select name="concentration_1" defaultValue="Yes">
-              <option value="Not sure">Not sure</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
-            </select>
-          </div>
-          <div className="student-selfstudy-cell">
-            <select name="plan_1" defaultValue="Yes">
-              <option value="Not sure">Not sure</option>
-              <option value="No">No</option>
-              <option value="Yes">Yes</option>
-            </select>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="evaluation_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-Not good: can only remember 2-4 words
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="reinforce_1" rows="2" style={{ width: '100%', resize: 'none' }}>
-Apply the method of learning words by repetition to be able to remember
-            </textarea>
-          </div>
-          <div className="student-selfstudy-cell">
-            <textarea name="notes_1" rows="2" style={{ width: '100%', resize: 'none' }}></textarea>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

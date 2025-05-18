@@ -1,10 +1,10 @@
 export function WeeklyGoal({goals, goalIndex}) {
     return (
-        <div className="student-selfstudy-goals" style={{ flex: 1 }}>
+        <div className="learning-journal-goals" style={{ flex: 1 }}>
                 {goals.slice(goalIndex, goalIndex + 3).map((goal, index) => (
                   <div
                     key={goalIndex + index}
-                    className="student-selfstudy-goal"
+                    className="learning-journal-goal"
                   >
                     <input
                       type="checkbox"
