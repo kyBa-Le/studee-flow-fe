@@ -4,26 +4,30 @@ import { getUser } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 
 export function InClass({ weekId }) {
   const [inClassJournal, setInClassJournal] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-          await fetchInClassAndSubjects(weekId);
-          // setInClassJournal([createEmptyRow()]);
+        setIsLoading(true);
+        await fetchInClassAndSubjects(weekId);
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to load data");
         setInClassJournal([createEmptyRow()]);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [weekId]);
 
   const fetchInClassAndSubjects = async (weekId) => {
     const resInClass = await getInClassJournal(weekId);
@@ -144,7 +148,8 @@ export function InClass({ weekId }) {
           <div className="learning-journal-cell header">My plan</div>
           <div className="learning-journal-cell header">Problem solved</div>
         </div>
-        {inClassJournal.map((entry, index) => renderRow(entry, index))}
+        {isLoading ? (
+          <LoadingData content="Loading ..." />) : inClassJournal.map((entry, index) => renderRow(entry, index))}
       </div>
       <ToastContainer />
     </div>
