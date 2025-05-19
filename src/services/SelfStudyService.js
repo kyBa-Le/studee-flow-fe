@@ -1,7 +1,7 @@
 import React from 'react'
 import apiClient from "./apiClient";
 
-export async function getWeeklySelfStudyJournalOfStudent(studentId,week_id) {
+export async function getWeeklySelfStudyJournalOfStudent(week_id = 0) {
    try {
     const response = await apiClient.get(`/api/student/self-studies?week_id=${week_id}`);
     return response;

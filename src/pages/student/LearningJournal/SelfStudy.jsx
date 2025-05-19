@@ -1,43 +1,30 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getUser } from "../../../services/UserService";
 import { getWeeklySelfStudyJournalOfStudent } from "../../../services/SelfStudyService";
-import { getAllWeek } from "../../../services/WeekService";
+import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 
-export function SelfStudy() {
+export function SelfStudy({weekId}) {
   const [subjects, setSubjects] = useState([]);
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [weeks, setWeeks] = useState([]);
-  const [currentWeek, setCurrentWeek] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const user = await getUser();
         const studentId = user.data.id;
         const classroomId = user.data.student_classroom_id;
 
-        const [subjectsResponse, weekResponse] = await Promise.all([
-          getAllSubjects(classroomId),
-          getAllWeek(),
-        ]);
+        const subjectsResponse = await getAllSubjects(classroomId);
 
         setSubjects(subjectsResponse.data);
 
-        const sortedWeeks = weekResponse.data.sort(
-          (a, b) => new Date(b.end_date) - new Date(a.end_date)
+        const studies = await getWeeklySelfStudyJournalOfStudent(
+          weekId
         );
-        setWeeks(sortedWeeks);
-        console.log("hello ",sortedWeeks)
-        if (sortedWeeks.length > 0) {
-          setCurrentWeek(sortedWeeks[0]);
-          const studies = await getWeeklySelfStudyJournalOfStudent(
-            studentId,
-            sortedWeeks[0].id
-          );
-          setSelfStudies(studies.data);
-        }
+        setSelfStudies(studies.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -46,15 +33,11 @@ export function SelfStudy() {
     };
 
     fetchData();
-  }, []);
+  }, [weekId]);
 
 
   const cellStyle = { width: "100%", resize: "none", outline: "none" };
   const selectStyle = { width: "100%", outline: "none" };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="learning-journal-table-container">
@@ -82,7 +65,9 @@ export function SelfStudy() {
           <div className="learning-journal-cell header">Notes</div>
         </div>
 
-        {selfStudies.length > 0 ? (
+        {loading ? (
+          <LoadingData content="Loading ..."/>
+        ) : selfStudies?.length > 0 ? (
           selfStudies.map((study, index) => (
             <div className="learning-journal-row" key={study.id}>
               <div className="learning-journal-cell">

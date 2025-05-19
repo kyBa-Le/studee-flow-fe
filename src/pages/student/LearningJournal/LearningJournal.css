@@ -46,24 +46,29 @@
 
 .learning-journal-tab {
   padding: 8px 20px;
-  border-radius: 5px;
   border: none;
   cursor: pointer;
+}
+
+.learning-journal-tab.right {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.learning-journal-tab.left {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
 }
 
 .learning-journal-tab.active {
   background-color: #2CB9E2;
   color: white;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
 }
 
 .learning-journal-tab.inactive {
   background-color: white;
   color: #2CB9E2;
   border: 1px solid #2CB9E2;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
 .learning-journal-week-selector {
@@ -160,7 +165,6 @@
   font-weight: 600;
   white-space: pre-wrap;
 }
-
 .learning-journal-submit {
   display: flex;
   justify-content: flex-end;
@@ -180,7 +184,7 @@
 .learning-journal-goal-content{
   border: 1px solid white;
   box-shadow: 0 0 10px rgba(241, 234, 234, 0.863);
-  padding: 10px 30px 60px 30px;
+  padding: 10px 30px;
   border-radius: 10px;
   margin: 35px 0 35px 0;
   background-color: white;
@@ -191,4 +195,6 @@
   padding: 10px 60px;
 }
 
-
+.learning-journal-table .learning-journal-row:last-of-type {
+  padding-bottom: 30px;
+}

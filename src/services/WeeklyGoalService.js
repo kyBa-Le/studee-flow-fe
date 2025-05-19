@@ -1,6 +1,6 @@
 import apiClient from "./apiClient";
 
-export const getWeeklyGoals = async (weekId) => {
+export const getWeeklyGoals = async (weekId = 0) => {
   try {
     const response = apiClient.get("/api/student/weekly-goals?week_id=" + weekId);
     return response;

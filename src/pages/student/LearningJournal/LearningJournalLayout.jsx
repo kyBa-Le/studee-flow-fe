@@ -7,18 +7,18 @@ import { getAllWeek } from "../../../services/WeekService";
 
 export function LearningJournalLayout() {
   const [weeks, setWeeks] = useState([]);
-  const [currentWeek, setCurrentWeek] = useState("");
-  const [goalIndex, setGoalIndex] = useState(0);
+  const [currentWeek, setCurrentWeek] = useState({});
   const [isSelfStudy, setIsSelfStudy] = useState(true);
 
   useEffect(() => {
     const fetchWeeks = async () => {
       try {
         const response = await getAllWeek();
-        const weekData = response.data || [];
+        const weekData = response.data.sort( (a, b) => new Date(b.end_date) - new Date(a.end_date) ) || [];
         setWeeks(weekData);
+
         if (weekData.length > 0) {
-          setCurrentWeek(weekData[0].week);
+          setCurrentWeek(weekData[0]);
         }
       } catch (error) {
         console.error("Error fetching weeks:", error);
@@ -35,15 +35,20 @@ export function LearningJournalLayout() {
         <div className="learning-journal-headerr">
           <div className="learning-journal-week-selector">
             <select
-              value={currentWeek}
-              onChange={(e) => setCurrentWeek(e.target.value)}
+              value={weeks.findIndex(w => w.week === currentWeek.week)}
+              onChange={(e) => {
+                const selectedIndex = parseInt(e.target.value);
+                const selectedWeek = weeks[selectedIndex];
+                setCurrentWeek(selectedWeek);
+              }}
             >
-              {weeks.map((week) => (
-                <option key={week.id} value={week.week}>
+              {weeks.map((week, index) => (
+                <option key={week.id} value={index}>
                   Week {week.week}
                 </option>
               ))}
             </select>
+
             <i className="fa-solid fa-angle-down learning-journal-icon"></i>
           </div>
         </div>
@@ -59,7 +64,7 @@ export function LearningJournalLayout() {
 
           <div className="learning-journal-goal-section">
 
-              <WeeklyGoal weekId={1} goalIndex={goalIndex} />
+            <WeeklyGoal weekId={currentWeek.id} />
 
           </div>
 
@@ -70,14 +75,14 @@ export function LearningJournalLayout() {
               <button
                 type="button"
                 onClick={() => setIsSelfStudy(false)}
-                className={`learning-journal-tab ${!isSelfStudy ? "active" : "inactive"}`}
+                className={`learning-journal-tab left ${!isSelfStudy ? "active" : "inactive"}`}
               >
                 Classroom
               </button>
               <button
                 type="button"
                 onClick={() => setIsSelfStudy(true)}
-                className={`learning-journal-tab ${isSelfStudy ? "active" : "inactive"}`}
+                className={`learning-journal-tab right ${isSelfStudy ? "active" : "inactive"}`}
               >
                 Self Study
               </button>
@@ -85,13 +90,13 @@ export function LearningJournalLayout() {
 
             <h2 className="learning-journal-title">Learning Journal</h2>
             {/* TODO: Dynamically load week range based on selected week */}
-            <h2 className="learning-journal-titles">
-              Week {currentWeek}: 16/02/2025 - 23/02/2025
-            </h2>
+            <div>
+              <b>Week {currentWeek?.week}</b>: {currentWeek?.start_date} - {currentWeek?.end_date}
+            </div>
           </div>
 
           <div className="learning-journal-table-container">
-            {isSelfStudy ? <SelfStudy /> : <InClass />}
+            {isSelfStudy ? <SelfStudy weekId={currentWeek.id} /> : <InClass weekId={currentWeek.id} />}
           </div>
         </div>
 
