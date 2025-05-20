@@ -18,3 +18,12 @@ export async function createSelfStudyJournal(data) {
     return error;
   }
 }
+
+export async function updateSelfStudyJournal(id, data) {
+  try {
+    const response = await apiClient.put(`/api/student/self-studies/${id}`, data);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}

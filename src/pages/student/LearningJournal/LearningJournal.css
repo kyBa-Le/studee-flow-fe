@@ -195,7 +195,7 @@
   padding: 10px 60px;
 }
 
-.learning-journal-table .learning-journal-row:last-of-type {
+.learning-journal-table .learning-journal-row:not(.header-row):last-of-type {
   padding-bottom: 30px;
 }
 
@@ -228,4 +228,8 @@ input[type="checkbox"]:checked::after {
   border: solid #FE9A3B;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.learning-journal-cell input, textarea {
+  outline: none;
 }

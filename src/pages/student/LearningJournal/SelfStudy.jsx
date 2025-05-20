@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getUser } from "../../../services/UserService";
-import { getWeeklySelfStudyJournalOfStudent } from "../../../services/SelfStudyService";
+import { getWeeklySelfStudyJournalOfStudent, updateSelfStudyJournal } from "../../../services/SelfStudyService";
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
+import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
 
 export function SelfStudy({weekId}) {
   const [subjects, setSubjects] = useState([]);
@@ -14,11 +15,9 @@ export function SelfStudy({weekId}) {
       try {
         setLoading(true);
         const user = await getUser();
-        const studentId = user.data.id;
         const classroomId = user.data.student_classroom_id;
 
         const subjectsResponse = await getAllSubjects(classroomId);
-
         setSubjects(subjectsResponse.data);
 
         const studies = await getWeeklySelfStudyJournalOfStudent(
@@ -34,10 +33,6 @@ export function SelfStudy({weekId}) {
 
     fetchData();
   }, [weekId]);
-
-
-  const cellStyle = { width: "100%", resize: "none", outline: "none" };
-  const selectStyle = { width: "100%", outline: "none" };
 
   return (
     <div className="learning-journal-table-container">
@@ -69,118 +64,7 @@ export function SelfStudy({weekId}) {
           <LoadingData content="Loading ..."/>
         ) : selfStudies?.length > 0 ? (
           selfStudies.map((study, index) => (
-            <div className="learning-journal-row" key={study.id}>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`date_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={new Date(study.date).toLocaleDateString(
-                    "en-GB"
-                  )}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                <select
-                  name={`skill_${index}`}
-                  defaultValue={study.subject_id}
-                  style={selectStyle}
-                >
-                  {subjects.map((subject) => (
-                    <option key={subject.id} value={subject.id}>
-                      {subject.subject_name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`lesson_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.lesson}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`time_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.time_allocation}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                {study.learning_resources.startsWith("http") ? (
-                  <a
-                    href={study.learning_resources}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {study.learning_resources}
-                  </a>
-                ) : (
-                  <textarea
-                    name={`resource_${index}`}
-                    rows="2"
-                    style={cellStyle}
-                    defaultValue={study.learning_resources}
-                  />
-                )}
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`activity_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.learning_activities}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                <select
-                  name={`concentration_${index}`}
-                  defaultValue={study.concentration}
-                  style={selectStyle}
-                >
-                  <option value="1">Not sure</option>
-                  <option value="0">No</option>
-                  <option value="2">Yes</option>
-                </select>
-              </div>
-              <div className="learning-journal-cell">
-                <select
-                  name={`plan_${index}`}
-                  defaultValue={study.is_follow_plan ? "true" : "false"}
-                  style={selectStyle}
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`evaluation_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.evaluation}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`reinforce_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.reinforcing_learning}
-                />
-              </div>
-              <div className="learning-journal-cell">
-                <textarea
-                  name={`notes_${index}`}
-                  rows="2"
-                  style={cellStyle}
-                  defaultValue={study.notes}
-                />
-              </div>
-            </div>
+            <SelfStudyForm key={index} subjects={subjects} study={study} index={index}/>
           ))
         ) : (
           <div className="learning-journal-row">
@@ -191,5 +75,180 @@ export function SelfStudy({weekId}) {
         )}
       </div>
     </div>
+  );
+}
+
+export function SelfStudyForm({ subjects, study, index }) {
+  const [formData, setFormData] = useState(study);
+  const debounceTimer = useRef(null);
+
+  const cellStyle = { width: "100%", resize: "none", outline: "none"};
+  const selectStyle = { width: "100%", outline: "none" };
+
+  // Debounced submit logic
+  const triggerAutoSubmit = useDebouncedSubmit(handleAutoSubmit)
+
+
+  // Auto submit after formData changed
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      triggerAutoSubmit();
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [formData]);
+
+  function handleOnChange(e) {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+
+  function handlePlanChange(e) {
+    const isFollowPlan = e.target.value === "true";
+
+    setFormData((prev) => ({
+      ...prev,
+      is_follow_plan: isFollowPlan,
+    }));
+  }
+  
+
+  //todo: handle submit
+  async function handleAutoSubmit() {
+    console.log(formData);
+    const response = await updateSelfStudyJournal(formData.id, formData);
+    console.log(response);
+  }
+
+  useEffect(() => {
+    return () => clearTimeout(debounceTimer.current);
+  }, []);
+
+  return (
+    <form className="learning-journal-row" key={study.id}>
+      <div className="learning-journal-cell">
+        <textarea
+          type="date"
+          name="date"
+          style={cellStyle}
+          value={formData.date ? formData.date.slice(0, 10) : ""}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+        <select
+          name="subject_id"
+          value={formData.subject_id}
+          style={selectStyle}
+          onChange={handleOnChange}
+        >
+          {subjects.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              {subject.subject_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="lesson"
+          rows="2"
+          style={cellStyle}
+          value={formData.lesson}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="time_allocation"
+          rows="2"
+          style={cellStyle}
+          value={formData.time_allocation}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+          <textarea
+            name="learning_resource"
+            rows="2"
+            style={cellStyle}
+            value={formData.learning_resources}
+            onChange={handleOnChange}
+          />
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="learning_activities"
+          rows="2"
+          style={cellStyle}
+          value={formData.learning_activities}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+        <select
+          name="concentration"
+          value={formData.concentration}
+          style={selectStyle}
+          onChange={handleOnChange}
+        >
+          <option value="1">Not sure</option>
+          <option value="0">No</option>
+          <option value="2">Yes</option>
+        </select>
+      </div>
+
+      <div className="learning-journal-cell">
+        <select
+          name="is_follow_plan"
+          value={formData.is_follow_plan ? "true" : "false"}
+          style={selectStyle}
+          onChange={handlePlanChange}
+        >
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="evaluation"
+          rows="2"
+          style={cellStyle}
+          value={formData.evaluation}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="reinforcing_learning"
+          rows="2"
+          style={cellStyle}
+          value={formData.reinforcing_learning}
+          onChange={handleOnChange}
+        />
+      </div>
+
+      <div className="learning-journal-cell">
+        <textarea
+          name="notes"
+          rows="2"
+          style={cellStyle}
+          value={formData.notes}
+          onChange={handleOnChange}
+        />
+      </div>
+    </form>
   );
 }
