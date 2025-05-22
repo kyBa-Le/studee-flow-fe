@@ -10,12 +10,14 @@ import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 import { toast } from "react-toastify";
 import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
 import "./InClass.css";
+import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 
 export function InClass({ weekId }) {
   const [subjects, setSubjects] = useState([]);
   const [inClassJournal, setInClassJournal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [extraForms, setExtraForms] = useState([]);
 
   const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
@@ -46,6 +48,10 @@ export function InClass({ weekId }) {
     fetchData();
   }, [weekId]);
 
+  const handleAddForm = () => {
+    setExtraForms((prev) => [...prev, { id: Date.now() }]);
+  }
+
   return (
     <div className="learning-journal-table-container">
       <div className="learning-journal-table">
@@ -69,17 +75,44 @@ export function InClass({ weekId }) {
 
         {loading ? (
           <LoadingData content="Loading ..." />
-        ) : inClassJournal.length > 0 ? (
-          inClassJournal.map((entry, index) => (
-            <InClassForm cellStyle={cellStyle} selectStyle={selectStyle} key={index} subjects={subjects} initialData={entry} />
-          ))
         ) : (
-          subjects.length > 0 &&
-          userId && (
-            <EmptyInClassForm selectStyle={selectStyle} cellStyle={cellStyle} weekId={weekId} subjects={subjects} studentId={userId} />
-          )
+          <>
+            {
+              inClassJournal.map((journal) => (
+                <InClassForm
+                  key={journal.id}
+                  initialData={journal}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                />
+              ))
+            }
+
+            {
+              extraForms.map((form) => (
+                <EmptyInClassForm
+                  key={form.id}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                  weekId={weekId}
+                />
+              ))
+            }
+
+            {inClassJournal.length === 0 && (
+              <EmptyInClassForm
+                subjects={subjects}
+                cellStyle={cellStyle}
+                selectStyle={selectStyle}
+                weekId={weekId}
+              />
+            )}
+          </>
         )}
       </div>
+      <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
     </div>
   );
 }

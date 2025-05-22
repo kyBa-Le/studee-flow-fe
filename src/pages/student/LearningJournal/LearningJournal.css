@@ -195,7 +195,7 @@
   padding: 10px 60px;
 }
 
-.learning-journal-table .learning-journal-row:not(.header-row):last-of-type {
+.learning-journal-row:not(.header-row).journal-form-container:last-of-type {
   padding-bottom: 30px;
 }
 
@@ -236,4 +236,11 @@ input[type="checkbox"]:checked::after {
 
 .learning-journal-cell input[type="date"] {
   width: 80% !important;
+}
+
+.add-form-button-places {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  margin-top: 5px;
 }

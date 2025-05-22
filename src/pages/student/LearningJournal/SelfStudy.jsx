@@ -5,12 +5,13 @@ import { createSelfStudyJournal, getWeeklySelfStudyJournalOfStudent, updateSelfS
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
 import { toast } from "react-toastify";
+import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 
-export function SelfStudy({weekId}) {
+export function SelfStudy({ weekId }) {
   const [subjects, setSubjects] = useState([]);
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [extraForms, setExtraForms] = useState([]);
   const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
 
@@ -37,6 +38,10 @@ export function SelfStudy({weekId}) {
 
     fetchData();
   }, [weekId]);
+
+  const handleAddForm = () => {
+    setExtraForms((prev) => [...prev, { id: Date.now() }]);
+  }
 
   return (
     <div className="learning-journal-table-container">
@@ -65,15 +70,45 @@ export function SelfStudy({weekId}) {
         </div>
 
         {loading ? (
-          <LoadingData content="Loading ..."/>
-        ) : selfStudies?.length > 0 ? (
-          selfStudies.map((study, index) => (
-            <SelfStudyForm key={index} subjects={subjects} study={study} cellStyle={cellStyle} selectStyle={selectStyle}/>
-          ))
+          <LoadingData content="Loading ..." />
         ) : (
-            <EmptyForm weekId={weekId} subjects={subjects} cellStyle={cellStyle} selectStyle={selectStyle} />
+            <>
+              {selfStudies.map((study, index) => (
+                <div className="journal-form-container" key={index}>
+                  <SelfStudyForm
+                    subjects={subjects}
+                    study={study}
+                    cellStyle={cellStyle}
+                    selectStyle={selectStyle}
+                  />
+                </div>
+              ))}
+
+              {extraForms.map((form) => (
+                <div className="journal-form-container" key={form.id}>
+                  <EmptyForm
+                    weekId={weekId}
+                    subjects={subjects}
+                    cellStyle={cellStyle}
+                    selectStyle={selectStyle}
+                  />
+                </div>
+              ))}
+
+              {selfStudies.length === 0 && extraForms.length === 0 && (
+                <div>
+                  <EmptyForm
+                    weekId={weekId}
+                    subjects={subjects}
+                    cellStyle={cellStyle}
+                    selectStyle={selectStyle}
+                  />
+                </div>
+              )}
+            </>
         )}
       </div>
+      <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
     </div>
   );
 }
@@ -97,7 +132,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
     reinforcing_learning: "",
     notes: ""
   };
-  
+
   const [formData, setFormData] = useState(initialFormData);
   const debounceTimer = useRef(null);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
@@ -129,7 +164,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
   async function handleAutoCreate() {
     try {
-      const response = await ( isNew ? createSelfStudyJournal(formData) : updateSelfStudyJournal(id, formData));
+      const response = await (isNew ? createSelfStudyJournal(formData) : updateSelfStudyJournal(id, formData));
       if (isNew) {
         setIsNew(false);
         const newId = response.data.selfStudyId;
@@ -139,7 +174,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
     } catch (error) {
       toast.error("Please enter journal again, some error appeared!");
     }
-    
+
   }
 
 
@@ -303,7 +338,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       is_follow_plan: isFollowPlan,
     }));
   }
-  
+
 
   //todo: handle submit
   async function handleAutoUpdate() {
@@ -362,13 +397,13 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       </div>
 
       <div className="learning-journal-cell">
-          <textarea
-            name="learning_resources"
-            rows="3"
-            style={cellStyle}
-            value={formData.learning_resources}
-            onChange={handleOnChange}
-          />
+        <textarea
+          name="learning_resources"
+          rows="3"
+          style={cellStyle}
+          value={formData.learning_resources}
+          onChange={handleOnChange}
+        />
       </div>
 
       <div className="learning-journal-cell">
