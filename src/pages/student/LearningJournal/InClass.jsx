@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   getInClassJournal,
   createInClassJournal,
@@ -38,7 +38,6 @@ export function InClass({ weekId }) {
 
         setInClassJournal(data.length > 0 ? data : []);
       } catch (error) {
-        console.log("This is the error");
         console.log(error);
       } finally {
         setLoading(false);
@@ -249,10 +248,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
 
   useEffect(() => {
 
-    const timeout = setTimeout(() => {
-      triggerAutoSubmit();
-    }, 500);
-    return () => clearTimeout(timeout);
+    triggerAutoSubmit();
 
   }, [formData]);
 
@@ -266,7 +262,6 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
 
   async function handleAutoUpdate() {
     try {
-      console.log("Run");
       await updateInClassJournal(formData.id, formData);
     } catch (error) {
       console.error(error);

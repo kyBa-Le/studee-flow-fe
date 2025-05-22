@@ -50,7 +50,7 @@ const Schedule = () => {
   useEffect(() => {
     getTask()
       .then((response) => {
-        const transformedData = transformEvents(response);
+        const transformedData = transformEvents(response.data);
         setEvents(transformedData);
       })
       .catch((error) => console.error("Error fetching User:", error));

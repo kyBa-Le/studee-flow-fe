@@ -314,11 +314,9 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
   // Auto submit after formData changed
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      triggerAutoSubmit();
-    }, 500);
 
-    return () => clearTimeout(timeout);
+      triggerAutoSubmit();
+
   }, [formData]);
 
   function handleOnChange(e) {
@@ -340,7 +338,6 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
   }
 
 
-  //todo: handle submit
   async function handleAutoUpdate() {
     const response = await updateSelfStudyJournal(formData.id, formData);
   }
