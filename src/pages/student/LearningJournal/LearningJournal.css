@@ -1,76 +1,80 @@
-.student-selfstudy-container {
+.learning-journal-container {
   display: flex;
   flex-direction: column;
   border-radius: 6px;
   overflow: hidden;
 }
 
-.student-selfstudy {
-  max-width: 1533px;
-  padding: 130px 98px 70px 98px;
+.learning-journal {
+  /* max-width: 1533px; */
+  padding: 15vh 2vw 5vh 2vw;
   background-color: #f5f5f56c;
 }
 
-.student-selfstudy-header {
+.learning-journal-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
 }
-.student-selfstudy-headerr {
+.learning-journal-headerr {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
 }
-.student-selfstudy-title-wrapper {
+.learning-journal-title-wrapper {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: -73px;
 }
-.student-selfstudy-title {
+.learning-journal-title {
   text-align: center;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 0; 
 }
-.student-selfstudy-titles{
+.learning-journal-titles{
     text-align: center;
     font-size: 18px;
     font-weight: normal;
     margin-bottom: 0;
 }
-.student-selfstudy-tabs {
+.learning-journal-tabs {
   display: flex;
 }
 
-.student-selfstudy-tab {
+.learning-journal-tab {
   padding: 8px 20px;
-  border-radius: 5px;
   border: none;
   cursor: pointer;
 }
 
-.student-selfstudy-tab.active {
-  background-color: #2CB9E2;
-  color: white;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
+.learning-journal-tab.right {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
-.student-selfstudy-tab.inactive {
+.learning-journal-tab.left {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.learning-journal-tab.active {
+  background-color: #2CB9E2;
+  color: white;
+}
+
+.learning-journal-tab.inactive {
   background-color: white;
   color: #2CB9E2;
   border: 1px solid #2CB9E2;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
-.student-selfstudy-week-selector {
+.learning-journal-week-selector {
   position: relative;
 }
 
-.student-selfstudy-week-selector select {
+.learning-journal-week-selector select {
   background-color: #2CB9E2;
   color:#ffffff;
   appearance: none;
@@ -82,23 +86,23 @@
   box-sizing: border-box;
   outline: none;
 }
-.student-selfstudy-week-selector option {
+.learning-journal-week-selector option {
   background-color: white; 
   color: black;  
   border: 1px solid black;         
 }
 
-.student-selfstudy-week-selector option:hover {
+.learning-journal-week-selector option:hover {
   color:#ffffff;
 }
 
-.student-selfstudy-week-selector:hover select {
+.learning-journal-week-selector:hover select {
   background-color: #71d4f0;
   transform: scale(1.05);
   transition: all 0.3s 0s ease-in-out;
 }
 
-.student-selfstudy-icon {
+.learning-journal-icon {
   position: absolute;
   right: 12px;
   top: 50%;
@@ -107,20 +111,20 @@
   pointer-events: none;
 }
 
-.student-selfstudy-title {
+.learning-journal-title {
   text-align: center;
   font-size: 20px;
   margin-bottom: 20px;
   font-weight: bold;
 }
 
-.student-selfstudy-goals {
+.learning-journal-goals {
   display: flex;
   gap: 10px;
   color: white;
 }
 
-.student-selfstudy-goal {
+.learning-journal-goal {
   flex: 1;
   background-color: #2CB9E2;
   padding: 10px;
@@ -131,21 +135,22 @@
   font-size: 14px;
 }
 
-.student-selfstudy-table-container {
+.learning-journal-table-container {
   overflow-x: auto;
 }
 
-.student-selfstudy-table {
+.learning-journal-table {
   display: flex;
   flex-direction: column;
 }
 
-.student-selfstudy-row {
-  display: flex;
+.learning-journal-row {
+  display: grid;
   width: 100%;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 }
 
-.student-selfstudy-cell {
+.learning-journal-cell {
   flex: 1;
   padding: 10px;
   text-align: center;
@@ -155,19 +160,18 @@
 
 }
 
-.student-selfstudy-cell.header {
+.learning-journal-cell.header {
   background-color: #DCEEFC;
   font-weight: 600;
   white-space: pre-wrap;
 }
-
-.student-selfstudy-submit {
+.learning-journal-submit {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
 }
 
-.student-selfstudy-submit-btn {
+.learning-journal-submit-btn {
   background-color: #2CB9E2;
   color: white;
   border: none;
@@ -177,16 +181,66 @@
   cursor: pointer;
 }
 
-.student-selfstudy-goal-content{
+.learning-journal-goal-content{
   border: 1px solid white;
   box-shadow: 0 0 10px rgba(241, 234, 234, 0.863);
-  padding: 10px 30px 60px 30px;
+  padding: 10px 30px;
   border-radius: 10px;
   margin: 35px 0 35px 0;
   background-color: white;
 }
 
-.student-selfstudy-goal-section{
+.learning-journal-goal-section{
   max-width: 100%;
   padding: 10px 60px;
+}
+
+.learning-journal-row:not(.header-row).journal-form-container:last-of-type {
+  padding-bottom: 30px;
+}
+
+input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  margin-right: 10px;
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: -5px;
+  width: 10px;
+  height: 20px;
+  border: solid #FE9A3B;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.learning-journal-cell input, textarea {
+  outline: none;
+}
+
+.learning-journal-cell input[type="date"] {
+  width: 80% !important;
+}
+
+.add-form-button-places {
+  display: flex;
+  justify-content: end;
+  width: 100%;
+  margin-top: 5px;
 }

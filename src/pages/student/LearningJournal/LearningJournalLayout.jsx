@@ -1,92 +1,106 @@
-import React, { useState } from "react";
-import "./SelfStudy.css";
+import { useEffect, useState } from "react";
+import "./LearningJournal.css";
 import { WeeklyGoal } from "./WeeklyGoal";
 import { SelfStudy } from "./SelfStudy";
 import { InClass } from "./InClass";
+import { getAllWeek } from "../../../services/WeekService";
 
-export function LearningJournalLayout({ children }) {
-  const [selectedWeek, setSelectedWeek] = useState("1");
-  const [isSelf, setIsSelf] = useState(true);
+export function LearningJournalLayout() {
+  const [weeks, setWeeks] = useState([]);
+  const [currentWeek, setCurrentWeek] = useState({});
+  const [isSelfStudy, setIsSelfStudy] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted!");
-  };
+  useEffect(() => {
+    const fetchWeeks = async () => {
+      try {
+        const response = await getAllWeek();
+        const weekData = response.data.sort( (a, b) => new Date(b.end_date) - new Date(a.end_date) ) || [];
+        setWeeks(weekData);
 
-  const changeLayout = (isSelfStudy) => {
-    setIsSelf(isSelfStudy);
-  };
+        if (weekData.length > 0) {
+          setCurrentWeek(weekData[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching weeks:", error);
+      }
+    };
+
+    fetchWeeks();
+  }, []);
+
 
   return (
-    <div className="student-selfstudy-container">
-      <div className="student-selfstudy" onSubmit={handleSubmit}>
-        <div className="student-selfstudy-headerr">
-          <div className="student-selfstudy-week-selector">
+    <div className="learning-journal-container">
+      <div className="learning-journal">
+        <div className="learning-journal-headerr">
+          <div className="learning-journal-week-selector">
             <select
-              name="week"
-              value={selectedWeek}
-              onChange={(e) => setSelectedWeek(e.target.value)}
+              value={weeks.findIndex(w => w.week === currentWeek.week)}
+              onChange={(e) => {
+                const selectedIndex = parseInt(e.target.value);
+                const selectedWeek = weeks[selectedIndex];
+                setCurrentWeek(selectedWeek);
+              }}
             >
-              <option value="1">Week 1</option>
-              <option value="2">Week 2</option>
-              <option value="3">Week 3</option>
+              {weeks.map((week, index) => (
+                <option key={week.id} value={index}>
+                  Week {week.week}
+                </option>
+              ))}
             </select>
-            <i className="fa-solid fa-angle-down student-selfstudy-icon"></i>
+
+            <i className="fa-solid fa-angle-down learning-journal-icon"></i>
           </div>
         </div>
-        <div className="student-selfstudy-goal-content">
-          <div className="student-selfstudy-header">
-            <div className="student-selfstudy-title-wrapper">
-              <h2
-                className="student-selfstudy-title"
-                style={{ paddingTop: "20px" }}
-              >
+
+        <div className="learning-journal-goal-content">
+          <div className="learning-journal-header">
+            <div className="learning-journal-title-wrapper">
+              <h2 className="learning-journal-title" style={{ paddingTop: "20px" }}>
                 Weekly Goal
               </h2>
             </div>
           </div>
 
-          <div className="student-selfstudy-goal-section">
-            
+          <div className="learning-journal-goal-section">
 
-              {<WeeklyGoal weekId={1} />}
+            <WeeklyGoal weekId={currentWeek.id} />
 
-              
           </div>
 
           <hr />
-          <div className="student-selfstudy-header">
-            <div className="student-selfstudy-tabs">
+
+          <div className="learning-journal-header">
+            <div className="learning-journal-tabs">
               <button
-                onClick={() => changeLayout(false)}
                 type="button"
-                className={`student-selfstudy-tab ${
-                  !isSelf ? "active" : "inactive"
-                }`}
+                onClick={() => setIsSelfStudy(false)}
+                className={`learning-journal-tab left ${!isSelfStudy ? "active" : "inactive"}`}
               >
                 Classroom
               </button>
               <button
-                onClick={() => changeLayout(true)}
                 type="button"
-                className={`student-selfstudy-tab ${
-                  isSelf ? "active" : "inactive"
-                }`}
+                onClick={() => setIsSelfStudy(true)}
+                className={`learning-journal-tab right ${isSelfStudy ? "active" : "inactive"}`}
               >
-                Self study
+                Self Study
               </button>
             </div>
-            <h2 className="student-selfstudy-title">Learning Journal</h2>
-            <h2 className="student-selfstudy-titles">
-              Week 1: 16/02/2025 - 23/02/2025
-            </h2>
+
+            <h2 className="learning-journal-title">Learning Journal</h2>
+            <div>
+              <b>Week {currentWeek?.week}</b>: {currentWeek?.start_date} - {currentWeek?.end_date}
+            </div>
           </div>
-          <div className="student-selfstudy-table-container">
-            {isSelf === true ? <SelfStudy /> : <InClass />}
+
+          <div className="learning-journal-table-container">
+            {isSelfStudy ? <SelfStudy weekId={currentWeek.id} /> : <InClass weekId={currentWeek.id} />}
           </div>
         </div>
-        <div className="student-selfstudy-submit">
-          <button type="submit" className="student-selfstudy-submit-btn">
+
+        <div className="learning-journal-submit">
+          <button type="submit" className="learning-journal-submit-btn">
             Submit
           </button>
         </div>

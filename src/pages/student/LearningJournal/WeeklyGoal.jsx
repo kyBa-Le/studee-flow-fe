@@ -5,21 +5,20 @@ import { toast, ToastContainer } from "react-toastify";
 export function WeeklyGoal({ weekId }) {
 
   const [goalIndex, setGoalIndex] = useState(0);
-  const [currentWeekId, setCurrentWeekId] = useState(weekId);
   const [weeklyGoals, setWeeklyGoals] = useState([]);
 
   //get the weekly goals of the current week
   useEffect(() => {
-    if (!currentWeekId) return;
-    getWeeklyGoals(currentWeekId)
+    if (!weekId) return;
+    getWeeklyGoals(weekId)
       .then((data) => {
         console.log("Weekly goals:", data);
         setWeeklyGoals(data.data);
       })
       .catch(console.error);
-  }, [currentWeekId]);
+  }, [weekId]);
 
-  // hanle button to change the slide
+  // handle button to change the slide
   const handlePrev = () => {
     setGoalIndex((prev) => Math.max(prev - 1, 0));
   };
@@ -29,41 +28,9 @@ export function WeeklyGoal({ weekId }) {
     setGoalIndex((prev) => Math.min(prev + 1, weeklyGoals.length - 3));
   };
 
-  // handle form when input the goal
-  const handleGoalChange = (index, newGoalText) => {
-    const updatedGoals = [...weeklyGoals];
-    updatedGoals[index] = { ...updatedGoals[index], goal: newGoalText };
-    setWeeklyGoals(updatedGoals);
-  };
-
-  const handleIsAchievedChange = (index, isChecked) => {
-    const updatedGoals = [...weeklyGoals];
-    updatedGoals[index] = {
-      ...updatedGoals[index],
-      is_achieved: isChecked ? 1 : 0
-    };
-    setWeeklyGoals(updatedGoals);
-  };
-
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const form = e.target;
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
-
-      await updateWeeklyGoal(data.goal_id, { goal: data.goal, is_achieved: data.is_achieved });
-
-      toast.success(`Goal updated`);
-    } catch (error) {
-      toast.error("Goal update failed, please try again");
-    }
-  };
-
   return (
     <div
-      className="student-selfstudy-goals-row"
+      className="learning-journal-goals-row"
       style={{ display: "flex", alignItems: "center", gap: 16 }}
     >
       <i
@@ -71,36 +38,9 @@ export function WeeklyGoal({ weekId }) {
         style={{ fontSize: 15, cursor: "pointer" }}
         onClick={handlePrev}
       ></i>
-      <div className="student-selfstudy-goals" style={{ flex: 1 }}>
-        {weeklyGoals.slice(goalIndex, goalIndex + 3).map((goal, index) => (
-          <form onSubmit={handleSubmit}
-            key={goal.id}
-            className="student-selfstudy-goal"
-          >
-            <input type="number" name="goal_id" style={{ display: 'none' }} aria-hidden="true" value={goal.id} />
-            <input
-              type="checkbox"
-              name={`is_achieved`}
-              checked={goal.is_achieved === 1}
-              onChange={(e) => handleIsAchievedChange(index, e.target.checked)}
-              id={`goal_${goalIndex + index}`} value={goal.is_achieved ? 1 : 0}
-            />
-            <input
-              type="text"
-              name={`goal`}
-              id={`goal_${goalIndex + index}`}
-              value={goal.goal || ""}
-              onChange={(e) => handleGoalChange(goalIndex + index, e.target.value)}
-              style={{
-                flex: 1,
-                border: "none",
-                background: "transparent",
-                color: "#fff",
-                fontSize: "14px",
-              }}
-            />
-            <button type="submit" style={{ display: 'none' }} aria-hidden="true" />
-          </form>
+      <div className="learning-journal-goals" style={{ flex: 1 }}>
+        {weeklyGoals.slice(goalIndex, goalIndex + 3).map((goal) => (
+          <WeeklyGoalForm goal={goal} />
         ))}
       </div>
       <i
@@ -110,5 +50,59 @@ export function WeeklyGoal({ weekId }) {
       ></i>
       <ToastContainer />
     </div>
+  );
+}
+
+
+// weekly goal form
+export function WeeklyGoalForm({goal}) {
+
+  const [formData, setFormData] = useState(goal);
+
+  const handleOnChange = (e) => {
+    const { name, type, value, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateWeeklyGoal(formData.id, formData);
+      toast.success(`Goal updated`);
+    } catch (error) {
+      toast.error("Goal update failed, please try again");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}
+      key={formData?.id}
+      className="learning-journal-goal"
+    >
+      <input type="number" name="goal_id" style={{ display: 'none' }} aria-hidden="true" value={goal.id} />
+      <input
+        type="checkbox"
+        name={`is_achieved`}
+        checked={formData?.is_achieved === 1}
+        onChange={handleOnChange}/>
+      <input
+        type="text"
+        name={`goal`}
+        value={formData?.goal || ""}
+        onChange={handleOnChange}
+        style={{
+          flex: 1,
+          border: "none",
+          background: "transparent",
+          color: "#fff",
+          fontSize: "14px",
+        }}
+      />
+      <button type="submit" style={{ display: 'none' }} aria-hidden="true" />
+    </form>
   );
 }
