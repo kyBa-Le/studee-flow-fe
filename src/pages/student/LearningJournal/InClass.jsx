@@ -1,145 +1,63 @@
-import { useEffect, useState } from "react";
-import { getInClassJournal } from "../../../services/InClassService";
+import { useEffect, useState, useRef } from "react";
+import {
+  getInClassJournal,
+  createInClassJournal,
+  updateInClassJournal
+} from "../../../services/InClassService";
 import { getUser } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
+import { toast } from "react-toastify";
+import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
+import "./InClass.css";
 
 export function InClass({ weekId }) {
-  const [inClassJournal, setInClassJournal] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [inClassJournal, setInClassJournal] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
+  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
+  const selectStyle = { width: "100%", outline: "none" };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        await fetchInClassAndSubjects(weekId);
+        setLoading(true);
+        const user = await getUser();
+        setUserId(user.data.id);
+        const classroomId = user.data.student_classroom_id;
+
+        const subjectRes = await getAllSubjects(classroomId);
+        setSubjects(subjectRes.data);
+
+        const journalRes = await getInClassJournal(weekId);
+        const data = journalRes.data;
+
+        setInClassJournal(data.length > 0 ? data : []);
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to load data");
-        setInClassJournal([createEmptyRow()]);
+        console.log("This is the error");
+        console.log(error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
     fetchData();
   }, [weekId]);
 
-  const fetchInClassAndSubjects = async (weekId) => {
-    const resInClass = await getInClassJournal(weekId);
-    const inClass = resInClass.data;
-
-    const user = await getUser();
-    const classroomId = user.data.student_classroom_id;
-
-    const resSubjects = await getAllSubjects(classroomId);
-
-    setSubjects(resSubjects.data);
-    setInClassJournal(inClass.length > 0 ? inClass : [createEmptyRow()]);
-  };
-
-  const createEmptyRow = () => ({
-    date: "",
-    lesson: "",
-    self_assessment: "1",
-    difficulties: "",
-    plan: "",
-    is_problem_solved: 0,
-    subject_id: "",
-  });
-
-  const handleChange = (index, field, value) => {
-    const updated = [...inClassJournal];
-    updated[index][field] = value;
-    setInClassJournal(updated);
-  };
-
-  const renderRow = (entry, index) => (
-    <div className="learning-journal-row" key={index}>
-      <div className="learning-journal-cell">
-        <textarea
-          rows="2"
-          style={{ width: "100%", resize: "none" }}
-          value={entry.date}
-          onChange={(e) => handleChange(index, "date", e.target.value)}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          value={entry.subject_id || ""}
-          style={{ width: "100%" }}
-          onChange={(e) => handleChange(index, "subject_id", e.target.value)}
-        >
-          {subjects?.map((subject) => (
-            <option key={subject.id} value={subject.id}>
-              {subject.subject_name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="learning-journal-cell">
-        <textarea
-          rows="2"
-          style={{ width: "100%", resize: "none" }}
-          value={entry.lesson}
-          onChange={(e) => handleChange(index, "lesson", e.target.value)}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          value={entry.self_assessment}
-          onChange={(e) => handleChange(index, "self_assessment", e.target.value)}
-          style={{ width: "100%" }}
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-      </div>
-      <div className="learning-journal-cell">
-        <textarea
-          rows="2"
-          style={{ width: "100%", resize: "none" }}
-          value={entry.difficulties}
-          onChange={(e) => handleChange(index, "difficulties", e.target.value)}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <textarea
-          rows="2"
-          style={{ width: "100%", resize: "none" }}
-          value={entry.plan}
-          onChange={(e) => handleChange(index, "plan", e.target.value)}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          value={entry.is_problem_solved}
-          onChange={(e) => handleChange(index, "is_problem_solved", parseInt(e.target.value))}
-          style={{ width: "100%" }}
-        >
-          <option value={1}>Yes</option>
-          <option value={0}>No</option>
-        </select>
-      </div>
-    </div>
-  );
-
   return (
     <div className="learning-journal-table-container">
       <div className="learning-journal-table">
-        <div className="learning-journal-row header-row">
+        <div className="learning-journal-row in-class header-row">
           <div className="learning-journal-cell header">Date</div>
           <div className="learning-journal-cell header">Skill/Module</div>
           <div className="learning-journal-cell header">
             My lesson <br /> What did I learn today?
           </div>
           <div className="learning-journal-cell header">
-            Self-assessment <br />
+            Self-assessment
+            <br />
             1: I need more practice <br />
             2: I sometimes find this difficult <br />
             3: No problem!
@@ -148,10 +66,256 @@ export function InClass({ weekId }) {
           <div className="learning-journal-cell header">My plan</div>
           <div className="learning-journal-cell header">Problem solved</div>
         </div>
-        {isLoading ? (
-          <LoadingData content="Loading ..." />) : inClassJournal.map((entry, index) => renderRow(entry, index))}
+
+        {loading ? (
+          <LoadingData content="Loading ..." />
+        ) : inClassJournal.length > 0 ? (
+          inClassJournal.map((entry, index) => (
+            <InClassForm cellStyle={cellStyle} selectStyle={selectStyle} key={index} subjects={subjects} initialData={entry} />
+          ))
+        ) : (
+          subjects.length > 0 &&
+          userId && (
+            <EmptyInClassForm selectStyle={selectStyle} cellStyle={cellStyle} weekId={weekId} subjects={subjects} studentId={userId} />
+          )
+        )}
       </div>
-      <ToastContainer />
     </div>
+  );
+}
+
+function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
+  const [formData, setFormData] = useState({
+    id: null,
+    date: null,
+    subject_id: subjects?.[0]?.id || "",
+    lesson: "",
+    self_assessment: "1",
+    difficulties: "",
+    plan: "",
+    is_problem_solved: 0,
+    week_id: weekId,
+  });
+
+  const [isNew, setIsNew] = useState(true);
+  const [id, setId] = useState(null);
+
+  const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
+
+  useEffect(() => {
+    if (!formData.date) return;
+    triggerAutoSubmit();
+  }, [formData]);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "is_problem_solved" ? parseInt(value) : value,
+    }));
+  }
+
+  async function handleAutoCreate() {
+    try {
+      const response = await (isNew ? createInClassJournal(formData) : updateInClassJournal(id, formData));
+      if (isNew) {
+        const newId = response.data.inClassId;
+        setId(newId);
+        setIsNew(false);
+        toast.success("New in-class journal created.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error creating in-class journal.");
+    }
+  }
+
+  return (
+    <form className="learning-journal-row in-class">
+      <div className="learning-journal-cell">
+        <input
+          type="date"
+          name="date"
+          style={cellStyle}
+          value={formData.date}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="subject_id"
+          value={formData.subject_id}
+          style={selectStyle}
+          onChange={handleChange}
+        >
+          {subjects.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              {subject.subject_name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="lesson"
+          rows="3"
+          style={cellStyle}
+          value={formData.lesson}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="self_assessment"
+          value={formData.self_assessment}
+          onChange={handleChange}
+          style={selectStyle}
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="difficulties"
+          rows="3"
+          style={cellStyle}
+          value={formData.difficulties}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="plan"
+          rows="3"
+          style={cellStyle}
+          value={formData.plan}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="is_problem_solved"
+          value={formData.is_problem_solved}
+          onChange={handleChange}
+          style={selectStyle}
+        >
+          <option value={1}>Yes</option>
+          <option value={0}>No</option>
+        </select>
+      </div>
+    </form>
+  );
+}
+
+
+function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
+  const [formData, setFormData] = useState(initialData);
+  const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate, 1500);
+
+  useEffect(() => {
+
+    const timeout = setTimeout(() => {
+      triggerAutoSubmit();
+    }, 500);
+    return () => clearTimeout(timeout);
+
+  }, [formData]);
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "is_problem_solved" ? parseInt(value) : value,
+    }));
+  }
+
+  async function handleAutoUpdate() {
+    try {
+      console.log("Run");
+      await updateInClassJournal(formData.id, formData);
+    } catch (error) {
+      console.error(error);
+      toast.error("Update failed. Please wait and try again.");
+    }
+  }
+
+  return (
+    <form className="learning-journal-row in-class">
+      <div className="learning-journal-cell">
+        <input
+          type="date"
+          name="date"
+          style={cellStyle}
+          value={formData?.date ? formData.date.slice(0, 10) : ""}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="subject_id"
+          value={formData.subject_id}
+          style={selectStyle}
+          onChange={handleChange}
+        >
+          {subjects.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              {subject.subject_name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="lesson"
+          rows="3"
+          style={cellStyle}
+          value={formData.lesson}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="self_assessment"
+          value={formData.self_assessment}
+          onChange={handleChange}
+          style={selectStyle}
+        >
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="difficulties"
+          rows="3"
+          style={cellStyle}
+          value={formData.difficulties}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <textarea
+          name="plan"
+          rows="3"
+          style={cellStyle}
+          value={formData.plan}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="learning-journal-cell">
+        <select
+          name="is_problem_solved"
+          value={formData.is_problem_solved}
+          onChange={handleChange}
+          style={selectStyle}
+        >
+          <option value={1}>Yes</option>
+          <option value={0}>No</option>
+        </select>
+      </div>
+    </form>
   );
 }

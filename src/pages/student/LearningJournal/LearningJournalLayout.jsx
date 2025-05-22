@@ -8,7 +8,7 @@ import { getAllWeek } from "../../../services/WeekService";
 export function LearningJournalLayout() {
   const [weeks, setWeeks] = useState([]);
   const [currentWeek, setCurrentWeek] = useState({});
-  const [isSelfStudy, setIsSelfStudy] = useState(true);
+  const [isSelfStudy, setIsSelfStudy] = useState(false);
 
   useEffect(() => {
     const fetchWeeks = async () => {
@@ -89,7 +89,6 @@ export function LearningJournalLayout() {
             </div>
 
             <h2 className="learning-journal-title">Learning Journal</h2>
-            {/* TODO: Dynamically load week range based on selected week */}
             <div>
               <b>Week {currentWeek?.week}</b>: {currentWeek?.start_date} - {currentWeek?.end_date}
             </div>

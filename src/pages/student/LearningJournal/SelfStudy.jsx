@@ -11,7 +11,7 @@ export function SelfStudy({weekId}) {
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const cellStyle = { width: "100%", resize: "none", outline: "none" };
+  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
 
   useEffect(() => {
@@ -105,11 +105,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
   useEffect(() => {
     if (!formData.date) return;
-    const timeout = setTimeout(() => {
-      triggerAutoSubmit();
-    }, 500);
-
-    return () => clearTimeout(timeout);
+    triggerAutoSubmit();
   }, [formData]);
 
   function handleOnChange(e) {
@@ -141,15 +137,10 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
         toast.success("New learning journal created.")
       }
     } catch (error) {
-      console.log(error);
       toast.error("Please enter journal again, some error appeared!");
     }
     
   }
-
-  useEffect(() => {
-    return () => clearTimeout(debounceTimer.current);
-  }, []);
 
 
   return (
@@ -182,7 +173,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="lesson"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.lesson}
           onChange={handleOnChange}
@@ -192,7 +183,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="time_allocation"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.time_allocation}
           onChange={handleOnChange}
@@ -202,7 +193,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="learning_resources"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.learning_resources}
           onChange={handleOnChange}
@@ -212,7 +203,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="learning_activities"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.learning_activities}
           onChange={handleOnChange}
@@ -247,7 +238,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="evaluation"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.evaluation}
           onChange={handleOnChange}
@@ -257,7 +248,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="reinforcing_learning"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.reinforcing_learning}
           onChange={handleOnChange}
@@ -267,7 +258,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       <div className="learning-journal-cell">
         <textarea
           name="notes"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.notes}
           onChange={handleOnChange}
@@ -353,7 +344,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="lesson"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.lesson}
           onChange={handleOnChange}
@@ -363,7 +354,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="time_allocation"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.time_allocation}
           onChange={handleOnChange}
@@ -373,7 +364,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
           <textarea
             name="learning_resources"
-            rows="2"
+            rows="3"
             style={cellStyle}
             value={formData.learning_resources}
             onChange={handleOnChange}
@@ -383,7 +374,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="learning_activities"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.learning_activities}
           onChange={handleOnChange}
@@ -418,7 +409,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="evaluation"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.evaluation}
           onChange={handleOnChange}
@@ -428,7 +419,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="reinforcing_learning"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.reinforcing_learning}
           onChange={handleOnChange}
@@ -438,7 +429,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       <div className="learning-journal-cell">
         <textarea
           name="notes"
-          rows="2"
+          rows="3"
           style={cellStyle}
           value={formData.notes}
           onChange={handleOnChange}
