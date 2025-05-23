@@ -38,11 +38,14 @@
   flex-direction: column;
   align-items: center;
   width: 100px;
+  p {
+    font-size: 12px;
+  }
 }
 
 .teacher-avatar {
-  width: 80px;
-  height: 80px;
+  width: 55px;
+  height: 55px;
   background-size: cover;
   background-position: center;
   border-radius: 50%;
@@ -64,7 +67,7 @@
 .semester-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 5px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -72,19 +75,21 @@
 }
 
 .semester-row span {
-  width: 100px;
+  width: 85px;
   font-weight: bold;
 }
 
 .semester-row input[type="date"] {
-  padding: 5px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
+    padding: 5px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    max-width: 125px;
+    font-size: 12px;
 }
 
 .badge {
-  background-color: var(--button-blue-background-color);
-  padding: 10px 5px;
+    background-color: var(--button-blue-background-color);
+    padding: 15px 5px;
 }
 
 .subjects-place {
@@ -95,6 +100,7 @@
 
 .label-title {
   font-weight: bold;
+  font-size: 14px;
   display: inline-block;
   margin-bottom: 0.2rem;
   margin-right: 0.2 rem;
@@ -105,12 +111,15 @@
   flex-direction: column;
   margin-bottom: 20px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #ccc; /* gạch mờ dưới mỗi label */
+  border-bottom: 1px solid #ccc;
+  input {
+    font-size: 12px;
+  }
 }
 
 .classroom-info-form .label-title {
   font-weight: bold;
-  margin-bottom: 20px; /* cách tiêu đề với input */
+  margin-bottom: 5px;
 }
 
 .classroom-info-form input {
@@ -133,22 +142,6 @@
   margin-top: 20px; /* khoảng cách phía trên nếu cần */
 }
 
-.action-button {
-  padding: 12px 30px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 18px;
-}
-
-.edit-class-button {
-  background-color: #24b7e3;
-}
-
-.delete-class-button {
-  background-color: #e53e3e;
+.semester-list * {
+    font-size: 14px;
 }

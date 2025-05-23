@@ -1,7 +1,9 @@
 // ClassroomList.jsx
+import { DateConverter } from "../../../components/utils/DateConverter";
 import "./ClassroomList.css";
 
-export function ClassroomList({ classrooms }) {
+export function ClassroomList({ classrooms, setSelectedClassroom }) {
+
     return (
         <div className="content classroom-list-container">
             <table>
@@ -19,24 +21,20 @@ export function ClassroomList({ classrooms }) {
                         <th>Updated at</th>
                     </tr>
                 </thead>
-            </table>
-            <table>
-                <colgroup>
-                    <col style={{ width: '7.69%' }} />
-                    <col style={{ width: '23.07%' }} />
-                    <col style={{ width: '23.07%' }} />
-                    <col style={{ width: '23.07%' }} />
-                </colgroup>
-                <tbody>
-                    {classrooms.map((classroom) => (
-                        <tr key={classroom.id}>
-                            <td>{classroom.id}</td>
-                            <td>PNV 26A</td>
-                            <td>2025-05-22 16:07:10</td>
-                            <td>2025-05-22 16:07:10</td>
-                        </tr>
-                    ))}
-                </tbody>
+                {
+                    classrooms.map((classroom, index) => {
+                        return (
+                            <tbody>
+                                <tr onClick={() => setSelectedClassroom(index)} style={{cursor: "pointer"}} key={classroom.id}>
+                                    <td>{classroom.id}</td>
+                                    <td>{classroom.class_name}</td>
+                                    <td>{DateConverter(classroom.created_at)}</td>
+                                    <td>{DateConverter(classroom.updated_at)}</td>
+                                </tr>
+                            </tbody>
+                        );
+                    })
+                }
             </table>
         </div>
     );

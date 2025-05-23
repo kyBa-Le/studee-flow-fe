@@ -1,0 +1,23 @@
+.actionButton {
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    font-size: 12px;
+    width: 80px;
+    height: 35px;
+  }
+  
+  .editClassButton {
+    color: #24b7e3;
+    border: 1px solid #24b7e3;
+  }
+  
+  .editClassButton:hover {
+    color: #ffffff;
+    background-color: #24b7e3;
+  }
+  
