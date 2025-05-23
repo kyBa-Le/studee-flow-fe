@@ -1,9 +1,13 @@
 import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoutes";
 import { TeacherHome } from "../pages/teacher/Home/TeacherHome";
+import { Classroom } from "../pages/teacher/Classroom/Classroom";
+import { TeacherLayout } from "../components/layouts/MainLayouts/TeacherLayout";
+
 
 const teacherRoutes = [
     { path: '/teacher/home', element: <TeacherHome /> },
+    { path: '/teacher/classroom/:classroomId', element: <Classroom /> },
 ];
 
 export function TeacherRoutes() {
@@ -13,7 +17,9 @@ export function TeacherRoutes() {
             path={path}
             element={
                 <ProtectedRoute allowedRoles={['teacher']}>
-                    {element}
+                    <TeacherLayout>
+                        {element}
+                    </TeacherLayout>
                 </ProtectedRoute>
             }
         />
