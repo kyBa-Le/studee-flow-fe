@@ -17,3 +17,11 @@ export async function adminGetAllClassrooms() {
       return [];
     }
 }
+
+export async function getAllTeachersByClassroomId(id) {
+  try {
+    return await apiClient.get(`/api/classrooms/${id}/teachers`);
+  } catch (error) {
+    return [];
+  }
+}
