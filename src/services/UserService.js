@@ -54,3 +54,12 @@ export async function getAllClassrooms() {
     return [];
   }
 }
+
+export async function getStudentById(id) {
+    try {
+        return await apiClient.get(`/api/students/${id}`);
+    } catch (error) {
+        console.error('Error fetching student data:', error);
+        throw error;
+    }
+}
