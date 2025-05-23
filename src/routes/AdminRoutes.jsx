@@ -4,11 +4,13 @@ import { ProtectedRoute } from "./ProtectedRoutes";
 import { StudentManagement } from "../pages/admin/StudentManagement/StudentManagement";
 import { TeacherManagement } from "../pages/admin/TeacherManagement/TeacherManagement";
 import { AdminLayout } from "../components/layouts/MainLayouts/AdminLayout";
+import { ClassroomManagement } from "../pages/admin/ClassroomManagement/ClassroomManagement";
 
 const adminRoutes = [
     { path: '/admin/teacher-management', element: <TeacherManagement />, pageTitle: "TEACHER MANAGEMENT" },
     { path: '/admin/student-management', element: <StudentManagement />, pageTitle: "STUDENT MANAGEMENT" },
     { path: '/admin/create-student-accounts', element: <CreateStudentsForm />, pageTitle: "STUDENT MANAGEMENT" },
+    { path: '/admin/classroom-management', element: <ClassroomManagement />, pageTitle: "CLASSROOM MANAGEMENT" },
 ]
 export function AdminRoutes() {
     return (
