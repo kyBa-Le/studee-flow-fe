@@ -1,0 +1,86 @@
+.profile-edit-container {
+  align-items: center;
+  padding: 100px;
+
+}
+
+.profile-edit {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-edit__title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.profile-edit__avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.profile-edit__avatar-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-edit__field {
+  margin-bottom: 1rem;
+}
+
+.profile-edit__label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.profile-edit__input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.profile-edit__row {
+  display: flex;
+  gap: 3rem;
+}
+
+.profile-edit__row .profile-edit__field {
+  flex: 1;
+}
+
+.profile-edit__buttons {
+  display: flex;
+  justify-content: right;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.profile-edit__button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.profile-edit__button--cancel {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.profile-edit__button--update {
+  background-color: #00bcd4;
+  color: white;
+}

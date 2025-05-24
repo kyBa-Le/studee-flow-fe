@@ -19,8 +19,8 @@ export function CreateStudentsForm() {
       try {
         const response = await getAllClassrooms();
         setClasses(response.data);
-        if (response.length > 0) {
-          setClassroomId(response[0].class_name);
+        if (response.data.length > 0) {
+          setClassroomId(response.data[0].id); 
         }
       } catch (error) {
         console.error("Failed to fetch classes:", error);
@@ -101,7 +101,7 @@ export function CreateStudentsForm() {
       const payload = {
         emails: studentList.map(student => student.email),
         password,
-        classroomId,
+        classroom_id: classroomId,
       };
 
       const response = await createBulkStudents(payload);
@@ -183,7 +183,7 @@ export function CreateStudentsForm() {
                     onChange={(e) => setClassroomId(e.target.value)}
                   >
                     {classes.map((cls) => (
-                      <option key={cls.id} value={cls.class_name}>
+                      <option key={cls.id} value={cls.id}>
                         {cls.class_name}
                       </option>
                     ))}

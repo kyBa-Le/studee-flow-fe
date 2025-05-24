@@ -1,5 +1,6 @@
 .student-table {
   padding: 24px;
+  width: 100vw;
   background-color: #f7f7f7;
   font-family: sans-serif;
 }
@@ -17,6 +18,11 @@
   border: none;
   border-radius: 20px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.student-table__add-button:hover {
+  background-color: #007acc;
 }
 
 .student-table__search {
@@ -28,41 +34,52 @@
 
 .student-table__content {
   background-color: white;
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  /* đảm bảo rộng 100% cha */
+  padding: 16px;
+  /* có thể giữ padding để cách viền */
+  box-sizing: border-box;
+  /* để padding tính vào width */
+}
+
+.student-table__scroll-wrapper {
+  max-height: 65vh;
+  scrollbar-gutter: stable;
+  width: 100%;
 }
 
 .student-table__table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.student-table__row--head {
-  background-color: #ffffff;
+.student-table__table th,
+.student-table__table td {
+  /* text-align: center; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  padding: 15px 15px;
+  box-sizing: border-box;
 }
 
-.student-table__row:hover {
-  background-color: #fafafa;
+.student-table__table tbody tr:hover {
+  background-color: #f0f8ff;
 }
 
-.student-table__cell {
-  padding: 12px 16px;
-  border-bottom: 1px solid #eee;
-}
-
-.student-table__cell--bold {
-  font-weight: bold;
-}
-
-.student-table__status-select {
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+.student-table__cell--datetime {
+  font-size: 13px;
+  color: #777;
+  white-space: nowrap;
 }
 
 .student-table__action {
-  margin-right: 8px;
+  margin-right: 16px;
   padding: 4px 8px;
   border: none;
   border-radius: 4px;
@@ -74,16 +91,24 @@
   color: white;
 }
 
+.student-table__action--edit:hover {
+  background-color: #007acc;
+}
+
 .student-table__action--delete {
   background-color: #ff4d4f;
   color: white;
 }
 
+.student-table__action--delete:hover {
+  background-color: #e60023;
+}
+
 .student-table__pagination {
   display: flex;
   justify-content: flex-end;
-  padding: 16px;
-  gap: 8px;
+  padding: 10px 35px;
+  gap: 15px;
 }
 
 .student-table__page,
@@ -100,47 +125,76 @@
   color: white;
 }
 
-.student-table__table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+/* Column widths */
+.student-table__table th:nth-child(1),
+.student-table__table td:nth-child(1) {
+  width: 60px;
 }
 
-.student-table__table thead {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
+.student-table__table th:nth-child(2),
+.student-table__table td:nth-child(2) {
+  width: 200px;
 }
 
-.student-table__table tbody {
-  display: block;
-  height: 65vh;
-  overflow-y: auto;
-  width: 100%;
-  padding-left: 20px;
-  padding-right: 20px;
+.student-table__table td:nth-child(3),
+.student-table__table th:nth-child(3) {
+  width: 255px;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word;
 }
 
-.student-table__row {
-  display: table;
-  width: 100%;
-  table-layout: fixed;
-}
+@media (max-width: 1024px) {
 
-.student-table__cell {
-  padding: 15px 20px;
-  border-bottom: 1px solid #ccc;
-  text-align: left;
-}
+  .student-table__table th,
+  .student-table__table td {
+    padding: 10px;
+    font-size: 13px;
+  }
 
-.student-table__table tbody .loading-row {
-  height: inherit;
-  width: 100%;
-  td {
-    width: 90vw;
+  .student-table__search {
+    width: 160px;
   }
 }
 
-.student-table__table thead th {
-  padding: 20px 35px;
+/* Nút Edit và Delete dạng viên thuốc */
+.edit-button,
+.delete-button {
+  width: 40px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: white;
+  font-size: 16px;
+  padding: 0;
+}
+
+/* Nút edit - xanh */
+.edit-button {
+  background-color: #2AB9E2;
+}
+
+.edit-button:hover {
+  background-color: #71d4f0;
+  transform: scale(1.05);
+}
+
+/* Nút delete - đỏ */
+.delete-button {
+  background-color: #DC3545;
+}
+
+.delete-button:hover {
+  background-color: #ed6e7b;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  margin-left: 8px;
 }

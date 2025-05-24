@@ -1,0 +1,147 @@
+.classroom-info-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+}
+
+.teacher-avatar {
+  width: 70px;
+  height: 70px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+}
+
+.classroom-info-form {
+  flex: 1 1;
+  padding: 10px 20px;
+  height: 75vh;
+  max-height: 75vh;
+  overflow: scroll;
+  label {
+    width: 100%;
+  }
+}
+
+.teacher-avatar-place {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.teacher-avatar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  p {
+    font-size: 12px;
+  }
+}
+
+.teacher-avatar {
+  width: 55px;
+  height: 55px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.teacher-name {
+  font-size: 14px;
+  text-align: center;
+}
+
+.semester-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.semester-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.semester-row span {
+  width: 85px;
+  font-weight: bold;
+}
+
+.semester-row input[type="date"] {
+    padding: 5px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    max-width: 125px;
+    font-size: 12px;
+}
+
+.badge {
+    background-color: var(--button-blue-background-color);
+    padding: 15px 5px;
+}
+
+.subjects-place {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+}
+
+.label-title {
+  font-weight: bold;
+  font-size: 14px;
+  display: inline-block;
+  margin-bottom: 0.2rem;
+  margin-right: 0.2 rem;
+}
+
+.classroom-info-form label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+  input {
+    font-size: 12px;
+  }
+}
+
+.classroom-info-form .label-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.classroom-info-form input {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-section {
+  margin-bottom: 24px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 12px;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end; /* đẩy nút qua bên phải */
+  gap: 10px; /* khoảng cách giữa các nút */
+  margin-top: 20px; /* khoảng cách phía trên nếu cần */
+}
+
+.semester-list * {
+    font-size: 14px;
+}

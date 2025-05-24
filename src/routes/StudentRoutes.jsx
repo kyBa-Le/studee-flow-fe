@@ -5,11 +5,13 @@ import { ProtectedRoute } from "./ProtectedRoutes";
 import { SelfStudy } from "../pages/student/LearningJournal/SelfStudy";
 import { LearningJournalLayout } from "../pages/student/LearningJournal/LearningJournalLayout";
 import { SemesterGoal } from "../pages/student/SemesterGoal/SemesterGoal";
+import Profile from "../pages/student/Profile/Profile";
 
 const studentRoutes = [
     {path: '/student/home', element: <Home/> },
     {path: '/student/learning-journal', element: <LearningJournalLayout></LearningJournalLayout> },
      {path: '/student/semester-goal', element: <SemesterGoal/> },
+    {path: '/student/profile', element: <Profile/> },
 ]
 export function StudentRoutes() {
     return studentRoutes.map(({ path, element }) => (

@@ -9,3 +9,13 @@ export async function getCurrentSemesterByClassroomId(classroomId) {
         throw error;
     }
 }
+
+export async function getAllSemestersByClassroomId(classroomId) {
+    try {
+        const response = await apiClient.get(`/api/semesters?classroom_id=${classroomId}`);
+        return response;
+    } catch (error) {
+        console.error('Failed to fetch all semesters:', error);
+        throw error;
+    }
+}
