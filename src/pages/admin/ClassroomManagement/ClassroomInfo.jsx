@@ -1,9 +1,39 @@
+import { useEffect, useRef, useState } from "react";
 import { ButtonDelete } from "../../../components/ui/Button/Delete/ButtonDelete";
 import { ButtonEdit } from "../../../components/ui/Button/Edit/ButtonEdit";
 import { DateConverter } from "../../../components/utils/DateConverter";
 import "./ClassroomInfo.css";
+import { getAllTeachersByClassroomId } from "../../../services/ClassroomService";
+import { getAllStudents } from "../../../services/UserService";
+import { getAllSubjects } from "../../../services/SubjectService";
+import { getAllSemestersByClassroomId } from "../../../services/SemesterService";
 
-export function ClassroomInfo({classroom}) {
+export function ClassroomInfo({ classroom }) {
+    const [teachers, setTeachers] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [semesters, setSemesters] = useState([]);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (classroom) {
+                try {
+                    const [teachersResponse, subjectResponse, semesterResponse] = await Promise.all([
+                        getAllTeachersByClassroomId(classroom.id),
+                        getAllSubjects(classroom.id),
+                        getAllSemestersByClassroomId(classroom.id)
+                    ]);
+                    setTeachers(teachersResponse.data);
+                    setSubjects(subjectResponse.data);
+                    setSemesters(semesterResponse.data);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+        fetchData();
+    }
+        , [classroom])
+
     return (
         <div className="content classroom-info-container">
             <h4 style={{ paddingTop: "10px" }}>Class information</h4>
@@ -22,27 +52,22 @@ export function ClassroomInfo({classroom}) {
 
                         <span className="label-title">Teachers:</span>
                         <div className="teacher-avatar-place form-section">
-                            {[1, 2, 3].map((_, i) => (
+                            {teachers.map((teacher, i) => (
                                 <div className="teacher-avatar-item" key={i}>
                                     <div className="teacher-avatar"
                                         style={{
-                                            backgroundImage: "url('https://th.bing.com/th/id/OIP.lFfefuSR0zhQyrwk3N93NAHaEK?w=281&h=180&c=7&r=0&o=5&cb=iwc2&pid=1.7')"
+                                            backgroundImage: teacher.avatar_link ? `url(${teacher.avatar_link})` : "url('https://th.bing.com/th/id/OIP.lFfefuSR0zhQyrwk3N93NAHaEK?w=281&h=180&c=7&r=0&o=5&cb=iwc2&pid=1.7')"
                                         }}></div>
-                                    <p className="teacher-name">Ho Ly Kim Sa</p>
+                                    <p className="teacher-name">{teacher.full_name}</p>
                                 </div>
                             ))}
                         </div>
 
                         <label>
-                            <span className="label-title">Total students:</span>
-                            <div>25</div>
-                        </label>
-
-                        <label>
-                            <span className="label-title">Subjects: 5</span>
+                            <span className="label-title">Subjects: {subjects?.length}</span>
                             <div className="subjects-place">
-                                {Array(5).fill("GE3 - IT English").map((subj, idx) => (
-                                    <span className="badge" key={idx}>{subj}</span>
+                                {subjects?.map((subj, idx) => (
+                                    <span className="badge" key={idx}>{subj.subject_name}</span>
                                 ))}
                             </div>
                         </label>
@@ -50,19 +75,30 @@ export function ClassroomInfo({classroom}) {
                         <label>
                             <span className="label-title">Semesters:</span>
                             <div className="semester-list">
-                                {[1, 2, 3, 4, 5, 6].map((num) => (
-                                    <div className="semester-row" key={num}>
-                                        <span>Semester {num}:</span>
-                                        <input type="date" value="2025-01-01" />
-                                        <input type="date" value="2025-06-01" />
-                                    </div>
-                                ))}
+                                {
+                                    semesters.length > 0 ?
+                                    (
+                                                semesters.map((semester) => (
+                                                    <div className="semester-row" key={semester.id}>
+                                                        <span>{semester.name}:</span>
+                                                        <input type="date" value={DateConverter(semester.started_at)} />
+                                                        <input type="date" value={DateConverter(semester.ended_at)} />
+                                                    </div>))
+                                    ) :
+                                    (
+                                            <div className="semester-row">
+                                                <span>No semester found!</span>
+                                                <input type="date" />
+                                                <input type="date" />
+                                            </div>
+                                    )
+                                }
                             </div>
                         </label>
 
                         <div className="action-buttons">
-                            <ButtonEdit/>
-                            <ButtonDelete/>
+                            <ButtonEdit />
+                            <ButtonDelete />
                         </div>
                     </form>
                 )
