@@ -331,7 +331,7 @@ input:-webkit-autofill:active {
   justify-content: flex-end;
   gap: 16px;
   margin-top: auto; 
-  padding: 0px 16px 0 0;
+  /* padding: 0px 16px 0 0; */
 }
 
 .cancel-button {
