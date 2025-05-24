@@ -3,16 +3,15 @@ import { getAchievement } from '../../../services/AchievementService';
 import Banner from '../../../assests/images/Banner.png';
 import SmileGreen from '../../../assests/images/smile_icon_green.png';
 import SmileBlue from '../../../assests/images/smile_icon_blue.png';
-import Certificate from '../../../assests/images/Certificate.png';
-import Scheduel from '../../../components/ui/Schedule/Schedule.tsx';
+import Schedule from '../../../components/ui/Schedule/Schedule.tsx';
 import { getUser } from '../../../services/UserService';
+import {Achievement} from '../../../components/ui/Achievement/Achievement.jsx';
 import "./Home.css";
 
 function Home() {
   const [achievements, setAchievements] = useState([]);
-  const carouselRef = useRef(null);
   const [user, setUser] = useState({});
-
+  
   useEffect(() => {
     getUser()
       .then(response => {
@@ -25,25 +24,6 @@ function Home() {
       })
       .catch(error => console.error('Error fetching achievements:', error));
   }, []);
-
-  useEffect(() => {
-    if (carouselRef.current && window.bootstrap) {
-      new window.bootstrap.Carousel(carouselRef.current, {
-        interval: false, 
-        ride: false     
-      });
-    }
-  }, [achievements]);
-
-  const chunkAchievements = (arr, chunkSize) => {
-    const result = [];
-    for (let i = 0; i < arr.length; i += chunkSize) {
-      result.push(arr.slice(i, i + chunkSize));
-    }
-    return result;
-  };
-
-  const achievementChunks = chunkAchievements(achievements, 4);
 
   return (
     <div className='student-home-container'>
@@ -69,7 +49,7 @@ function Home() {
             {/* Time table */}
             <div className='time-table'>
               <div className='time-table-content'>
-                <Scheduel/>
+                <Schedule/>
               </div>
             </div>
             <div className='nav-blog-student'>
@@ -101,46 +81,7 @@ function Home() {
               </div>
             </div>
             {/* Achievements */}
-            <div className='student-achievement'>
-              <div className='student-achievement-content'>
-                <div className='student-achievement-title'>
-                  <i className="fa-solid fa-award"></i> Achievements
-                </div>
-                <div className='student-achievement-blog'>
-                  <div id="carouselExampleControls" className="carousel slide" ref={carouselRef}>
-                    {/* Left control */}
-                    <button className="custom-carousel-control prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                      <i className="fa-solid fa-angle-left"></i>
-                    </button>
-                    <div className="carousel-inner">
-                      {achievementChunks.map((chunk, index) => (
-                        <div className={`carousel-item ${index === 0 ? 'active' : ''}`} key={index}>
-                          <div className='achievement-row student-achievement-blog-content'>
-                            {chunk.map((achievement, idx) => (
-                              <div className='achievement-blog' key={idx}>
-                                <img className='certificate-img' src={Certificate} alt="certificate" />
-                                <div className='achievement-blog-right'>
-                                  <div className='achievement-blog-right-top'>
-                                    <div className='achievement-blog-right-title'>{achievement.title}</div>
-                                    <div className='achievement-blog-right-text'>{achievement.content}</div>
-                                    <div className='semester-subject'>Semester {achievement.semester}</div>
-                                  </div>
-                                  <button className='view-certificate-btn'>View Certificate</button>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    {/* Right control */}
-                    <button className="custom-carousel-control next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                      <i className="fa-solid fa-angle-right"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <Achievement achievements={achievements} />
             {/* End Achievements */}
           </div>
         </div>
