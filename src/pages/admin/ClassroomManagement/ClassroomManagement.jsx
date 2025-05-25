@@ -2,34 +2,52 @@ import { useEffect, useState } from "react";
 import "./ClassroomManagement.css";
 import { ClassroomList } from "./ClassroomList";
 import { ClassroomInfo } from "./ClassroomInfo";
-import { adminGetAllClassrooms } from "../../../services/ClassroomService";
+import { toast, ToastContainer } from "react-toastify";
+import { adminGetAllClassrooms, adminCreateClassroom } from "../../../services/ClassroomService";
 import { CreateClassroomForm } from "./CreateClassroomForm";
 
 export function ClassroomManagement() {
     const [classrooms, setClassrooms] = useState([]);
     const [selectedClassroom, setSelectedClassroom] = useState(0);
     const [isShowCreateForm, setIsShowCreateForm] = useState(false);
+    const [isClassroomCreated, setIsClassroomCreated] = useState(false);
 
     useEffect(() => {
         const fetchClassrooms = async () => {
             try {
                 const fetchedClassrooms = await adminGetAllClassrooms();
-                setClassrooms(fetchedClassrooms.data);
+                setClassrooms(fetchedClassrooms.data || []);
+                setIsClassroomCreated(false);
             } catch (error) {
                 console.error("Error fetching classrooms:", error);
+                toast.error("Failed to fetch classrooms.");
             }
         };
 
         fetchClassrooms();
-    }, []);
+    }, [isClassroomCreated]);
 
     const handleShowCreateForm = () => {
         setIsShowCreateForm(!isShowCreateForm);
     };
 
-    const handleCreate = (formData) => {
-        // PostData
-    }
+    const handleCreate = async (formData) => {
+        try {
+            await adminCreateClassroom(formData);
+            setIsShowCreateForm(!isShowCreateForm)
+            setIsClassroomCreated(true);
+        } catch (error) {
+            console.error("Error creating classroom:", error);
+
+            const message = error.response?.data?.message || "";
+
+            if (message.includes("Duplicate entry") && message.includes("classrooms_class_name_unique")) {
+                toast.error("Class name already exists, please choose a different one.");
+            } else {
+                toast.error("Failed to create classroom.");
+            }
+        }
+    };
 
     return (
         <div className="classroom-management-container">
@@ -50,9 +68,14 @@ export function ClassroomManagement() {
                     setSelectedClassroom={setSelectedClassroom}
                     classrooms={classrooms}
                 />
-                <ClassroomInfo classroom={classrooms[selectedClassroom]} />
+                <ClassroomInfo classroom={classrooms[selectedClassroom]} handleShowCreateForm={handleShowCreateForm} />
             </div>
-            {isShowCreateForm && <CreateClassroomForm handleShowCreateForm={handleShowCreateForm} handleCreate={handleCreate} />}
+            {isShowCreateForm && (
+                <CreateClassroomForm
+                    handleShowCreateForm={handleShowCreateForm}
+                    handleCreate={handleCreate}
+                />
+            )}
         </div>
     );
 }

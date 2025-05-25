@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { addMonths, format, parseISO } from "date-fns"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
@@ -8,22 +8,28 @@ export function CreateClassroomForm({
   handleShowCreateForm,
   handleCreate,
   handleUpdate,
-  initialData = null, // Nếu truyền dữ liệu classroom để sửa
+  editData = null,
 }) {
-  // Nếu có initialData (edit), khởi tạo state từ đó, nếu ko thì rỗng/mặc định
-  const [className, setClassName] = useState(initialData?.class_name || "")
-  const [totalSemesters, setTotalSemesters] = useState(initialData?.semesters?.length || 0)
-  const [semesterDuration, setSemesterDuration] = useState(
-    initialData?.semesters?.length > 0
-      ? Math.round(
-          (parseISO(initialData.semesters[0].end_date) - parseISO(initialData.semesters[0].start_date)) /
-            (1000 * 60 * 60 * 24 * 30)
-        )
-      : 0
-  )
-  const [startDate, setStartDate] = useState(initialData?.semesters?.[0]?.start_date || "")
+  const [className, setClassName] = useState(editData?.class_name || "")
+  const [totalSemesters, setTotalSemesters] = useState(editData?.semesters?.length || 0)
+
+  const [semesterDuration, setSemesterDuration] = useState(() => {
+    if (
+      editData?.semesters?.length > 0 &&
+      editData.semesters[0].start_date &&
+      editData.semesters[0].end_date
+    ) {
+      return Math.round(
+        (parseISO(editData.semesters[0].end_date) - parseISO(editData.semesters[0].start_date)) /
+          (1000 * 60 * 60 * 24 * 30)
+      )
+    }
+    return 1
+  })
+
+  const [startDate, setStartDate] = useState(editData?.semesters?.[0]?.start_date || "")
   const [semesters, setSemesters] = useState(
-    initialData?.semesters?.map((sem) => ({
+    editData?.semesters?.map((sem) => ({
       name: sem.semester_name,
       start: sem.start_date,
       end: sem.end_date,
@@ -31,8 +37,7 @@ export function CreateClassroomForm({
     })) || []
   )
 
-  // ClassName không cho sửa khi đã có initialData (chỉnh sửa)
-  // Nếu muốn, có thể đổi flag disabled hoặc chỉ giữ nguyên className mà không cho chỉnh.
+  const [isCreating, setIsCreating] = useState(false)
 
   const generateSemesters = () => {
     if (!className?.trim()) {
@@ -109,27 +114,35 @@ export function CreateClassroomForm({
     toast.info("Semester deleted.")
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (semesters.length === 0) {
       toast.error("Please generate semesters before submitting.")
       return
     }
 
+    setIsCreating(true)
+
     const newFormData = {
-      class_name: className,
+      classroom: {
+        class_name: className,
+      },
       semesters: semesters.map((sem) => ({
-        semester_name: sem.name,
-        start_date: sem.start,
-        end_date: sem.end,
+        name: sem.name,
+        started_at: sem.start,
+        ended_at: sem.end,
       })),
     }
 
-    if (handleUpdate) {
-      handleUpdate(newFormData)
-      toast.success("Classroom updated successfully!")
-    } else {
-      handleCreate(newFormData)
-      toast.success("Classroom created successfully!")
+    try {
+      if (handleUpdate) {
+        await handleUpdate(newFormData)
+      } else {
+        await handleCreate(newFormData)
+      }
+    } catch (error) {
+      toast.error("An error occurred while submitting.")
+    } finally {
+      setIsCreating(false)
     }
   }
 
@@ -144,7 +157,7 @@ export function CreateClassroomForm({
             <input
               value={className}
               onChange={(e) => setClassName(e.target.value)}
-              disabled={!!handleUpdate} // khóa input khi edit
+              disabled={!!handleUpdate}
             />
           </div>
           <div className="input-group">
@@ -240,12 +253,12 @@ export function CreateClassroomForm({
           <button className="cancel-btn" onClick={handleShowCreateForm}>
             Cancel
           </button>
-          <button className="create-btn" onClick={handleSubmit}>
-            {handleUpdate ? "Update" : "Create"}
+          <button className="create-btn" onClick={handleSubmit} disabled={isCreating}>
+            {isCreating ? "Creating..." : handleUpdate ? "Update" : "Create"}
           </button>
         </div>
       </div>
-      <ToastContainer position="top-right" autoClose={3000} />
+      {/* <ToastContainer position="top-right" autoClose={3000} /> */}
     </div>
   )
 }

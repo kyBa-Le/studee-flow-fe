@@ -8,7 +8,7 @@ import { getAllStudents } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getAllSemestersByClassroomId } from "../../../services/SemesterService";
 
-export function ClassroomInfo({ classroom }) {
+export function ClassroomInfo({ classroom, handleShowCreateForm }) {
     const [teachers, setTeachers] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [semesters, setSemesters] = useState([]);
@@ -97,7 +97,7 @@ export function ClassroomInfo({ classroom }) {
                         </label>
 
                         <div className="action-buttons">
-                            <ButtonEdit />
+                            <ButtonEdit onClick={handleShowCreateForm} />
                             <ButtonDelete />
                         </div>
                     </form>
