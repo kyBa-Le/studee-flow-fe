@@ -139,3 +139,11 @@
 .semester-list * {
     font-size: 14px;
 }
+
+.teacher-avatar-item {
+  cursor: pointer;
+}
+
+.teacher-avatar-item:hover .cancel-icon {
+  display: block !important;
+}

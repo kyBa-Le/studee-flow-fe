@@ -34,3 +34,12 @@ export async function addTeacherToClassroom(classroomId, teacherId) {
     throw error;
   }
 }
+
+export async function deleteTeacherFromClassroom(classroomId, teacherId) {
+  try {
+    return await apiClient.delete(`/api/classrooms/${classroomId}/teachers/${teacherId}`);
+  } catch (error) {
+    console.error("Error while deleting teacher from classroom:", error);
+    throw error;
+  }
+}
