@@ -3,8 +3,11 @@ import styles from "./AddTeacher.module.css";
 import { CancelButton } from "../../../components/ui/Button/Cancel/CancelButton";
 import { searchTeachersByEmail } from "../../../services/UserService";
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
+import { addTeacherToClassroom } from "../../../services/ClassroomService";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-export function AddTeacher({ classroomId, showInputSearch }) {
+export function AddTeacher({ classroomId, showInputSearch, setParentTeachers }) {
     const [teachers, setTeachers] = useState([]);
     const [searchData, setSearchData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -20,13 +23,29 @@ export function AddTeacher({ classroomId, showInputSearch }) {
     async function handleOnSearch(e) {
         setIsLoading(true);
         e.preventDefault();
-        const teachers = ( await searchTeachersByEmail(searchData)).data.teachers;
-        setIsLoading(false);
-        setTeachers(teachers);
+        try {
+            const teachers = (await searchTeachersByEmail(searchData)).data.teachers;
+            setTeachers(teachers);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
-    function handleAddTeacher() {
-        console.log("You clicked!")
+    async function handleAddTeacher(teacherId, index) {
+       try {
+           await addTeacherToClassroom(classroomId, teacherId)
+           toast.success("Teacher added.")
+           const teacher = teachers[index];
+           setParentTeachers(prev => [...prev, teacher]);
+       } catch (error) {
+            if (error.status == 400) {
+                toast.error("Teacher already in the class");
+            } else {
+                toast.error("Add teacher failed! Please try again.")
+            }
+       }
     }
     
     return (
@@ -58,7 +77,7 @@ export function AddTeacher({ classroomId, showInputSearch }) {
                                                 <td style={{ maxWidth: "120px", overflowWrap: "break-word" }}>{teacher.full_name}</td>
                                                 <td>
                                                     <div
-                                                        onClick={() => handleAddTeacher(teacher.id)}
+                                                        onClick={() => handleAddTeacher(teacher.id, index)}
                                                         style={{
                                                             width: "fit-content",
                                                             padding: "2px 6px",
@@ -82,6 +101,7 @@ export function AddTeacher({ classroomId, showInputSearch }) {
                     <div className="d-flex justify-end w-100"><CancelButton onClick={showInputSearch} /></div>
                 </div>
             </div>
+            <ToastContainer/>
         </div>
     )
 }

@@ -118,7 +118,7 @@ export function ClassroomInfo({ classroom }) {
             {
                 isShowSearch &&
                 (
-                    <AddTeacher showInputSearch={showInputSearch}/>
+                    <AddTeacher setParentTeachers={setTeachers} classroomId={classroom.id} showInputSearch={showInputSearch}/>
                 )
             }
         </div>

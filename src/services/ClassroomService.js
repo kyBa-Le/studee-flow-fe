@@ -25,3 +25,12 @@ export async function getAllTeachersByClassroomId(id) {
     return [];
   }
 }
+
+export async function addTeacherToClassroom(classroomId, teacherId) {
+  try {
+    return await apiClient.post(`/api/classrooms/${classroomId}/add-teacher`, { teacher_id: teacherId });
+  } catch (error) {
+    console.error("Error while adding teacher to classroom:", error);
+    throw error;
+  }
+}
