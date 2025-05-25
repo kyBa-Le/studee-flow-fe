@@ -26,6 +26,24 @@ export async function getAllTeachersByClassroomId(id) {
   }
 }
 
+export async function addTeacherToClassroom(classroomId, teacherId) {
+  try {
+    return await apiClient.post(`/api/classrooms/${classroomId}/add-teacher`, { teacher_id: teacherId });
+  } catch (error) {
+    console.error("Error while adding teacher to classroom:", error);
+    throw error;
+  }
+}
+
+export async function deleteTeacherFromClassroom(classroomId, teacherId) {
+  try {
+    return await apiClient.delete(`/api/classrooms/${classroomId}/teachers/${teacherId}`);
+  } catch (error) {
+    console.error("Error while deleting teacher from classroom:", error);
+    throw error;
+  }
+}
+
 export async function adminCreateClassroom(formData) {
   try {
     const response = await apiClient.post("/api/classrooms", formData);

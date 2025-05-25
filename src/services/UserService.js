@@ -118,3 +118,13 @@ export async function updateOwnProfile(profile) {
     throw error;
   }
 }
+
+export async function searchTeachersByEmail(email) {
+  try {
+    const response = await apiClient.get(`/api/teachers/search?email=${email}`);
+    return response;
+  } catch (error) {
+    console.error('Error searching teachers by email:', error);
+    throw error;
+  }
+}
