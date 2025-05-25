@@ -134,8 +134,8 @@ export function CreateClassroomForm({
     }
 
     try {
-      if (handleUpdate) {
-        await handleUpdate(newFormData)
+      if (editData?.id) {
+        await handleUpdate(editData.id, newFormData)
       } else {
         await handleCreate(newFormData)
       }
@@ -157,7 +157,6 @@ export function CreateClassroomForm({
             <input
               value={className}
               onChange={(e) => setClassName(e.target.value)}
-              disabled={!!handleUpdate}
             />
           </div>
           <div className="input-group">
@@ -254,11 +253,10 @@ export function CreateClassroomForm({
             Cancel
           </button>
           <button className="create-btn" onClick={handleSubmit} disabled={isCreating}>
-            {isCreating ? "Creating..." : handleUpdate ? "Update" : "Create"}
+            {isCreating ? (handleUpdate ? "Updating..." : "Creating...") : handleUpdate ? "Update" : "Create"}
           </button>
         </div>
       </div>
-      {/* <ToastContainer position="top-right" autoClose={3000} /> */}
     </div>
   )
 }

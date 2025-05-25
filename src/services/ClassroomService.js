@@ -45,3 +45,12 @@ export async function adminUpdateClassroom(id, formData) {
     throw error; 
   }
 }
+
+export async function getClassroomByClassroomId(id) {
+    try {
+      return await apiClient.get(`/api/classrooms/${id}`);
+    } catch (error) {
+      console.error("Error while fetching classrooms:", error);
+      return [];
+    }
+}
