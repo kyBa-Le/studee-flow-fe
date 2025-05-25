@@ -4,14 +4,16 @@ import { ButtonEdit } from "../../../components/ui/Button/Edit/ButtonEdit";
 import { DateConverter } from "../../../components/utils/DateConverter";
 import "./ClassroomInfo.css";
 import { getAllTeachersByClassroomId } from "../../../services/ClassroomService";
-import { getAllStudents } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getAllSemestersByClassroomId } from "../../../services/SemesterService";
+import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
+import { AddTeacher } from "./AddTeacher";
 
 export function ClassroomInfo({ classroom }) {
     const [teachers, setTeachers] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [semesters, setSemesters] = useState([]);
+    const [isShowSearch, setIsShowSearch] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
@@ -34,6 +36,10 @@ export function ClassroomInfo({ classroom }) {
     }
         , [classroom])
 
+    function showInputSearch() {
+        setIsShowSearch(prev => !prev)
+    }
+
     return (
         <div className="content classroom-info-container">
             <h4 style={{ paddingTop: "10px" }}>Class information</h4>
@@ -50,17 +56,22 @@ export function ClassroomInfo({ classroom }) {
                             <input readOnly type="date" value={DateConverter(classroom.created_at)} />
                         </label>
 
-                        <span className="label-title">Teachers:</span>
-                        <div className="teacher-avatar-place form-section">
-                            {teachers.map((teacher, i) => (
-                                <div className="teacher-avatar-item" key={i}>
-                                    <div className="teacher-avatar"
-                                        style={{
-                                            backgroundImage: teacher.avatar_link ? `url(${teacher.avatar_link})` : "url('https://th.bing.com/th/id/OIP.lFfefuSR0zhQyrwk3N93NAHaEK?w=281&h=180&c=7&r=0&o=5&cb=iwc2&pid=1.7')"
-                                        }}></div>
-                                    <p className="teacher-name">{teacher.full_name}</p>
-                                </div>
-                            ))}
+                        <div>
+                            <span className="label-title">Teachers:</span>
+                            <div className="teacher-avatar-place form-section">
+                                {teachers.map((teacher, i) => (
+                                    <div className="teacher-avatar-item" key={i}>
+                                        <div className="teacher-avatar"
+                                            style={{
+                                                backgroundImage: teacher.avatar_link ? `url(${teacher.avatar_link})` : "url('https://th.bing.com/th/id/OIP.lFfefuSR0zhQyrwk3N93NAHaEK?w=281&h=180&c=7&r=0&o=5&cb=iwc2&pid=1.7')"
+                                            }}></div>
+                                        <p className="teacher-name">{teacher.full_name}</p>
+                                    </div>
+                                ))}
+
+                            </div>
+                            <div className="d-flex justify-end align-center" ><AddLearningJournalFormButton onClick={showInputSearch} /></div>
+
                         </div>
 
                         <label>
@@ -77,21 +88,21 @@ export function ClassroomInfo({ classroom }) {
                             <div className="semester-list">
                                 {
                                     semesters.length > 0 ?
-                                    (
-                                                semesters.map((semester) => (
-                                                    <div className="semester-row" key={semester.id}>
-                                                        <span>{semester.name}:</span>
-                                                        <input type="date" value={DateConverter(semester.started_at)} />
-                                                        <input type="date" value={DateConverter(semester.ended_at)} />
-                                                    </div>))
-                                    ) :
-                                    (
+                                        (
+                                            semesters.map((semester) => (
+                                                <div className="semester-row" key={semester.id}>
+                                                    <span>{semester.name}:</span>
+                                                    <input type="date" value={DateConverter(semester.started_at)} />
+                                                    <input type="date" value={DateConverter(semester.ended_at)} />
+                                                </div>))
+                                        ) :
+                                        (
                                             <div className="semester-row">
                                                 <span>No semester found!</span>
                                                 <input type="date" />
                                                 <input type="date" />
                                             </div>
-                                    )
+                                        )
                                 }
                             </div>
                         </label>
@@ -101,6 +112,13 @@ export function ClassroomInfo({ classroom }) {
                             <ButtonDelete />
                         </div>
                     </form>
+                )
+            }
+            {/* Show modal search and add teacher */}
+            {
+                isShowSearch &&
+                (
+                    <AddTeacher showInputSearch={showInputSearch}/>
                 )
             }
         </div>

@@ -1,6 +1,6 @@
-export function AddLearningJournalFormButton({ onClick }) {
+export function SmallCancelButton({ onClick }) {
     const style = {
-        backgroundColor: '#FE9A3B',
+        backgroundColor: '#DC3545',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -14,6 +14,6 @@ export function AddLearningJournalFormButton({ onClick }) {
     return (
         <button onClick={() => {
             onClick();
-        }} type="button" style={style} className="add-new-form-button">+</button>
+        }} type="button" style={style}><i class="fa-solid fa-xmark"></i></button>
     );
 }
