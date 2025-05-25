@@ -4,11 +4,10 @@ import { ButtonEdit } from "../../../components/ui/Button/Edit/ButtonEdit";
 import { DateConverter } from "../../../components/utils/DateConverter";
 import "./ClassroomInfo.css";
 import { getAllTeachersByClassroomId } from "../../../services/ClassroomService";
-import { getAllStudents } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getAllSemestersByClassroomId } from "../../../services/SemesterService";
 
-export function ClassroomInfo({ classroom }) {
+export function ClassroomInfo({ classroom, handleShowEditData }) {
     const [teachers, setTeachers] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [semesters, setSemesters] = useState([]);
@@ -97,7 +96,7 @@ export function ClassroomInfo({ classroom }) {
                         </label>
 
                         <div className="action-buttons">
-                            <ButtonEdit />
+                            <ButtonEdit onClick={() => handleShowEditData(classroom.id)} />
                             <ButtonDelete />
                         </div>
                     </form>

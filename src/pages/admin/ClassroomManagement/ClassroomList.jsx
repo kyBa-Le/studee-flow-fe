@@ -21,21 +21,35 @@ export function ClassroomList({ classrooms, setSelectedClassroom }) {
                         <th>Updated at</th>
                     </tr>
                 </thead>
-                {
-                    classrooms.map((classroom, index) => {
-                        return (
-                            <tbody>
-                                <tr onClick={() => setSelectedClassroom(index)} style={{cursor: "pointer"}} key={classroom.id}>
+
+            </table>
+            <div style={{ maxHeight: '67vh', overflowY: 'scroll' }}>
+                <table className="w-100">
+                    <colgroup>
+                        <col style={{ width: '7.69%' }} />
+                        <col style={{ width: '23.07%' }} />
+                        <col style={{ width: '23.07%' }} />
+                        <col style={{ width: '23.07%' }} />
+                    </colgroup>
+                    <tbody>
+                        {
+                            classrooms.map((classroom, index) => (
+                                <tr
+                                    onClick={() => setSelectedClassroom(index)}
+                                    style={{ cursor: 'pointer' }}
+                                    key={classroom.id}
+                                >
                                     <td>{classroom.id}</td>
                                     <td>{classroom.class_name}</td>
                                     <td>{DateConverter(classroom.created_at)}</td>
                                     <td>{DateConverter(classroom.updated_at)}</td>
                                 </tr>
-                            </tbody>
-                        );
-                    })
-                }
-            </table>
+                            ))
+                        }
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     );
 }
