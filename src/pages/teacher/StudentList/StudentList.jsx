@@ -47,7 +47,7 @@ export function StudentList({students, progressData, handleChangeFeedback}) {
                         return (
                         <tr key={index}>
                             <td className="student-list-image-cell">
-                            <img src={student.avatar} alt="student" className="student-list-avatar" />
+                            <img src={student.avatar_link} alt="student" className="student-list-avatar" />
                             </td>
                             <td className="student-list-name-cell">{student.full_name}</td>
                             <td>
@@ -86,9 +86,9 @@ export function StudentList({students, progressData, handleChangeFeedback}) {
                             </td>
                             <td>
                             <div className="student-list-action-buttons">
-                                <Link to="/student/semester-goal"  className="student-list-action-button">Semester goals</Link>
-                                <Link to="/student/learning-journal"  className="student-list-action-button">Learning journal</Link>
-                                <Link to="#"  className="student-list-action-button">View profile</Link>
+                                <Link to={`/student/${student.id}/semester-goal`} className="student-list-action-button">Semester goals</Link>
+                                <Link  to={`/student/${student.id}/learning-journal`} className="student-list-action-button">Learning journal</Link>
+                                <Link to={`/student/${student.id}/profile`} className="student-list-action-button">View profile</Link>
                             </div>
                             </td>
                         </tr>
