@@ -57,7 +57,7 @@ export async function getAllClassrooms() {
 
 export async function getStudentById(id) {
     try {
-        return await apiClient.get(`/api/students/${id}`);
+        return await apiClient.get(`/api/students/${id}/profile`);
     } catch (error) {
         console.error('Error fetching student data:', error);
         throw error;
