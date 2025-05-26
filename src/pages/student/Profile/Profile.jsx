@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getUser, updateOwnProfile } from '../../../services/UserService';
 import ProfileEdit from './ProfileEdit';
 import './Profile.css';
-
+import { ButtonEdit } from "../../../components/ui/Button/Edit/ButtonEdit";
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -12,7 +12,7 @@ export default function Profile() {
     avatar_link: '',
     className: ''
   });
-  const [loading, setLoading] = useState(true);
+
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export default function Profile() {
       try {
         const response = await getUser();
         const data = response.data.data || response.data;
+        console.log('Profile data:', data);
         setProfile({
           full_name: data.full_name || '',
           email: data.email || '',
@@ -29,8 +30,6 @@ export default function Profile() {
         });
       } catch (error) {
         console.error('Error fetching profile:', error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchProfile();
@@ -59,8 +58,6 @@ export default function Profile() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-
   if (isEditing) {
     return (
       <ProfileEdit
@@ -81,7 +78,7 @@ export default function Profile() {
             alt="Avatar"
             border="2"
           />
-          <h2 className="profile__name">{profile.full_name || 'Tên người dùng'}</h2>
+          <h2 className="profile__name">{profile.full_name || 'User Name'}</h2>
         </div>
 
         <form className="profile__form">
@@ -124,7 +121,7 @@ export default function Profile() {
           </div>
 
           <div className="profile__button-container">
-            <button type="button" className="profile__button" onClick={handleEditClick}>Edit</button>
+            <ButtonEdit type="button" className="profile__button" onClick={handleEditClick}>Edit</ButtonEdit>
           </div>
         </form>
       </div>
