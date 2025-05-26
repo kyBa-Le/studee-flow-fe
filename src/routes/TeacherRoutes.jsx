@@ -4,12 +4,15 @@ import { TeacherHome } from "../pages/teacher/Home/TeacherHome";
 import {StudentProfile} from "../pages/teacher/StudentProfile";
 import { Classroom } from "../pages/teacher/Classroom/Classroom";
 import { TeacherLayout } from "../components/layouts/MainLayouts/TeacherLayout";
-
+import { SemesterGoal } from "../pages/student/SemesterGoal/SemesterGoal";
+import {LearningJournalLayout} from "../pages/student/LearningJournal/LearningJournalLayout";
 
 const teacherRoutes = [
     { path: '/teacher/home', element: <TeacherHome /> },
     { path: '/teacher/classroom/:classroomId', element: <Classroom /> },
-    { path: '/teacher/StudentProfile', element: <StudentProfile /> },
+    { path: '/student/:studentId/profile', element: <StudentProfile /> },
+    { path: '/student/:studentId/semester-goal', element: <SemesterGoal /> },
+    { path: '/student/:studentId/learning-journal', element: <LearningJournalLayout/> },
 ];
 
 export function TeacherRoutes() {

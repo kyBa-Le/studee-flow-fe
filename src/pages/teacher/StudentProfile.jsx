@@ -4,39 +4,37 @@ import Schedule from '../../components/ui/Schedule/Schedule.tsx';
 import { getStudentById } from '../../services/UserService';
 import {Achievement} from '../../components/ui/Achievement/Achievement.jsx';
 import { getAchievementByStudentId } from '../../services/AchievementService'; 
-export function StudentProfile({ studentId = 1 }) {
+import { useParams } from 'react-router-dom';
+export function StudentProfile() {
+    const {studentId} = useParams();
     const [achievements, setAchievements] = useState([]);
-     const [student, setStudent] = useState({});
+    const [student, setStudent] = useState({});
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const studentResponse = await getStudentById(studentId);
                 setStudent(studentResponse.data);
-                console.log(studentResponse.data)
                 const achievementsResponse = await getAchievementByStudentId(studentId);
                 setAchievements(achievementsResponse.data);
-                console.log(achievementsResponse.data)
-
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
         fetchData();
     }, [studentId]);
-
   return (
     <div className="student-profile-container">
       <div className="student-profile">
         <div className="student-profile-header-row">
-          <button className="student-profile-back-btn">
-            <i className="fa-solid fa-circle-arrow-left"></i>
+          <button className="student-profile-back-btn" onClick={() => window.history.back()}>
+                 <i className="fa-solid fa-circle-arrow-left"></i>
           </button>
           <h2 className="student-profile-title">STUDENT PROFILE</h2>
         </div>
         <div className="student-profile-card">
           <div className="student-profile-image">
-            <img src={student.avatar_link ?? "https://example.com/default-avatar.png"} alt="Avatar" />
+            <img src={student.avatar_link ?? "https://gockienthuc.edu.vn/wp-content/uploads/2024/07/hinh-anh-avatar-trang-mac-dinh-doc-dao-khong-lao-nhao_6690f00c1a1cb.webp"} alt="Avatar" />
           </div>
           <hr />
           <div className="student-profile-section-title">

@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { getAllSubjects}  from "../../../services/SubjectService";
 import { getSemesterGoalsByUser, createSemesterGoal, updateSemesterGoals } from "../../../services/SemesterGoalService";
 import { getCurrentSemesterByClassroomId, getAllSemestersByClassroomId } from "../../../services/SemesterService";
-import { getUser } from "../../../services/UserService";
+import { getStudentById, getUser } from "../../../services/UserService";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./SemesterGoal.css";
+import { useParams } from "react-router-dom";
 
 export function SemesterGoal() {
   const [subjects, setSubjects] = useState([]);
@@ -13,13 +14,14 @@ export function SemesterGoal() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [semesters, setSemesters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { studentId } = useParams();
   const [semesterId, setSemesterId] = useState();
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const user = (await getUser()).data;
-        const classroomId = user.student_classroom_id;
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
+        const classroomId = student.student_classroom_id;
 
         const allSemesters = await getAllSemestersByClassroomId(classroomId);
         setSemesters(allSemesters.data);
@@ -31,8 +33,8 @@ export function SemesterGoal() {
         const subjects = (await getAllSubjects(classroomId)).data;
         setSubjects(subjects);
 
-        const goals = (await getSemesterGoalsByUser(currentSemester.id)).data;
-        setSemesterGoals(goals);
+        const semesterGoals = (await getSemesterGoalsByUser(student.id, currentSemester.id)).data;
+        setSemesterGoals(semesterGoals);
 
         setIsLoading(false);
       } catch (error) {
@@ -47,11 +49,13 @@ export function SemesterGoal() {
   useEffect(() => {
     const fetchGoalsForSelectedSemester = async () => {
       try {
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
         const selected = semesters.find((s) => s.name === selectedSemester);
+        console.log(selected);
         if (!selected) return;
         setSemesterId(selected.id);
 
-        const goals = (await getSemesterGoalsByUser(selected.id)).data;
+        const goals = (await getSemesterGoalsByUser(student.id ,selected.id)).data;
         setSemesterGoals(goals);
       } catch (error) {
         console.error("Error fetching semester goals by selected semester:", error);
@@ -99,7 +103,7 @@ export function SemesterGoal() {
       const studentId = user.id;
 
       const goalsToSubmit = subjects.map(subject => {
-        const goal = semesterGoals.find((g) => g.subject_id === subject.id) || {};
+        const goal = semesterGoals ? (semesterGoals.find((g) => g.subject_id === subject.id)) : {};
         return {
           teacher_goals: goal.teacher_goals || "",
           course_goals: goal.course_goals || "",
@@ -181,7 +185,8 @@ export function SemesterGoal() {
 
               {!isLoading &&
                 subjects.map((subject) => {
-                  const goal = semesterGoals.find((g) => g.subject_id === subject.id) || {
+                  let goal = (semesterGoals.find((g) => g.subject_id === subject.id));
+                  goal = goal ? goal : {
                     subject_id: subject.id,
                     teacher_goals: "",
                     course_goals: "",
