@@ -1,3 +1,3 @@
 export function DateConverter(isoDate) {
-    return isoDate.split("T")[0];
+    return isoDate ? isoDate.split("T")[0] : "";
 }

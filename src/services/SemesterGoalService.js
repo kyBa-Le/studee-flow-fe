@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 
-export async function getSemesterGoalsByUser(semester_id) {
+export async function getSemesterGoalsByUser(studentId,semesterId) {
   try {
-    const response = await apiClient.get(`/api/student/semester-goals?semester_id=${semester_id}`);
+    const response = await apiClient.get(`/api/students/${studentId}/semester-goals?semester_id=${semesterId}`);
     return response;
   } catch (error) {
     console.error("Error while fetching semester goals:", error);

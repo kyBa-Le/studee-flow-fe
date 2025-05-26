@@ -12,8 +12,11 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
     new_password: '',
     confirm_new_password: '',
   });
+
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [selectedAvatarFile, setSelectedAvatarFile] = useState(null);
 
   useEffect(() => {
     setLocalProfile({
@@ -22,22 +25,20 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
       new_password: '',
       confirm_new_password: '',
     });
+    setSelectedAvatarFile(null);
     setLocalError('');
   }, [profile]);
 
-  // Khi chọn ảnh mới, đọc file và cập nhật avatar_link thành base64 để preview
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLocalProfile(prev => ({
-          ...prev,
-          avatar_link: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setSelectedAvatarFile(file);
+    const preview = URL.createObjectURL(file);
+    setLocalProfile(prev => ({
+      ...prev,
+      avatar_link: preview,
+    }));
   };
 
   const handleChange = (e) => {
@@ -51,6 +52,8 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError('');
+    setSubmitting(true);
+    setLoading(true);
 
     const { current_password, new_password, confirm_new_password } = localProfile;
     const hasAnyPassword = current_password || new_password || confirm_new_password;
@@ -58,36 +61,70 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
 
     if (hasAnyPassword && !hasAllPassword) {
       setLocalError('Please fill in all password fields to update password.');
+      setSubmitting(false);
+      setLoading(false);
       return;
     }
+
     if (new_password !== confirm_new_password) {
       setLocalError('New password and confirm password do not match!');
+      setSubmitting(false);
+      setLoading(false);
       return;
     }
 
-    setSubmitting(true);
+    let uploadedImageUrl = localProfile.avatar_link;
+
+    if (selectedAvatarFile) {
+      const data = new FormData();
+      data.append("file", selectedAvatarFile);
+      data.append("upload_preset", "using_clouding_for_studee-flow");
+      data.append("cloud_name", "dec0ihezw");
+
+      try {
+        const res = await fetch("https://api.cloudinary.com/v1_1/dec0ihezw/image/upload", {
+          method: "POST",
+          body: data,
+        });
+
+        if (!res.ok) throw new Error("Avatar upload failed");
+
+        const uploaded = await res.json();
+        uploadedImageUrl = uploaded.secure_url || uploaded.url;
+      } catch (error) {
+        console.error("Upload error:", error);
+        setLocalError("Avatar upload failed. Please try again.");
+        setSubmitting(false);
+        setLoading(false);
+        return;
+      }
+    }
+
+    const updatedProfile = {
+      ...localProfile,
+      avatar_link: uploadedImageUrl,
+    };
 
     try {
-      const result = await onSave(localProfile);
+      const result = await onSave(updatedProfile);
 
       if (!result.status) {
         setLocalError(result.message || errorMessage || 'Update failed. Please check inputs.');
         setSubmitting(false);
+        setLoading(false);
         return;
       }
 
-      if (result.avatar_link) {
-        setLocalProfile(prev => ({
-          ...prev,
-          avatar_link: result.avatar_link,
-        }));
-      }
-
-      setSubmitting(false);
+      setLocalProfile(prev => ({
+        ...prev,
+        avatar_link: result.avatar_link || uploadedImageUrl,
+      }));
     } catch (error) {
       setLocalError('An unexpected error occurred.');
-      setSubmitting(false);
     }
+
+    setSubmitting(false);
+    setLoading(false);
   };
 
 
@@ -96,24 +133,27 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
       <form className="profile-edit" onSubmit={handleSubmit}>
         <h2 className="profile-edit__title">Edit Profile</h2>
 
-        {/* Click vào ảnh để chọn file */}
-        <div
-          className="profile-edit__avatar"
-          onClick={() => document.getElementById('avatarInput').click()}
-          style={{ cursor: 'pointer' }}
-        >
-          <img
-            src={localProfile.avatar_link || 'https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg'}
-            alt="Avatar"
-            className="profile-edit__avatar-image"
-          />
+        <div className="profile-edit__avatar-upload">
           <input
-            id="avatarInput"
             type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            style={{ display: 'none' }}
+            id="avatar-upload"
+            style={{ display: "none" }}
+            onChange={handleFileSelect}
           />
+          <div
+            onClick={() => document.getElementById("avatar-upload").click()}
+            className="profile-edit__avatar-preview"
+          >
+            {loading ? (
+              <p>Uploading...</p>
+            ) : (
+              <img
+                src={localProfile.avatar_link || "https://via.placeholder.com/120?text=Avatar"}
+                alt="Avatar"
+                className="profile-edit__avatar-image"
+              />
+            )}
+          </div>
         </div>
 
         <div className="profile-edit__field">
@@ -137,7 +177,6 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
               value={localProfile.current_password}
               onChange={handleChange}
               className="profile-edit__input"
-              required
             />
           </div>
           <div className="profile-edit__field">

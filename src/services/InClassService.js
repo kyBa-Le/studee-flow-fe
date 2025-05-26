@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 
-export async function getInClassJournal(week_id) {
+export async function getInClassJournal(id, week_id) {
   try {
-    const response = await apiClient.get(`/api/student/in-classes?week_id=${week_id}`);
+    const response = await apiClient.get(`/api/students/${id}/in-classes?week_id=${week_id}`);
     return response;
   } catch (error) {
     throw error;

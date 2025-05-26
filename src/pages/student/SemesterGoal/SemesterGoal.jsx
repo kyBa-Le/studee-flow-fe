@@ -2,24 +2,26 @@ import React, { useEffect, useState } from "react";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { getSemesterGoalsByUser } from "../../../services/SemesterGoalService";
 import { getCurrentSemesterByClassroomId } from "../../../services/SemesterService";
-import { getUser } from "../../../services/UserService";
+import { getStudentById, getUser } from "../../../services/UserService";
 import { createSemesterGoal } from "../../../services/SemesterGoalService";
 import { updateSemesterGoals } from "../../../services/SemesterGoalService";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./SemesterGoal.css";
+import { useParams } from "react-router-dom";
 
 export function SemesterGoal() {
   const [subjects, setSubjects] = useState([]);
   const [semesterGoals, setSemesterGoals] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const { studentId } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const user = (await getUser()).data;
-        const classroomId = user.student_classroom_id;
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
+        const classroomId = student.student_classroom_id;
 
         const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
         const currentSemester = semesterRes.data[0];
@@ -28,7 +30,7 @@ export function SemesterGoal() {
         const subjects = (await getAllSubjects(classroomId)).data;
         setSubjects(subjects);
 
-        const semesterGoals = (await getSemesterGoalsByUser(currentSemester.id)).data;
+        const semesterGoals = (await getSemesterGoalsByUser(student.id, currentSemester.id)).data;
         setSemesterGoals(semesterGoals);
 
         setIsLoading(false);
@@ -48,9 +50,9 @@ export function SemesterGoal() {
 
   const handleSubmit = async () => {
     try {
-      const user = (await getUser()).data;
-      const studentId = user.id;
-      const classroomId = user.student_classroom_id;
+      const student = (await getUser()).data;
+      const studentId = student.id;
+      const classroomId = student.student_classroom_id;
 
       const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
       const semesterId = semesterRes.data[0].id;

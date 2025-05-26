@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { getAllSubjects } from "../../../services/SubjectService";
-import { getUser } from "../../../services/UserService";
+import { getStudentById, getUser } from "../../../services/UserService";
 import { createSelfStudyJournal, getWeeklySelfStudyJournalOfStudent, updateSelfStudyJournal } from "../../../services/SelfStudyService";
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
 import { toast } from "react-toastify";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
+import { useParams } from "react-router-dom";
 
 export function SelfStudy({ weekId }) {
   const [subjects, setSubjects] = useState([]);
@@ -14,22 +15,24 @@ export function SelfStudy({ weekId }) {
   const [extraForms, setExtraForms] = useState([]);
   const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
+  const { studentId } = useParams();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const user = await getUser();
-        const classroomId = user.data.student_classroom_id;
+        const student = (await(studentId ? getStudentById(studentId) : getUser())).data;
+        const classroomId = student.student_classroom_id;
 
         const subjectsResponse = await getAllSubjects(classroomId);
         setSubjects(subjectsResponse.data);
 
-        const studies = await getWeeklySelfStudyJournalOfStudent(
-          weekId
-        );
-        setSelfStudies(studies.data);
+        if (weekId) {
+          const selfStudies = await getWeeklySelfStudyJournalOfStudent(student.id, weekId);
+          setSelfStudies(selfStudies.data);
+        }
       } catch (error) {
+        toast.error("Fail to load data")
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
@@ -134,7 +137,6 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
   };
 
   const [formData, setFormData] = useState(initialFormData);
-  const debounceTimer = useRef(null);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
 
 
@@ -307,6 +309,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
   const [formData, setFormData] = useState(study);
   const debounceTimer = useRef(null);
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
 
   // Debounced submit logic
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate)
@@ -314,9 +317,10 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
   // Auto submit after formData changed
   useEffect(() => {
-
-      triggerAutoSubmit();
-
+      if(isUserUpdate) {
+        triggerAutoSubmit();
+        setIsUserUpdate(false);
+      }
   }, [formData]);
 
   function handleOnChange(e) {
@@ -326,6 +330,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       ...prev,
       [name]: value,
     }));
+    setIsUserUpdate(true);
   }
 
   function handlePlanChange(e) {
@@ -335,6 +340,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       ...prev,
       is_follow_plan: isFollowPlan,
     }));
+    setIsUserUpdate(true);
   }
 
 

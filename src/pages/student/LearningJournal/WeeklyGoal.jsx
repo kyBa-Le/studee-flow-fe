@@ -1,21 +1,32 @@
 import { useEffect, useState } from "react";
 import { getWeeklyGoals, updateWeeklyGoal } from "../../../services/WeeklyGoalService";
 import { toast, ToastContainer } from "react-toastify";
+import { useParams } from "react-router-dom";
+import { getStudentById, getUser } from "../../../services/UserService";
 
 export function WeeklyGoal({ weekId }) {
 
   const [goalIndex, setGoalIndex] = useState(0);
   const [weeklyGoals, setWeeklyGoals] = useState([]);
+  const { studentId } = useParams();
 
   //get the weekly goals of the current week
   useEffect(() => {
+    console.log(weekId);
     if (!weekId) return;
-    getWeeklyGoals(weekId)
-      .then((data) => {
-        console.log("Weekly goals:", data);
-        setWeeklyGoals(data.data);
-      })
-      .catch(console.error);
+
+    const fetchWeeklyGoals = async () => {
+      try {
+        const id =  (studentId ? studentId : (await getUser()).data.id);
+        console.log(id);
+        const data = (await getWeeklyGoals(id, weekId)).data;
+        setWeeklyGoals(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchWeeklyGoals();
+
   }, [weekId]);
 
   // handle button to change the slide
@@ -55,7 +66,7 @@ export function WeeklyGoal({ weekId }) {
 
 
 // weekly goal form
-export function WeeklyGoalForm({goal}) {
+export function WeeklyGoalForm({ goal }) {
 
   const [formData, setFormData] = useState(goal);
 
@@ -88,7 +99,7 @@ export function WeeklyGoalForm({goal}) {
         type="checkbox"
         name={`is_achieved`}
         checked={formData?.is_achieved === 1}
-        onChange={handleOnChange}/>
+        onChange={handleOnChange} />
       <input
         type="text"
         name={`goal`}
