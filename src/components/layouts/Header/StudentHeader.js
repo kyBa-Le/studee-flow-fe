@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './StudentHeader.css';
 import Logo from "../../../assests/images/Logo.png";
 import { getUser } from '../../../services/UserService';
-import { logout } from '../../../services/AuthService';
+import { Logout } from '../../../services/AuthService';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function StudentHeader() {
@@ -24,16 +24,10 @@ function StudentHeader() {
     { path: '/student/semester-goal', label: 'Semester goal' },
     { path: '/student/achievement', label: 'Achievement' }
   ];
-  const handleLogout = async () => {
-        try {
-            await logout();
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            navigate('/login');
-        } catch (error) {
-            console.error('Logout failed:', error);
-        }
-  };
+  const handleLogout = () => {
+      Logout(); 
+      navigate('/login'); 
+    };
   return (
     <div className='student-header-container'>
       <div className='student-header-content'>

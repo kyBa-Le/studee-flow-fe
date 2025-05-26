@@ -11,10 +11,8 @@ export const login = async (email, password) => {
     }
 }
 
-export const logout = async () => {
-    try {
-        return await apiClient.post("/api/logout");
-    } catch (error) {
-        throw error;
-    }
+export function Logout() {
+    localStorage.removeItem("token");
+    console.log("clicked");
+    window.location.href = "/login";
 }

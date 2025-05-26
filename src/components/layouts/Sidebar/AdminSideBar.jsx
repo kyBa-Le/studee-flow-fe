@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Logout } from "../../utils/Logout";
+import { Logout } from "../../../services/AuthService";
 import "./AdminSideBar.css";
 
 const menuItems = [
