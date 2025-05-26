@@ -309,6 +309,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
   const [formData, setFormData] = useState(study);
   const debounceTimer = useRef(null);
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
 
   // Debounced submit logic
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate)
@@ -316,9 +317,10 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
   // Auto submit after formData changed
   useEffect(() => {
-
-      triggerAutoSubmit();
-
+      if(isUserUpdate) {
+        triggerAutoSubmit();
+        setIsUserUpdate(false);
+      }
   }, [formData]);
 
   function handleOnChange(e) {
@@ -328,6 +330,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       ...prev,
       [name]: value,
     }));
+    setIsUserUpdate(true);
   }
 
   function handlePlanChange(e) {
@@ -337,6 +340,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
       ...prev,
       is_follow_plan: isFollowPlan,
     }));
+    setIsUserUpdate(true);
   }
 
 

@@ -12,6 +12,7 @@ import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit"
 import "./InClass.css";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
+import { useUpdateEffect } from "../../../components/hooks/useUpdateEffect";
 
 export function InClass({ weekId }) {
   const [subjects, setSubjects] = useState([]);
@@ -136,7 +137,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
 
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     if (!formData.date) return;
     triggerAutoSubmit();
   }, [formData]);
@@ -247,14 +248,19 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
 function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
   const [formData, setFormData] = useState(initialData);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate, 1500);
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
 
-  useEffect(() => {
-
-    triggerAutoSubmit();
-
-  }, [formData]);
+  useUpdateEffect(
+    () => {
+      if (isUserUpdate) {
+        triggerAutoSubmit();
+        setIsUserUpdate(false);
+      }
+    }, [formData]
+  )
 
   function handleChange(e) {
+    setIsUserUpdate(true);
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
