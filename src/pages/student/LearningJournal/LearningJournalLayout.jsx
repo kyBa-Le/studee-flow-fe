@@ -14,11 +14,11 @@ export function LearningJournalLayout() {
     const fetchWeeks = async () => {
       try {
         const response = await getAllWeek();
-        const weekData = response.data.sort( (a, b) => new Date(b.end_date) - new Date(a.end_date) ) || [];
+        const weekData = response.data.sort((a, b) => new Date(a.end_date) - new Date(b.end_date)) || [];
         setWeeks(weekData);
 
         if (weekData.length > 0) {
-          setCurrentWeek(weekData[0]);
+          setCurrentWeek(weekData[weekData.length - 1]);
         }
       } catch (error) {
         console.error("Error fetching weeks:", error);
