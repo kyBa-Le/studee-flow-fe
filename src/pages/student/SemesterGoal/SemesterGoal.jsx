@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getAllSubjects } from "../../../services/SubjectService";
-import { getSemesterGoalsByUser } from "../../../services/SemesterGoalService";
-import { getCurrentSemesterByClassroomId } from "../../../services/SemesterService";
+import { getAllSubjects}  from "../../../services/SubjectService";
+import { getSemesterGoalsByUser, createSemesterGoal, updateSemesterGoals } from "../../../services/SemesterGoalService";
+import { getCurrentSemesterByClassroomId, getAllSemestersByClassroomId } from "../../../services/SemesterService";
 import { getUser } from "../../../services/UserService";
-import { createSemesterGoal } from "../../../services/SemesterGoalService";
-import { updateSemesterGoals } from "../../../services/SemesterGoalService";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./SemesterGoal.css";
@@ -13,23 +11,28 @@ export function SemesterGoal() {
   const [subjects, setSubjects] = useState([]);
   const [semesterGoals, setSemesterGoals] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState("");
+  const [semesters, setSemesters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [semesterId, setSemesterId] = useState();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInitialData = async () => {
       try {
         const user = (await getUser()).data;
         const classroomId = user.student_classroom_id;
 
-        const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
-        const currentSemester = semesterRes.data[0];
+        const allSemesters = await getAllSemestersByClassroomId(classroomId);
+        setSemesters(allSemesters.data);
+
+        const currentSemester = (await getCurrentSemesterByClassroomId(classroomId)).data[0];
         setSelectedSemester(currentSemester.name);
+        setSemesterId(currentSemester.id);
 
         const subjects = (await getAllSubjects(classroomId)).data;
         setSubjects(subjects);
 
-        const semesterGoals = (await getSemesterGoalsByUser(currentSemester.id)).data;
-        setSemesterGoals(semesterGoals);
+        const goals = (await getSemesterGoalsByUser(currentSemester.id)).data;
+        setSemesterGoals(goals);
 
         setIsLoading(false);
       } catch (error) {
@@ -38,58 +41,94 @@ export function SemesterGoal() {
       }
     };
 
-    fetchData();
+    fetchInitialData();
   }, []);
+
+  useEffect(() => {
+    const fetchGoalsForSelectedSemester = async () => {
+      try {
+        const selected = semesters.find((s) => s.name === selectedSemester);
+        if (!selected) return;
+        setSemesterId(selected.id);
+
+        const goals = (await getSemesterGoalsByUser(selected.id)).data;
+        setSemesterGoals(goals);
+      } catch (error) {
+        console.error("Error fetching semester goals by selected semester:", error);
+        toast.error("Failed to load semester goals for selected semester.");
+      }
+    };
+
+    if (selectedSemester && semesters.length > 0) {
+      fetchGoalsForSelectedSemester();
+    }
+  }, [selectedSemester, semesters]);
 
   const autoResize = (e) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
   };
 
+  const handleGoalChange = (subjectId, field, value) => {
+    setSemesterGoals((prev) => {
+      const existingGoalIndex = prev.findIndex((goal) => goal.subject_id === subjectId);
+      
+      if (existingGoalIndex >= 0) {
+        const updatedGoals = [...prev];
+        updatedGoals[existingGoalIndex] = {
+          ...updatedGoals[existingGoalIndex],
+          [field]: value
+        };
+        return updatedGoals;
+      } else {
+        return [
+          ...prev,
+          {
+            subject_id: subjectId,
+            [field]: value,
+            is_achieved: false
+          }
+        ];
+      }
+    });
+  };
+
   const handleSubmit = async () => {
     try {
       const user = (await getUser()).data;
       const studentId = user.id;
-      const classroomId = user.student_classroom_id;
 
-      const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
-      const semesterId = semesterRes.data[0].id;
-
-      const forms = document.querySelectorAll("form");
-
-      for (let i = 0; i < forms.length; i++) {
-        const form = forms[i];
-        const formData = new FormData(form);
-
-        const data = {
-          teacher_goals: formData.get("teacher_goals"),
-          course_goals: formData.get("course_goals"),
-          self_goals: formData.get("self_goals"),
-          is_achieved: formData.get("is_achieved") === "true",
+      const goalsToSubmit = subjects.map(subject => {
+        const goal = semesterGoals.find((g) => g.subject_id === subject.id) || {};
+        return {
+          teacher_goals: goal.teacher_goals || "",
+          course_goals: goal.course_goals || "",
+          self_goals: goal.self_goals || "",
+          is_achieved: goal.is_achieved || false,
           student_id: studentId,
-          subject_id: subjects[i]?.id,
+          subject_id: subject.id,
           semester_id: semesterId,
+          id: goal.id
         };
+      });
 
-        const semester_goal_id = formData.get("semester_goal_id");
-
-        if (!data.subject_id) continue;
-
-        if (semester_goal_id && semester_goal_id !== "null") {
-          await updateSemesterGoals(semester_goal_id, data);
+      for (const goal of goalsToSubmit) {
+        if (goal.id) {
+          await updateSemesterGoals(goal.id, goal);
         } else {
-          await createSemesterGoal(data);
+          await createSemesterGoal(goal);
         }
       }
 
       toast.success("Semester goals submitted successfully!");
+      
+      const updatedGoals = (await getSemesterGoalsByUser(semesterId)).data;
+      setSemesterGoals(updatedGoals);
     } catch (error) {
+      console.error(error);
       toast.error("Failed to submit semester goals.");
     }
   };
-
-  const findGoalBySubject = (subjectId) =>
-    semesterGoals.find((goal) => goal.subject_id === subjectId) || {};
 
   return (
     <div className="semester-goal-container">
@@ -100,9 +139,9 @@ export function SemesterGoal() {
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
             >
-              {[1, 2, 3, 4].map((num) => (
-                <option key={num} value={num}>
-                  Semester {num}
+              {semesters.map((sem) => (
+                <option key={sem.id} value={sem.name}>
+                  {sem.name}
                 </option>
               ))}
             </select>
@@ -118,8 +157,7 @@ export function SemesterGoal() {
                 <br />
                 What do I expect from the course and my teachers?
                 <br />
-                At the end of this semester, what exactly would I like to be
-                able to do in the language?
+                At the end of this semester, what exactly would I like to be able to do in the language?
               </p>
             </div>
 
@@ -142,11 +180,17 @@ export function SemesterGoal() {
               </div>
 
               {!isLoading &&
-                subjects.map((cls, index) => {
-                  const goal = findGoalBySubject(cls.id);
+                subjects.map((subject) => {
+                  const goal = semesterGoals.find((g) => g.subject_id === subject.id) || {
+                    subject_id: subject.id,
+                    teacher_goals: "",
+                    course_goals: "",
+                    self_goals: "",
+                    is_achieved: false
+                  };
 
                   return (
-                    <form key={cls.id} className="semester-goal-row">
+                    <div key={subject.id} className="semester-goal-row">
                       <input
                         type="hidden"
                         name="is_achieved"
@@ -158,30 +202,39 @@ export function SemesterGoal() {
                         value={goal.id ?? ""}
                       />
                       <div className="semester-goal-cell title">
-                        {cls.subject_name}
+                        {subject.subject_name}
                       </div>
                       <div className="semester-goal-cell">
                         <textarea
                           name="teacher_goals"
                           onInput={autoResize}
-                          defaultValue={goal.teacher_goals || ""}
+                          value={goal.teacher_goals || ""}
+                          onChange={(e) =>
+                            handleGoalChange(subject.id, "teacher_goals", e.target.value)
+                          }
                         />
                       </div>
                       <div className="semester-goal-cell">
                         <textarea
                           name="course_goals"
                           onInput={autoResize}
-                          defaultValue={goal.course_goals || ""}
+                          value={goal.course_goals || ""}
+                          onChange={(e) =>
+                            handleGoalChange(subject.id, "course_goals", e.target.value)
+                          }
                         />
                       </div>
                       <div className="semester-goal-cell">
                         <textarea
                           name="self_goals"
                           onInput={autoResize}
-                          defaultValue={goal.self_goals || ""}
+                          value={goal.self_goals || ""}
+                          onChange={(e) =>
+                            handleGoalChange(subject.id, "self_goals", e.target.value)
+                          }
                         />
                       </div>
-                    </form>
+                    </div>
                   );
                 })}
             </div>
