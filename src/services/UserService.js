@@ -57,7 +57,7 @@ export async function getAllClassrooms() {
 
 export async function getStudentById(id) {
     try {
-        return await apiClient.get(`/api/students/${id}`);
+        return await apiClient.get(`/api/students/${id}/profile`);
     } catch (error) {
         console.error('Error fetching student data:', error);
         throw error;
@@ -115,6 +115,16 @@ export async function updateOwnProfile(profile) {
     return await apiClient.put('/api/student/profile', payload);
   } catch (error) {
     console.error('Error updating profile:', error);
+    throw error;
+  }
+}
+
+export async function searchTeachersByEmail(email) {
+  try {
+    const response = await apiClient.get(`/api/teachers/search?email=${email}`);
+    return response;
+  } catch (error) {
+    console.error('Error searching teachers by email:', error);
     throw error;
   }
 }
