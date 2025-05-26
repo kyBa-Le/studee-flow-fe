@@ -13,6 +13,7 @@ import "./InClass.css";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
 import { useUpdateEffect } from "../../../components/hooks/useUpdateEffect";
+import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 
 export function InClass({ weekId }) {
   const [subjects, setSubjects] = useState([]);
@@ -21,7 +22,7 @@ export function InClass({ weekId }) {
   const [extraForms, setExtraForms] = useState([]);
   const {studentId} = useParams();
 
-  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
+  const cellStyle = { width: "100%", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
 
   useEffect(() => {
@@ -120,6 +121,7 @@ export function InClass({ weekId }) {
 }
 
 function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     date: null,
@@ -138,8 +140,10 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
 
   useUpdateEffect(() => {
-    if (!formData.date) return;
-    triggerAutoSubmit();
+    if (isUserUpdate) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleChange(e) {
@@ -148,6 +152,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
       ...prev,
       [name]: name === "is_problem_solved" ? parseInt(value) : value,
     }));
+    setIsUserUpdate(true)
   }
 
   async function handleAutoCreate() {
@@ -191,7 +196,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
         </select>
       </div>
       <div className="learning-journal-cell">
-        <textarea
+        <textarea onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
@@ -213,6 +218,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="difficulties"
           rows="3"
           style={cellStyle}
@@ -222,6 +228,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="plan"
           rows="3"
           style={cellStyle}
@@ -304,6 +311,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
@@ -325,6 +333,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="difficulties"
           rows="3"
           style={cellStyle}
@@ -334,6 +343,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="plan"
           rows="3"
           style={cellStyle}

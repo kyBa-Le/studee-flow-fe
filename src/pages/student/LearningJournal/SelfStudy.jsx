@@ -7,13 +7,14 @@ import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit"
 import { toast } from "react-toastify";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
+import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 
 export function SelfStudy({ weekId }) {
   const [subjects, setSubjects] = useState([]);
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [extraForms, setExtraForms] = useState([]);
-  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
+  const cellStyle = { width: "100%", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
   const { studentId } = useParams();
 
@@ -21,7 +22,7 @@ export function SelfStudy({ weekId }) {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const student = (await(studentId ? getStudentById(studentId) : getUser())).data;
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
         const classroomId = student.student_classroom_id;
 
         const subjectsResponse = await getAllSubjects(classroomId);
@@ -75,40 +76,40 @@ export function SelfStudy({ weekId }) {
         {loading ? (
           <LoadingData content="Loading ..." />
         ) : (
-            <>
-              {selfStudies.map((study, index) => (
-                <div className="journal-form-container" key={index}>
-                  <SelfStudyForm
-                    subjects={subjects}
-                    study={study}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              ))}
+          <>
+            {selfStudies.map((study, index) => (
+              <div className="journal-form-container" key={index}>
+                <SelfStudyForm
+                  subjects={subjects}
+                  study={study}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                />
+              </div>
+            ))}
 
-              {extraForms.map((form) => (
-                <div className="journal-form-container" key={form.id}>
-                  <EmptyForm
-                    weekId={weekId}
-                    subjects={subjects}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              ))}
+            {extraForms.map((form) => (
+              <div className="journal-form-container" key={form.id}>
+                <EmptyForm
+                  weekId={weekId}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                />
+              </div>
+            ))}
 
-              {selfStudies.length === 0 && extraForms.length === 0 && (
-                <div>
-                  <EmptyForm
-                    weekId={weekId}
-                    subjects={subjects}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              )}
-            </>
+            {selfStudies.length === 0 && extraForms.length === 0 && (
+              <div>
+                <EmptyForm
+                  weekId={weekId}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
       <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
@@ -119,6 +120,7 @@ export function SelfStudy({ weekId }) {
 export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
   const [isNew, setIsNew] = useState(true)
   const [id, setId] = useState(null);
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
   const initialFormData = {
     id: null,
     student_id: null,
@@ -141,8 +143,10 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
 
   useEffect(() => {
-    if (!formData.date) return;
-    triggerAutoSubmit();
+    if (isUserUpdate) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleOnChange(e) {
@@ -152,6 +156,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       ...prev,
       [name]: value
     }));
+    setIsUserUpdate(true);
   }
 
   function handlePlanChange(e) {
@@ -161,6 +166,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
       ...prev,
       is_follow_plan: isFollowPlan
     }));
+    setIsUserUpdate(true);
   }
 
 
@@ -209,6 +215,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
@@ -219,6 +226,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="time_allocation"
           rows="3"
           style={cellStyle}
@@ -229,6 +237,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="learning_resources"
           rows="3"
           style={cellStyle}
@@ -239,6 +248,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="learning_activities"
           rows="3"
           style={cellStyle}
@@ -274,6 +284,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="evaluation"
           rows="3"
           style={cellStyle}
@@ -284,6 +295,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="reinforcing_learning"
           rows="3"
           style={cellStyle}
@@ -294,6 +306,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="notes"
           rows="3"
           style={cellStyle}
@@ -317,10 +330,10 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
   // Auto submit after formData changed
   useEffect(() => {
-      if(isUserUpdate) {
-        triggerAutoSubmit();
-        setIsUserUpdate(false);
-      }
+    if (isUserUpdate) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleOnChange(e) {
@@ -381,6 +394,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
@@ -391,6 +405,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="time_allocation"
           rows="3"
           style={cellStyle}
@@ -401,6 +416,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="learning_resources"
           rows="3"
           style={cellStyle}
@@ -411,6 +427,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="learning_activities"
           rows="3"
           style={cellStyle}
@@ -446,6 +463,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="evaluation"
           rows="3"
           style={cellStyle}
@@ -456,6 +474,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="reinforcing_learning"
           rows="3"
           style={cellStyle}
@@ -466,6 +485,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
 
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="notes"
           rows="3"
           style={cellStyle}
