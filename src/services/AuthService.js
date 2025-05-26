@@ -10,3 +10,11 @@ export const login = async (email, password) => {
         throw error;
     }
 }
+
+export const logout = async () => {
+    try {
+        return await apiClient.post("/api/logout");
+    } catch (error) {
+        throw error;
+    }
+}

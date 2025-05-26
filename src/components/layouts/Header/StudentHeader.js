@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './StudentHeader.css';
 import Logo from "../../../assests/images/Logo.png";
 import { getUser } from '../../../services/UserService';
-import { Link, useLocation } from "react-router-dom";
+import { logout } from '../../../services/AuthService';
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 function StudentHeader() {
+    const navigate = useNavigate();
     const [user, setUser] = useState({});
     const location = useLocation();
     
@@ -22,7 +24,16 @@ function StudentHeader() {
     { path: '/student/semester-goal', label: 'Semester goal' },
     { path: '/student/achievement', label: 'Achievement' }
   ];
-
+  const handleLogout = async () => {
+        try {
+            await logout();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+  };
   return (
     <div className='student-header-container'>
       <div className='student-header-content'>
@@ -48,7 +59,11 @@ function StudentHeader() {
                 <hr/>
                 <div className='drop-down-option-content'>
                   <Link to='/student/profile'><span className='drop-down-option drop-down-option-profile'><i className="fa-regular fa-user"></i> Profile</span></Link>
-                  <Link to='/student/log-out'><span className='drop-down-option drop-down-option-logout'><i className="fa-solid fa-arrow-right-from-bracket"></i> Log out</span></Link>
+                  <Link to='#' onClick={handleLogout}>
+                      <span className='drop-down-option drop-down-option-logout'>
+                          <i className="fa-solid fa-arrow-right-from-bracket"></i> Log out
+                      </span>
+                  </Link>
                 </div>
               </div>
             </div>
