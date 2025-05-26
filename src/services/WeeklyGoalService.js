@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 
-export const getWeeklyGoals = async (weekId = 0) => {
+export const getWeeklyGoals = async (id, weekId = 0) => {
   try {
-    const response = apiClient.get("/api/student/weekly-goals?week_id=" + weekId);
+    const response = apiClient.get(`/api/students/${id}/weekly-goals?week_id=` + weekId);
     return response;
   } catch (error) {
     console.error("Error fetching weekly goals:", error);
