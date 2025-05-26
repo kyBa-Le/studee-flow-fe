@@ -4,40 +4,42 @@ import {
   createInClassJournal,
   updateInClassJournal
 } from "../../../services/InClassService";
-import { getUser } from "../../../services/UserService";
+import { getStudentById, getUser } from "../../../services/UserService";
 import { getAllSubjects } from "../../../services/SubjectService";
 import { LoadingData } from "../../../components/ui/Loading/LoadingData";
 import { toast } from "react-toastify";
 import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit";
 import "./InClass.css";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
+import { useParams } from "react-router-dom";
 
 export function InClass({ weekId }) {
   const [subjects, setSubjects] = useState([]);
   const [inClassJournal, setInClassJournal] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState(null);
   const [extraForms, setExtraForms] = useState([]);
+  const {studentId} = useParams();
 
   const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
 
   useEffect(() => {
+    console.log(weekId);
     const fetchData = async () => {
       try {
         setLoading(true);
-        const user = await getUser();
-        setUserId(user.data.id);
-        const classroomId = user.data.student_classroom_id;
+        const user = (await (studentId ? getStudentById(studentId) : getUser())).data;
+        const classroomId = user.student_classroom_id;
 
         const subjectRes = await getAllSubjects(classroomId);
         setSubjects(subjectRes.data);
-
-        const journalRes = await getInClassJournal(weekId);
-        const data = journalRes.data;
-
-        setInClassJournal(data.length > 0 ? data : []);
+        if (weekId) {
+          const journalRes = await getInClassJournal(user.id, weekId);
+          const data = journalRes.data;
+          setInClassJournal(data.length > 0 ? data : []);
+        }
       } catch (error) {
+        toast.error("Fail to load data.")
         console.log(error);
       } finally {
         setLoading(false);

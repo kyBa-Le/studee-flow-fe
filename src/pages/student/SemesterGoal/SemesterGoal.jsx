@@ -20,7 +20,7 @@ export function SemesterGoal() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const student = (await (studentId ? getStudentById(studentId) : getUser)).data;
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
         const classroomId = student.student_classroom_id;
 
         const semesterRes = await getCurrentSemesterByClassroomId(classroomId);
