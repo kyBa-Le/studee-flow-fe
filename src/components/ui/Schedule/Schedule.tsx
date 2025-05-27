@@ -13,7 +13,7 @@ import { registerLicense } from '@syncfusion/ej2-base';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
-const Schedule = () => {
+const Schedule = ({studentId}) => {
   const [events, setEvents] = useState<any[]>([]);
 
   const transformEvents = (data: any[]) => {
@@ -42,19 +42,19 @@ const Schedule = () => {
           parseInt(endTime[0]),
           parseInt(endTime[1])
         ),
-        student_id: event.student_id,
+        student_id: studentId,
       };
     });
   };
 
   useEffect(() => {
-    getTask()
+    getTask(studentId)
       .then((response) => {
         const transformedData = transformEvents(response.data);
         setEvents(transformedData);
       })
       .catch((error) => console.error("Error fetching User:", error));
-  }, []);
+  }, [studentId]);
 
   const eventSettings: EventSettingsModel = { dataSource: events };
 

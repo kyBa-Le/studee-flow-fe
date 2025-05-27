@@ -6,7 +6,6 @@
 }
 
 .student-profile {
-  max-width: 1533px;
   padding: 130px 98px 70px 98px;
   background-color: #f5f5f56c;
 }
@@ -21,11 +20,8 @@
 }
 
 .student-profile-back-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #FE9A3B;
+  font-size: 35px;
+  color:#ff9900;
 }
 
 .student-profile-title {

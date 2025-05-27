@@ -50,7 +50,7 @@ function Home() {
             {/* Time table */}
             <div className='time-table'>
               <div className='time-table-content'>
-                <Schedule/>
+                <Schedule studentId={user.id}/>
               </div>
             </div>
             <div className='nav-blog-student'>

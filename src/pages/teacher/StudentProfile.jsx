@@ -28,7 +28,7 @@ export function StudentProfile() {
       <div className="student-profile">
         <div className="student-profile-header-row">
           <button className="student-profile-back-btn" onClick={() => window.history.back()}>
-                 <i className="fa-solid fa-circle-arrow-left"></i>
+            <i className="fa-solid fa-circle-arrow-left"></i>
           </button>
           <h2 className="student-profile-title">STUDENT PROFILE</h2>
         </div>
@@ -73,12 +73,12 @@ export function StudentProfile() {
           <div className="student-profile-section-title">
             <span role="img" aria-label="clipboard">
              <i class="fa-regular fa-calendar"></i>
-            </span>{" "}
+            </span>
             Timetable
           </div>
           <div className='student-profile-time-table'>
             <div className='student-profile-time-table-content'>
-                <Schedule/>
+              <Schedule studentId={studentId}/>
             </div>
           </div>
           <hr />
