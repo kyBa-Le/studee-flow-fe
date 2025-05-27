@@ -125,7 +125,6 @@ justify-content: end;
 
 .semester-goal-cell textarea {
   width: 100%;             
-  resize: none;                
   border: none;
   border-radius: 6px;
   padding: 8px;

@@ -9,6 +9,7 @@ export function WeeklyGoal({ weekId }) {
   const [goalIndex, setGoalIndex] = useState(0);
   const [weeklyGoals, setWeeklyGoals] = useState([]);
   const { studentId } = useParams();
+  const isReadOnly = !!studentId;
 
   //get the weekly goals of the current week
   useEffect(() => {
@@ -18,7 +19,6 @@ export function WeeklyGoal({ weekId }) {
     const fetchWeeklyGoals = async () => {
       try {
         const id =  (studentId ? studentId : (await getUser()).data.id);
-        console.log(id);
         const data = (await getWeeklyGoals(id, weekId)).data;
         setWeeklyGoals(data);
       } catch (error) {
@@ -51,7 +51,7 @@ export function WeeklyGoal({ weekId }) {
       ></i>
       <div className="learning-journal-goals" style={{ flex: 1 }}>
         {weeklyGoals.slice(goalIndex, goalIndex + 3).map((goal) => (
-          <WeeklyGoalForm goal={goal} />
+          <WeeklyGoalForm isReadOnly={isReadOnly} goal={goal} />
         ))}
       </div>
       <i
@@ -66,7 +66,7 @@ export function WeeklyGoal({ weekId }) {
 
 
 // weekly goal form
-export function WeeklyGoalForm({ goal }) {
+export function WeeklyGoalForm({ goal, isReadOnly }) {
 
   const [formData, setFormData] = useState(goal);
 
@@ -90,21 +90,24 @@ export function WeeklyGoalForm({ goal }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}
+    <form
+      onSubmit={handleSubmit}
       key={formData?.id}
       className="learning-journal-goal"
     >
-      <input type="number" name="goal_id" style={{ display: 'none' }} aria-hidden="true" value={goal.id} />
+      <input type="number" name="goal_id" style={{ display: 'none' }} aria-hidden="true" value={goal.id} readOnly />
       <input
         type="checkbox"
         name={`is_achieved`}
         checked={formData?.is_achieved === 1}
-        onChange={handleOnChange} />
+        onChange={isReadOnly ? undefined : handleOnChange}
+        disabled={isReadOnly}
+      />
       <input
         type="text"
         name={`goal`}
         value={formData?.goal || ""}
-        onChange={handleOnChange}
+        onChange={isReadOnly ? undefined : handleOnChange}
         style={{
           flex: 1,
           border: "none",
@@ -112,8 +115,9 @@ export function WeeklyGoalForm({ goal }) {
           color: "#fff",
           fontSize: "14px",
         }}
+        readOnly={isReadOnly}
       />
-      <button type="submit" style={{ display: 'none' }} aria-hidden="true" />
+      <button type="submit" style={{ display: 'none' }} aria-hidden="true" disabled={isReadOnly} />
     </form>
   );
 }

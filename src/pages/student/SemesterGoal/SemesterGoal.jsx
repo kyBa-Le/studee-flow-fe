@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { getAllSubjects}  from "../../../services/SubjectService";
-import { getSemesterGoalsByUser, createSemesterGoal, updateSemesterGoals } from "../../../services/SemesterGoalService";
-import { getCurrentSemesterByClassroomId, getAllSemestersByClassroomId } from "../../../services/SemesterService";
+import { useEffect, useState } from "react";
+import { getAllSubjects } from "../../../services/SubjectService";
+import {
+  getSemesterGoalsByUser,
+  createSemesterGoal,
+  updateSemesterGoals,
+} from "../../../services/SemesterGoalService";
+import {
+  getCurrentSemesterByClassroomId,
+  getAllSemestersByClassroomId,
+} from "../../../services/SemesterService";
 import { getStudentById, getUser } from "../../../services/UserService";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -51,11 +58,10 @@ export function SemesterGoal() {
       try {
         const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
         const selected = semesters.find((s) => s.name === selectedSemester);
-        console.log(selected);
         if (!selected) return;
         setSemesterId(selected.id);
 
-        const goals = (await getSemesterGoalsByUser(student.id ,selected.id)).data;
+        const goals = (await getSemesterGoalsByUser(student.id, selected.id)).data;
         setSemesterGoals(goals);
       } catch (error) {
         console.error("Error fetching semester goals by selected semester:", error);
@@ -76,12 +82,12 @@ export function SemesterGoal() {
   const handleGoalChange = (subjectId, field, value) => {
     setSemesterGoals((prev) => {
       const existingGoalIndex = prev.findIndex((goal) => goal.subject_id === subjectId);
-      
+
       if (existingGoalIndex >= 0) {
         const updatedGoals = [...prev];
         updatedGoals[existingGoalIndex] = {
           ...updatedGoals[existingGoalIndex],
-          [field]: value
+          [field]: value,
         };
         return updatedGoals;
       } else {
@@ -90,8 +96,11 @@ export function SemesterGoal() {
           {
             subject_id: subjectId,
             [field]: value,
-            is_achieved: false
-          }
+            teacher_goals: "",
+            course_goals: "",
+            self_goals: "",
+            is_achieved: false,
+          },
         ];
       }
     });
@@ -102,17 +111,18 @@ export function SemesterGoal() {
       const user = (await getUser()).data;
       const studentId = user.id;
 
-      const goalsToSubmit = subjects.map(subject => {
-        const goal = semesterGoals ? (semesterGoals.find((g) => g.subject_id === subject.id)) : {};
+      const goalsToSubmit = subjects.map((subject) => {
+        const goal = semesterGoals.find((g) => g.subject_id === subject.id);
+
         return {
-          teacher_goals: goal.teacher_goals || "",
-          course_goals: goal.course_goals || "",
-          self_goals: goal.self_goals || "",
-          is_achieved: goal.is_achieved || false,
+          teacher_goals: goal?.teacher_goals ?? "",
+          course_goals: goal?.course_goals ?? "",
+          self_goals: goal?.self_goals ?? "",
+          is_achieved: goal?.is_achieved ?? false,
           student_id: studentId,
           subject_id: subject.id,
           semester_id: semesterId,
-          id: goal.id
+          id: goal?.id ?? null,
         };
       });
 
@@ -125,8 +135,8 @@ export function SemesterGoal() {
       }
 
       toast.success("Semester goals submitted successfully!");
-      
-      const updatedGoals = (await getSemesterGoalsByUser(semesterId)).data;
+
+      const updatedGoals = (await getSemesterGoalsByUser(studentId, semesterId)).data;
       setSemesterGoals(updatedGoals);
     } catch (error) {
       console.error(error);
@@ -185,13 +195,13 @@ export function SemesterGoal() {
 
               {!isLoading &&
                 subjects.map((subject) => {
-                  let goal = (semesterGoals.find((g) => g.subject_id === subject.id));
-                  goal = goal ? goal : {
+                  let goal = semesterGoals.find((g) => g.subject_id === subject.id);
+                  goal = goal ?? {
                     subject_id: subject.id,
                     teacher_goals: "",
                     course_goals: "",
                     self_goals: "",
-                    is_achieved: false
+                    is_achieved: false,
                   };
 
                   return (
@@ -200,11 +210,13 @@ export function SemesterGoal() {
                         type="hidden"
                         name="is_achieved"
                         value={goal.is_achieved ?? false}
+                        readOnly={!!studentId}
                       />
                       <input
                         type="hidden"
                         name="semester_goal_id"
                         value={goal.id ?? ""}
+                        readOnly={!!studentId}
                       />
                       <div className="semester-goal-cell title">
                         {subject.subject_name}
@@ -213,30 +225,33 @@ export function SemesterGoal() {
                         <textarea
                           name="teacher_goals"
                           onInput={autoResize}
-                          value={goal.teacher_goals || ""}
+                          value={goal.teacher_goals}
                           onChange={(e) =>
                             handleGoalChange(subject.id, "teacher_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                       <div className="semester-goal-cell">
                         <textarea
                           name="course_goals"
                           onInput={autoResize}
-                          value={goal.course_goals || ""}
+                          value={goal.course_goals}
                           onChange={(e) =>
                             handleGoalChange(subject.id, "course_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                       <div className="semester-goal-cell">
                         <textarea
                           name="self_goals"
                           onInput={autoResize}
-                          value={goal.self_goals || ""}
+                          value={goal.self_goals}
                           onChange={(e) =>
                             handleGoalChange(subject.id, "self_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                     </div>
@@ -251,8 +266,9 @@ export function SemesterGoal() {
             onClick={handleSubmit}
             type="button"
             className="semester-goal-btn-submit"
+            disabled={!!studentId}
           >
-            Submit
+            Save
           </button>
         </div>
       </div>
