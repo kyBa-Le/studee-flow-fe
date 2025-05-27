@@ -210,11 +210,13 @@ export function SemesterGoal() {
                         type="hidden"
                         name="is_achieved"
                         value={goal.is_achieved ?? false}
+                        readOnly={!!studentId}
                       />
                       <input
                         type="hidden"
                         name="semester_goal_id"
                         value={goal.id ?? ""}
+                        readOnly={!!studentId}
                       />
                       <div className="semester-goal-cell title">
                         {subject.subject_name}
@@ -227,6 +229,7 @@ export function SemesterGoal() {
                           onChange={(e) =>
                             handleGoalChange(subject.id, "teacher_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                       <div className="semester-goal-cell">
@@ -237,6 +240,7 @@ export function SemesterGoal() {
                           onChange={(e) =>
                             handleGoalChange(subject.id, "course_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                       <div className="semester-goal-cell">
@@ -247,6 +251,7 @@ export function SemesterGoal() {
                           onChange={(e) =>
                             handleGoalChange(subject.id, "self_goals", e.target.value)
                           }
+                          readOnly={!!studentId}
                         />
                       </div>
                     </div>
@@ -261,6 +266,7 @@ export function SemesterGoal() {
             onClick={handleSubmit}
             type="button"
             className="semester-goal-btn-submit"
+            disabled={!!studentId}
           >
             Save
           </button>

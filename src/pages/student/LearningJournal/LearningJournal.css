@@ -235,7 +235,8 @@ input[type="checkbox"]:checked::after {
 }
 
 .learning-journal-cell input[type="date"] {
-  width: 80% !important;
+  width: 75% !important;
+  font-size: 12px;
 }
 
 .add-form-button-places {

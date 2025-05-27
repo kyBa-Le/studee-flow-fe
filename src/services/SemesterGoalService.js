@@ -16,7 +16,8 @@ export async function createSemesterGoal(data) {
     const response = await apiClient.post("/api/student/semester-goals", data);
     return response;
   } catch (error) {
-    return error;
+    console.error("Error while creating semester goal:", error);
+    throw error;
   }
 }
 
@@ -25,6 +26,7 @@ export async function updateSemesterGoals(semesterGoalId, data) {
     const response = await apiClient.put("/api/student/semester-goals/" + semesterGoalId, data);
     return response;
   } catch (error) {
-    return error;
+    console.error("Error while updating semester goals:", error);
+    throw error;
   }
 }

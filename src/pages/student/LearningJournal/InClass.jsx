@@ -21,6 +21,7 @@ export function InClass({ weekId }) {
   const [loading, setLoading] = useState(true);
   const [extraForms, setExtraForms] = useState([]);
   const {studentId} = useParams();
+  const isReadOnly = !!studentId;
 
   const cellStyle = { width: "100%", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
@@ -88,6 +89,7 @@ export function InClass({ weekId }) {
                   subjects={subjects}
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
+                  isReadOnly={isReadOnly}
                 />
               ))
             }
@@ -100,6 +102,7 @@ export function InClass({ weekId }) {
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
                   weekId={weekId}
+                  isReadOnly={isReadOnly}
                 />
               ))
             }
@@ -110,17 +113,18 @@ export function InClass({ weekId }) {
                 cellStyle={cellStyle}
                 selectStyle={selectStyle}
                 weekId={weekId}
+                isReadOnly={isReadOnly}
               />
             )}
           </>
         )}
       </div>
-      <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
+      <div className="add-form-button-places" >{!isReadOnly && <AddLearningJournalFormButton onClick={handleAddForm} />}</div>
     </div>
   );
 }
 
-function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
+function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId, isReadOnly }) {
   const [isUserUpdate, setIsUserUpdate] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
@@ -179,6 +183,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.date}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -187,6 +192,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleChange}
+          disabled={isReadOnly}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -202,6 +208,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -210,6 +217,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.self_assessment}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly}
         >
           <option value="1">1</option>
           <option value="2">2</option>
@@ -224,6 +232,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -234,6 +243,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -242,6 +252,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.is_problem_solved}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly}
         >
           <option value={1}>Yes</option>
           <option value={0}>No</option>
@@ -252,7 +263,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
 }
 
 
-function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
+function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly }) {
   const [formData, setFormData] = useState(initialData);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate, 1500);
   const [isUserUpdate, setIsUserUpdate] = useState(false);
@@ -293,6 +304,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData?.date ? formData.date.slice(0, 10) : ""}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -301,6 +313,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleChange}
+          disabled={isReadOnly}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -317,6 +330,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -325,6 +339,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.self_assessment}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly}
         >
           <option value="1">1</option>
           <option value="2">2</option>
@@ -339,6 +354,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -349,6 +365,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          readOnly={isReadOnly}
         />
       </div>
       <div className="learning-journal-cell">
@@ -357,6 +374,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.is_problem_solved}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly}
         >
           <option value={1}>Yes</option>
           <option value={0}>No</option>
