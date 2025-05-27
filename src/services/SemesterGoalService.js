@@ -1,6 +1,7 @@
 import apiClient from "./apiClient";
 
 export async function getSemesterGoalsByUser(studentId,semesterId) {
+  console.log(semesterId);
   try {
     const response = await apiClient.get(`/api/students/${studentId}/semester-goals?semester_id=${semesterId}`);
     return response;
