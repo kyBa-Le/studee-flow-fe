@@ -10,6 +10,7 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 1000;
+  overflow: hidden;
 }
 
 /* The actual form container */
@@ -18,7 +19,7 @@
   width: 50vw;
   max-width: 1000px;
   min-width: 320px;
-  padding: 4rem 6rem;
+  padding: 3rem 4rem;
   border-radius: 16px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -81,12 +82,12 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 4rem;
+  margin-top: 1.5rem;
 }
 
 .cancel-button, .create-button {
-  width: 200px;
-  height: 40px;
+  width: 100px;
+  height: 35px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;

@@ -19,8 +19,8 @@
 }
 
 #add-button {
-  width: 160px;
-  height: 45px;
+  width: 130px;
+  height: 40px;
   border-radius: 40px;
   background-color: var(--button-blue-background-color);
   border: 0;
@@ -29,12 +29,13 @@
 
 #search-box {
   border-radius: 40px;
+  font-size: 12px;
   * {
     border-radius: 40px;
   }
   display: flex;
   justify-content: end;
-  width: 430px;
+  width: 395px;
   height: 40px;
   background-color: white;
   input {

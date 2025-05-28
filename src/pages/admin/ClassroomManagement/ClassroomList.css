@@ -63,6 +63,10 @@
     vertical-align: middle;
     padding: 15px 7px;
   }
+
+  .content.classroom-list-container table td {
+    font-size: 12px;
+  }
   
   .content.classroom-list-container table thead {
     background-color: var(--primary-orange-color);

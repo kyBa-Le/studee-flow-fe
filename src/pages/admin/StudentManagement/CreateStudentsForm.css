@@ -311,7 +311,7 @@ input:-webkit-autofill:active {
 }
 
 .footer-create-student-accounts button {
-  padding: 5px 40px;
+  padding: 5px 20px;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
@@ -331,7 +331,6 @@ input:-webkit-autofill:active {
   justify-content: flex-end;
   gap: 16px;
   margin-top: auto; 
-  /* padding: 0px 16px 0 0; */
 }
 
 .cancel-button {
