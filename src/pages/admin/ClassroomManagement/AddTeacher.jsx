@@ -50,14 +50,14 @@ export function AddTeacher({ classroomId, showInputSearch, setParentTeachers }) 
     
     return (
         <div style={{ width: "100vw", height: "100vh", backgroundColor: "rgba(0, 0, 0, 0.5)" }} className="d-flex justify-center align-items-center position-absolute top-0 left-0">
-            <div className="add-teacher-form" style={{ width: "500px", height: "60vh", backgroundColor: "white" }}>
+            <div className="add-teacher-form" style={{ width: "500px", backgroundColor: "white" }}>
                 <div className="p-4" >
                     <h5 className="text-center pb-1">Add teacher to the class</h5>
                     <form className="w-100" onSubmit={handleOnSearch} >
                         <input name="email" onChange={handleOnChange} className="" style={{ fontSize: "10px", width: "90%" }} value={searchData} type="text" placeholder="Search a teacher by email" />
                         <button type="submit" onClick={handleOnSearch} className="w-10"><i class="fa-solid fa-magnifying-glass"></i></button>
                     </form>
-                    <div style={{ padding: "15px 0", height: "300px"}}>
+                    <div style={{ padding: "15px 0", height: "30vh"}}>
                         <table className={`${styles.listTeacherTable} table w-full`} style={{ width: "100%" }}>
                             <thead>
                                 <tr>

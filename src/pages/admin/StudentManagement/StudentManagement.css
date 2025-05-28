@@ -12,24 +12,13 @@
 }
 
 .student-table__add-button {
-  background-color: #00aaff;
+  background-color: var(--button-blue-background-color);
   color: white;
   padding: 8px 16px;
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.student-table__add-button:hover {
-  background-color: #007acc;
-}
-
-.student-table__search {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  width: 240px;
+  font-size: 14px;
 }
 
 .student-table__content {
@@ -38,11 +27,8 @@
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   width: 100%;
-  /* đảm bảo rộng 100% cha */
-  padding: 16px;
-  /* có thể giữ padding để cách viền */
+  padding: 10px 10px;
   box-sizing: border-box;
-  /* để padding tính vào width */
 }
 
 .student-table__scroll-wrapper {
@@ -57,14 +43,19 @@
   table-layout: fixed;
 }
 
+.student-table__table th {
+  background-color: var(--primary-orange-color);
+  color:#ffff;
+}
+
 .student-table__table th,
 .student-table__table td {
-  /* text-align: center; */
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
-  padding: 15px 15px;
+  padding: 15px 7px;
   box-sizing: border-box;
 }
 
@@ -73,7 +64,7 @@
 }
 
 .student-table__cell--datetime {
-  font-size: 13px;
+  font-size: 12px;
   color: #777;
   white-space: nowrap;
 }
@@ -104,13 +95,6 @@
   background-color: #e60023;
 }
 
-.student-table__pagination {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 35px;
-  gap: 15px;
-}
-
 .student-table__page,
 .student-table__page-nav {
   padding: 6px 12px;
@@ -125,28 +109,34 @@
   color: white;
 }
 
-/* Column widths */
-.student-table__table th:nth-child(1),
-.student-table__table td:nth-child(1) {
-  width: 60px;
-}
-
-.student-table__table th:nth-child(2),
-.student-table__table td:nth-child(2) {
-  width: 200px;
+.student-table__table th:nth-child(1) {
+  border-top-left-radius: 20px;
 }
 
 .student-table__table td:nth-child(3),
 .student-table__table th:nth-child(3) {
-  width: 255px;
+  width: 200px;
   white-space: normal !important;
   overflow: visible !important;
   text-overflow: unset !important;
   word-break: break-word;
 }
 
-@media (max-width: 1024px) {
+.student-table__table th:nth-child(8) {
+  border-top-right-radius: 20px;
+}
 
+.student-table__table thead tr {
+  font-size: 14px;
+  padding: 10px 15px;
+}
+
+.student-table__table tbody tr {
+  font-size: 12px;
+  padding:0 5px;
+}
+
+@media (max-width: 1024px) {
   .student-table__table th,
   .student-table__table td {
     padding: 10px;
@@ -158,24 +148,22 @@
   }
 }
 
-/* Nút Edit và Delete dạng viên thuốc */
 .edit-button,
 .delete-button {
-  width: 40px;
-  height: 32px;
+  width: 35px;
+  height: 30px;
   border: none;
-  border-radius: 999px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   color: white;
-  font-size: 16px;
-  padding: 0;
+  font-size: 14px;
+  padding: 15px;
 }
 
-/* Nút edit - xanh */
 .edit-button {
   background-color: #2AB9E2;
 }
@@ -185,7 +173,6 @@
   transform: scale(1.05);
 }
 
-/* Nút delete - đỏ */
 .delete-button {
   background-color: #DC3545;
 }
@@ -198,3 +185,8 @@
 .delete-button {
   margin-left: 8px;
 }
+
+.student-table__table tbody tr {
+  border-bottom: 1px solid #ccc; 
+}
+

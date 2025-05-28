@@ -10,6 +10,7 @@ export function StudentManagement() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [centerButton, setCenterButton] = useState(1);
   const studentsPerPage = 40;
 
   useEffect(() => {
@@ -27,12 +28,6 @@ export function StudentManagement() {
       });
   }, [currentPage]);
 
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
   const handleEditClick = (student) => {
     navigate('/admin/edit-student-accounts', { state: { student } });
   }
@@ -49,18 +44,58 @@ export function StudentManagement() {
         });
     }
   }
+
+  function renderPaginationButtons() {
+    const startPage = Math.max(1, centerButton - 1);
+    const endPage = Math.min(totalPages, centerButton + 1);
+    const pageButtons = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          className={`student-table__page ${currentPage === i ? 'student-table__page--active' : ''}`}
+          onClick={() => setCurrentPage(i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return pageButtons;
+  }
+
+  function handleArrowClick(direction) {
+    let newCenter = centerButton + direction;
+    newCenter = Math.max(1, Math.min(totalPages, newCenter));
+    setCenterButton(newCenter);
+  }
+
   return (
     <div className="student-table vw-100">
       <div className="student-table__header">
         <button className="student-table__add-button" onClick={() => navigate("/admin/create-student-accounts")}>
           + Add students
         </button>
-        <input type="text" className="student-table__search" placeholder="Search ..." />
+        <form id="search-box">
+          <input type="text" placeholder="Search ..." />
+          <div id="search-icon">
+            <i className="fa-solid fa-magnifying-glass"></i>
+          </div>
+        </form>
       </div>
 
       <div className="student-table__content">
         <div className="student-table__scroll-wrapper">
           <table className="student-table__table">
+            <colgroup>
+              <col style={{ width: '6.25%' }} />  
+              <col style={{ width: '15.75%' }} />  
+              <col style={{ width: '18.75%' }} /> 
+              <col style={{ width: '18.75%' }} />  
+              <col style={{ width: '12.5%' }} />   
+              <col style={{ width: '12.5%' }} />   
+              <col style={{ width: '12.5%' }} />   
+              <col style={{ width: '12.5%' }} />   
+            </colgroup>
             <thead>
               <tr className="student-table__row--head">
                 <th className="student-table__cell">ID</th>
@@ -73,63 +108,73 @@ export function StudentManagement() {
                 <th className="student-table__cell">Action</th>
               </tr>
             </thead>
-            <tbody>
-              {loading ? (
-                <tr>
-                  <td colSpan="9"><LoadingData content='Loading students' /></td>
-                </tr>
-              ) : (
-                students?.map((student) => (
-                  <tr key={student.id}>
-                    <td className="student-table__cell">{student.id}</td>
-                    <td className="student-table__cell">{student.full_name}</td>
-                    <td className="student-table__cell">{student.email}</td>
-                    <td className="student-table__cell">{student.classroom?.class_name}</td>
-                    <td className="student-table__cell">{student.gender || 'N/A'}</td>
-                    <td className="student-table__cell">
-                      {new Date(student.created_at).toLocaleDateString('vi-VN')}
-                    </td>
-                    <td className="student-table__cell">
-                      {new Date(student.updated_at).toLocaleDateString('vi-VN')}
-                    </td>
-                    <td className="student-table__cell">
-                      <button
-                        type="button"
-                        onClick={() => handleEditClick(student)}
-                        className="edit-button"
-                        title="Edit"
-                      >
-                        <i className="far fa-edit"></i>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteClick(student)}
-                        className="delete-button"
-                        title="Delete"
-                      >
-                        <i className="far fa-trash-alt"></i>
-                      </button>
-                    </td>
-
-                  </tr>
-                ))
-              )}
-            </tbody>
           </table>
+          <div style={{maxHeight: "60vh", overflowY: "scroll"}}>
+            <table className='student-table__table' style={{fontSize: "12px"}}>
+              <colgroup>
+                <col style={{ width: '6.25%' }} />   
+                <col style={{ width: '15.75%' }} />  
+                <col style={{ width: '18.75%' }} />  
+                <col style={{ width: '18.75%' }} /> 
+                <col style={{ width: '12.5%' }} />   
+                <col style={{ width: '12.5%' }} />  
+                <col style={{ width: '12.5%' }} />  
+                <col style={{ width: '12.5%' }} />   
+              </colgroup>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="8"><LoadingData content='Loading students' /></td>
+                  </tr>
+                ) : (
+                  students?.map((student) => (
+                    <tr key={student.id}>
+                      <td className="student-table__cell">{student.id}</td>
+                      <td className="student-table__cell">{student.full_name}</td>
+                      <td className="student-table__cell">{student.email}</td>
+                      <td className="student-table__cell">{student.classroom?.class_name}</td>
+                      <td className="student-table__cell">{student.gender || 'N/A'}</td>
+                      <td className="student-table__cell">
+                        {new Date(student.created_at).toLocaleDateString('vi-VN')}
+                      </td>
+                      <td className="student-table__cell">
+                        {new Date(student.updated_at).toLocaleDateString('vi-VN')}
+                      </td>
+                      <td className="student-table__cell">
+                        <button
+                          type="button"
+                          onClick={() => handleEditClick(student)}
+                          className="edit-button"
+                          title="Edit"
+                        >
+                          <i className="far fa-edit"></i>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteClick(student)}
+                          className="delete-button"
+                          title="Delete"
+                        >
+                          <i className="far fa-trash-alt"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div className="student-table__pagination">
-          <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="student-table__page-nav">&lt;</button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => handlePageChange(i + 1)}
-              className={`student-table__page ${currentPage === i + 1 ? 'student-table__page--active' : ''}`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="student-table__page-nav">&gt;</button>
+        {/* Updated Pagination */}
+        <div className="pagination-place ">
+          <div className="pagination-container">
+            <i className="fa-solid fa-chevron-left" onClick={() => handleArrowClick(-3)}></i>
+            <div className="pagination-buttons">
+              {renderPaginationButtons()}
+            </div>
+            <i className="fa-solid fa-chevron-right" onClick={() => handleArrowClick(3)}></i>
+          </div>
         </div>
       </div>
     </div>
