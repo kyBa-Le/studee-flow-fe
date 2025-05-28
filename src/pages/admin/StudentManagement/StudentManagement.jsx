@@ -3,6 +3,7 @@ import { getAllStudents, deleteStudent } from '../../../services/UserService';
 import './StudentManagement.css';
 import { useNavigate } from 'react-router-dom';
 import { LoadingData } from '../../../components/ui/Loading/LoadingData';
+import { toast } from "react-toastify";
 
 export function StudentManagement() {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export function StudentManagement() {
         })
         .catch(error => {
           console.error('Failed to delete student:', error);
-          alert('Failed to delete student. Please try again later.');
+          toast.error('Failed to delete student. Please try again later.');
         });
     }
   }

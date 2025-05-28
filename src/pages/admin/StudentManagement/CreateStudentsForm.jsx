@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createBulkStudents } from '../../../services/UserService';
 import { getAllClassrooms } from '../../../services/UserService';
 import './CreateStudentsForm.css';
+import { toast } from "react-toastify";
 
 export function CreateStudentsForm() {
   const [currentEmail, setCurrentEmail] = useState('');
@@ -47,7 +48,7 @@ export function CreateStudentsForm() {
         if (password != "") {
           newStudents.push({ email, password });
         } else {
-          alert("Please add the password!");
+          toast.warning("Please add the password!");
         }
       }
     });
@@ -93,7 +94,7 @@ export function CreateStudentsForm() {
 
   const handleCreate = async () => {
     if (studentList.length === 0) {
-      alert("Please add at least one student.");
+      toast.warning("Please add at least one student.");
       return;
     }
     setLoading(true);
@@ -106,12 +107,12 @@ export function CreateStudentsForm() {
 
       const response = await createBulkStudents(payload);
       console.log('Create success:', response.data);
-      alert('Students created successfully!');
+      toast.success('Students created successfully!');
       handleCancel();
 
     } catch (error) {
       console.error('Failed to create students:', error);
-      alert('Failed to create students!');
+      toast.error('Failed to create students!');
     } finally {
       setLoading(false);
     }
