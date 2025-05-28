@@ -112,7 +112,7 @@ export async function updateOwnProfile(profile) {
       payload.confirm_new_password = profile.confirm_new_password;
     }
 
-    return await apiClient.put('/api/student/profile', payload);
+    return await apiClient.put('/api/user/profile', payload);
   } catch (error) {
     console.error('Error updating profile:', error);
     throw error;

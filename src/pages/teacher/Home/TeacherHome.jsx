@@ -60,23 +60,22 @@ export function TeacherHome() {
   return (
     <div style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
       <main>
-        <section className="max-w-[90vw] mx-auto px-6 py-10">
+        <section className="max-w-[73vw] mx-auto px-6 py-10 pt-[130px]">
           <div className="bg-white p-8 rounded-xl shadow px-[65px] min-h-[80vh]">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <h2 className="text-[24px] font-semibold" style={{ color: "#5F5F64" }}>All classes</h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+            <div className="grid grid-cols-3"  style={{ gridTemplateColumns: "1fr 1fr 1fr", paddingLeft: "0px", gap: "32px" }}>
               {classes.length > 0 ? (
                 classes.map((cls, idx) => (
                   <div
-                    style={{ aspectRatio: 2.5 }}
                     key={cls.id || idx}
                     className={`${cls.color || "bg-purple-100"
-                      } p-5 pl-10 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer`}
+                      } p-4 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[290px]`}
                     onClick={() => handleClassClick(cls.id, cls.class_name)}
                   >
-                    <h3 className="font-semibold text-[30px] pb-4" style={{ color: "#5E3078" }}>
+                    <h3 className="font-normal text-[22px] pb-2" style={{ color: "#5E3078" }}>
                       {cls.class_name}
                     </h3>
                     <div className="flex items-center text-sm gap-3">
