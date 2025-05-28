@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllClassrooms } from "../../../services/ClassroomService";
 import { getAllStudentsByClassroomId } from "../../../services/UserService";
+import "./TeacherHome.css";
 
 export function TeacherHome() {
   const [classes, setClasses] = useState([]);
@@ -60,38 +61,43 @@ export function TeacherHome() {
   return (
     <div style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
       <main>
-        <section className="max-w-[73vw] mx-auto px-6 py-10 pt-[130px]">
+        <section className="max-w-[90vw] mx-auto px-6 py-10 pt-[130px]">
           <div className="bg-white p-8 rounded-xl shadow px-[65px] min-h-[80vh]">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <h2 className="text-[24px] font-semibold" style={{ color: "#5F5F64" }}>All classes</h2>
             </div>
 
-            <div className="grid grid-cols-3"  style={{ gridTemplateColumns: "1fr 1fr 1fr", paddingLeft: "0px", gap: "32px" }}>
+            <div className="grid grid-cols-3" style={{ gridTemplateColumns: "1fr 1fr 1fr", paddingLeft: "0px", gap: "3vw" }}>
               {classes.length > 0 ? (
-                classes.map((cls, idx) => (
-                  <div
-                    key={cls.id || idx}
-                    className={`${cls.color || "bg-purple-100"
-                      } p-4 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer w-[290px]`}
-                    onClick={() => handleClassClick(cls.id, cls.class_name)}
-                  >
-                    <h3 className="font-normal text-[22px] pb-2" style={{ color: "#5E3078" }}>
-                      {cls.class_name}
-                    </h3>
-                    <div className="flex items-center text-sm gap-3">
-                      <i data-feather="users" className="w-4 h-4"></i>
-                      <span>
-                        {studentCounts[cls.id] || 0}
-                        {studentCounts[cls.id] > 1 ? " students" : " student"}
-                      </span>
-                      <i data-feather="monitor" className="w-4 h-4 ml-4"></i>
-                      <span>
-                        {teacherCounts[cls.id] || 0}
-                        {teacherCounts[cls.id] > 1 ? " teachers" : " teacher"}
-                      </span>
+                classes.map((cls, idx) =>
+                {
+                  const colorClass = `classroom-card-${idx % 3}`;
+                  return (
+                    <div
+                      key={cls.id || idx}
+                      className={`${cls.color || "bg-purple-100"
+                        } p-5 rounded-xl shadow-sm transition transform hover:scale-105 hover:shadow-md cursor-pointer ${colorClass}`}
+                      onClick={() => handleClassClick(cls.id, cls.class_name)}
+                    >
+                      <h3 className="font-normal text-[22px] pb-2 classroom-card-title">
+                        {cls.class_name}
+                      </h3>
+                      <div className="flex items-center text-sm gap-3">
+                        <i data-feather="users" className="w-4 h-4"></i>
+                        <span>
+                          {studentCounts[cls.id] || 0}
+                          {studentCounts[cls.id] > 1 ? " students" : " student"}
+                        </span>
+                        <i data-feather="monitor" className="w-4 h-4 ml-4"></i>
+                        <span>
+                          {teacherCounts[cls.id] || 0}
+                          {teacherCounts[cls.id] > 1 ? " teachers" : " teacher"}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  )
+                }
+                )
               ) : (
                 <div className="text-center col-span-full text-gray-500">
                   No classrooms found.

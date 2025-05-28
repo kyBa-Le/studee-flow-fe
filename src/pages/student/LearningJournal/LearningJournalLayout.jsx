@@ -4,11 +4,14 @@ import { WeeklyGoal } from "./WeeklyGoal";
 import { SelfStudy } from "./SelfStudy";
 import { InClass } from "./InClass";
 import { getAllWeek } from "../../../services/WeekService";
+import { useParams } from "react-router-dom";
 
 export function LearningJournalLayout() {
   const [weeks, setWeeks] = useState([]);
   const [currentWeek, setCurrentWeek] = useState({});
   const [isSelfStudy, setIsSelfStudy] = useState(false);
+  const { studentId } = useParams();
+
 
   useEffect(() => {
     const fetchWeeks = async () => {
@@ -33,6 +36,10 @@ export function LearningJournalLayout() {
     <div className="learning-journal-container">
       <div className="learning-journal">
         <div className="learning-journal-headerr">
+          {studentId && <button className="student-profile-back-btn" onClick={() => window.history.back()}>
+            <i className="fa-solid fa-circle-arrow-left"></i>
+          </button>}
+          <div></div>
           <div className="learning-journal-week-selector">
             <select
               value={weeks.findIndex(w => w.week === currentWeek.week)}
@@ -100,9 +107,11 @@ export function LearningJournalLayout() {
         </div>
 
         <div className="learning-journal-submit">
-          <button type="submit" className="learning-journal-submit-btn">
-            Submit
-          </button>
+          {
+            !studentId && <button type="submit" className="learning-journal-submit-btn">
+              Submit
+            </button>
+          }
         </div>
       </div>
     </div>

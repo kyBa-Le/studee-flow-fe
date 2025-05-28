@@ -18,7 +18,7 @@
 }
 .learning-journal-headerr {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 .learning-journal-title-wrapper {

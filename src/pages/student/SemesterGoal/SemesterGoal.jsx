@@ -148,6 +148,10 @@ export function SemesterGoal() {
     <div className="semester-goal-container">
       <div className="semester-goal">
         <div className="semester-goal-btn">
+          {studentId && <button className="student-profile-back-btn" onClick={() => window.history.back()}>
+            <i className="fa-solid fa-circle-arrow-left"></i>
+          </button>}
+          <div></div>
           <div className="semester-goal-btn-select">
             <select
               value={selectedSemester}
@@ -262,14 +266,17 @@ export function SemesterGoal() {
         </div>
 
         <div className="semester-goal-btn">
-          <button
-            onClick={handleSubmit}
-            type="button"
-            className="semester-goal-btn-submit"
-            disabled={!!studentId}
-          >
-            Save
-          </button>
+          <div></div>
+          {
+            !studentId && <button
+              onClick={handleSubmit}
+              type="button"
+              className="semester-goal-btn-submit"
+              disabled={!!studentId}
+            >
+              Save
+            </button>
+          }
         </div>
       </div>
       <ToastContainer />
