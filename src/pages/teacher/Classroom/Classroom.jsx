@@ -115,7 +115,7 @@ export function Classroom() {
                 progressData={data.progressData}
                 handleChangeFeedback={handleChangeFeedback}
               />
-            : <SubjectList subjects={data.subjects} />
+            : <SubjectList setSubject={setData} classroomId={classroomId} subjects={data.subjects} />
         )}
       </div>
     </div>
