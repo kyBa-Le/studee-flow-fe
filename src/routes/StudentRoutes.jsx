@@ -6,12 +6,14 @@ import { SelfStudy } from "../pages/student/LearningJournal/SelfStudy";
 import { LearningJournalLayout } from "../pages/student/LearningJournal/LearningJournalLayout";
 import { SemesterGoal } from "../pages/student/SemesterGoal/SemesterGoal";
 import Profile from "../pages/student/Profile/Profile";
+import Achievement from "../pages/student/Achievement/Achievement";
 
 const studentRoutes = [
     {path: '/student/home', element: <Home/> },
     {path: '/student/learning-journal', element: <LearningJournalLayout></LearningJournalLayout> },
-     {path: '/student/semester-goal', element: <SemesterGoal/> },
+    {path: '/student/semester-goal', element: <SemesterGoal/> },
     {path: '/student/profile', element: <Profile/> },
+    {path: '/student/achievement', element: <Achievement/> },
 ]
 export function StudentRoutes() {
     return studentRoutes.map(({ path, element }) => (
