@@ -125,6 +125,7 @@
   transform: translateY(-50%);
   color: white;
   pointer-events: none;
+  z-index: 2;
 }
 
 .learning-journal-title {

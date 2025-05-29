@@ -9,6 +9,7 @@ import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddL
 import { UpdateButton } from "../../../components/ui/Button/Update/UpdateButton";
 import { CancelButton } from "../../../components/ui/Button/Cancel/CancelButton";
 import { toast } from "react-toastify";
+import { getUser } from "../../../services/UserService";
 
 export function LearningJournalLayout() {
   const [weeks, setWeeks] = useState([]);
@@ -23,8 +24,10 @@ export function LearningJournalLayout() {
 
   useEffect(() => {
     const fetchWeeks = async () => {
+      if (openWeekForm == true) return;
       try {
-        const response = await getAllWeek();
+        const id = (studentId ? studentId: (await getUser()).data.id)
+        const response = await getAllWeek(id);
         const weekData = response.data.sort((a, b) => new Date(a.end_date) - new Date(b.end_date)) || [];
         setWeeks(weekData);
 
@@ -37,7 +40,7 @@ export function LearningJournalLayout() {
     };
 
     fetchWeeks();
-  }, []);
+  }, [openWeekForm]);
 
   function handleMouseEnter() {
     clearTimeout();
@@ -181,6 +184,7 @@ function CreateWeekForm({setOpenWeekForm}) {
     try {
       console.log(formData);
       await createWeek(formData);
+      setOpenWeekForm(false);
       toast.success("New week created")
     } catch (error) {
       toast.error("Please try again!")
