@@ -1,7 +1,8 @@
 .classroom-container {
-    background-color: #f5f5f56c;
+    background-color: rgb(245, 245, 245);
     padding: 20px;
     box-sizing: border-box;
+    padding-top: 95px;
 }
 
 .classroom-content {
@@ -13,7 +14,7 @@
 .classroom-header-top-row {
     display: flex;
     flex-direction: column;
-    padding: 0 0 40px 0;
+    padding: 0 0 20px 0;
 }
 
 .classroom-header-back-to-subject {
@@ -25,7 +26,7 @@
 }
 
 .back-button {
-  font-size: 40px;
+  font-size: 35px;
   color:#ff9900;
 }
 

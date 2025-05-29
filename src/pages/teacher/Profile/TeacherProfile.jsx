@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { getUser, updateOwnProfile } from '../../../services/UserService';
-import ProfileEdit from './ProfileEdit';
-import './Profile.css';
+import TeacherEditProfile from './TeacherEditProfile';
+import './TeacherProfile.css';
 import { ButtonEdit } from "../../../components/ui/Button/Edit/ButtonEdit";
+
+
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
@@ -60,7 +62,7 @@ export default function Profile() {
 
   if (isEditing) {
     return (
-      <ProfileEdit
+      <TeacherEditProfile
         profile={profile}
         onSave={handleSave}
         onCancel={handleCancel}
@@ -111,15 +113,7 @@ export default function Profile() {
                 <option value="male">Male</option>
               </select>
             </div>
-            <div className="profile__group">
-              <label className="profile__label">Class</label>
-              <select value={profile.className} className="profile__select" disabled>
-                <option value="PNV26A">PNV26A</option>
-                <option value="PNV26B">PNV26B</option>
-              </select>
-            </div>
           </div>
-
           <div className="profile__button-container">
             <ButtonEdit type="button" className="profile__button" onClick={handleEditClick}>Edit</ButtonEdit>
           </div>

@@ -253,7 +253,7 @@ export function CreateClassroomForm({
             Cancel
           </button>
           <button className="create-btn" onClick={handleSubmit} disabled={isCreating}>
-            {isCreating ? (handleUpdate ? "Updating..." : "Creating...") : handleUpdate ? "Update" : "Create"}
+            {isCreating ? (editData ? "Updating..." : "Creating...") : (!!editData ? "Update" : "Create")}
           </button>
         </div>
       </div>

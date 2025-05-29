@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ProfileEdit.css';
+import './TeacherEditProfile.css';
 import { CancelButton } from "../../../components/ui/Button/Cancel/CancelButton";
 import { UpdateButton } from "../../../components/ui/Button/Update/UpdateButton";
 
@@ -169,39 +169,25 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
             required
           />
         </div>
-
+        <div className="profile-edit__field">
+          <label className="profile-edit__label">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={localProfile.email}
+            onChange={handleChange}
+            className="profile-edit__input"
+            readOnly
+          />
+        </div>
         <div className="profile-edit__row">
           <div className="profile-edit__field">
             <label className="profile-edit__label">Current password</label>
             <input
               type="password"
               name="current_password"
-              autoComplete="new-password"
               value={localProfile.current_password}
-              onChange={handleChange}
-              className="profile-edit__input"
-            />
-          </div>
-          <div className="profile-edit__field">
-            <label className="profile-edit__label">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={localProfile.email}
-              onChange={handleChange}
-              className="profile-edit__input"
-              readOnly
-            />
-          </div>
-        </div>
-
-        <div className="profile-edit__row">
-          <div className="profile-edit__field">
-            <label className="profile-edit__label">New password</label>
-            <input
-              type="password"
-              name="new_password"
-              value={localProfile.new_password}
+              autoComplete="new-password"
               onChange={handleChange}
               className="profile-edit__input"
             />
@@ -223,6 +209,16 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
 
         <div className="profile-edit__row">
           <div className="profile-edit__field">
+            <label className="profile-edit__label">New password</label>
+            <input
+              type="password"
+              name="new_password"
+              value={localProfile.new_password}
+              onChange={handleChange}
+              className="profile-edit__input"
+            />
+          </div>
+          <div className="profile-edit__field">
             <label className="profile-edit__label">Confirm new password</label>
             <input
               type="password"
@@ -231,19 +227,6 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
               onChange={handleChange}
               className="profile-edit__input"
             />
-          </div>
-          <div className="profile-edit__field">
-            <label className="profile-edit__label">Class</label>
-            <select
-              name="className"
-              value={localProfile.className}
-              onChange={handleChange}
-              className="profile-edit__input"
-              disabled
-            >
-              <option value="PNV26A">PNV26A</option>
-              <option value="PNV26B">PNV26B</option>
-            </select>
           </div>
         </div>
 
