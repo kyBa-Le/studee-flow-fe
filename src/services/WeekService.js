@@ -9,3 +9,13 @@ export async function getAllWeek() {
         throw error;
     }
 }
+
+export async function createWeek(weekData) {
+    try {
+        const response = await apiClient.post(`/api/students/weeks`, weekData);
+        return response;
+    } catch (error) {
+        console.error('Failed to create week:', error);
+        throw error;
+    }
+}

@@ -1,16 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./LearningJournal.css";
 import { WeeklyGoal } from "./WeeklyGoal";
 import { SelfStudy } from "./SelfStudy";
 import { InClass } from "./InClass";
-import { getAllWeek } from "../../../services/WeekService";
+import { createWeek, getAllWeek } from "../../../services/WeekService";
 import { useParams } from "react-router-dom";
+import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
+import { UpdateButton } from "../../../components/ui/Button/Update/UpdateButton";
+import { CancelButton } from "../../../components/ui/Button/Cancel/CancelButton";
+import { toast } from "react-toastify";
 
 export function LearningJournalLayout() {
   const [weeks, setWeeks] = useState([]);
   const [currentWeek, setCurrentWeek] = useState({});
   const [isSelfStudy, setIsSelfStudy] = useState(false);
   const { studentId } = useParams();
+  const [isMoving, setIsMoving] = useState();
+  const timeOutRef = useRef(null);
+  const [openWeekForm, setOpenWeekForm] = useState(false);
+
 
 
   useEffect(() => {
@@ -31,6 +39,16 @@ export function LearningJournalLayout() {
     fetchWeeks();
   }, []);
 
+  function handleMouseEnter() {
+    clearTimeout();
+    setIsMoving(true);
+  }
+
+  function handleMouseLeave() {
+    timeOutRef.current = setTimeout(() => {
+      setIsMoving(false);
+    }, 1300)
+  }
 
   return (
     <div className="learning-journal-container">
@@ -40,7 +58,7 @@ export function LearningJournalLayout() {
             <i className="fa-solid fa-circle-arrow-left"></i>
           </button>}
           <div></div>
-          <div className="learning-journal-week-selector">
+          <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="learning-journal-week-selector">
             <select
               value={weeks.findIndex(w => w.week === currentWeek.week)}
               onChange={(e) => {
@@ -57,6 +75,7 @@ export function LearningJournalLayout() {
             </select>
 
             <i className="fa-solid fa-angle-down learning-journal-icon"></i>
+            <div className={`week-add-button ${isMoving ? "moving" : ""}`} ><AddLearningJournalFormButton onClick={() => {setOpenWeekForm(true)}} /></div>
           </div>
         </div>
 
@@ -114,6 +133,79 @@ export function LearningJournalLayout() {
           }
         </div>
       </div>
+      {openWeekForm && (
+        <div className="create-week-form-overlay">
+          <CreateWeekForm setOpenWeekForm={setOpenWeekForm}/>
+        </div>
+      )}
+
+      
     </div>
   );
+}
+
+function CreateWeekForm({setOpenWeekForm}) {
+  const [formData, setFormData] = useState({
+    week_number: 1,
+    start_date: null,
+    end_date: null
+  });
+
+  function handleOnChange(e) {
+    const { name, value } = e.target;
+
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: value,
+      };
+
+      if (updated.start_date && updated.end_date) {
+        const start = new Date(updated.start_date);
+        const end = new Date(updated.end_date);
+
+        if (end < start) {
+          return {
+            ...updated,
+            end_date: "",
+          };
+        }
+      }
+
+      return updated;
+    });
+  }
+  
+
+  async function handleSubmit() {
+    try {
+      console.log(formData);
+      await createWeek(formData);
+      toast.success("New week created")
+    } catch (error) {
+      toast.error("Please try again!")
+    }
+  }
+
+  return (
+    <form className="add-week-form">
+      <h6 className="text-center">START A NEW WEEK JOURNAL</h6>
+      <label>
+        <div>Week number</div>
+        <input value={formData.week_number} name="week_number" type="number" onChange={handleOnChange} />
+      </label>
+      <label>
+        <div>Start date</div>
+        <input value={formData.start_date} name="start_date" type="date" onChange={handleOnChange} />
+      </label>
+      <label>
+        <div>End date</div>
+        <input value={formData.end_date} name="end_date" type="date" onChange={handleOnChange} />
+      </label>
+      <div className="d-flex justify-content-end gap-2 mt-2">
+        <CancelButton onClick={() => setOpenWeekForm(false)} />
+        <UpdateButton onClick={handleSubmit}>Create</UpdateButton>
+      </div>
+    </form>
+  )
 }
