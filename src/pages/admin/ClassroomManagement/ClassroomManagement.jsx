@@ -39,6 +39,7 @@ export function ClassroomManagement() {
 
     const handleShowCreateForm = () => {
         setIsShowCreateForm(!isShowCreateForm);
+        setEditData(null);
     };
 
     const handleCreate = async (formData) => {
@@ -124,6 +125,7 @@ export function ClassroomManagement() {
                 <ClassroomList
                     setSelectedClassroom={setSelectedClassroom}
                     classrooms={classrooms}
+                    selectedClassroom={selectedClassroom}
                 />
                 <ClassroomInfo classroom={classrooms[selectedClassroom]} handleShowCreateForm={handleShowCreateForm} handleShowEditData={handleShowEditData} />
             </div>
