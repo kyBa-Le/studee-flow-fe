@@ -2,7 +2,7 @@
 import { DateConverter } from "../../../components/utils/DateConverter";
 import "./ClassroomList.css";
 
-export function ClassroomList({ classrooms, setSelectedClassroom }) {
+export function ClassroomList({ classrooms, setSelectedClassroom, selectedClassroom }) {
 
     return (
         <div className="content classroom-list-container">
@@ -38,6 +38,7 @@ export function ClassroomList({ classrooms, setSelectedClassroom }) {
                                     onClick={() => setSelectedClassroom(index)}
                                     style={{ cursor: 'pointer' }}
                                     key={classroom.id}
+                                    className={(selectedClassroom == index) ? "selected-classroom" : ""}
                                 >
                                     <td>{classroom.id}</td>
                                     <td>{classroom.class_name}</td>
