@@ -16,3 +16,13 @@ export async function  getAchievementByStudentId(id) {
         throw error;
     }
 }
+
+export async function creatAchievement(data) {
+    try {
+         const response = await apiClient.post(`api/student/achievements`, data);
+        return response;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        throw error;
+    }
+}

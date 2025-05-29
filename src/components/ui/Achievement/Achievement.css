@@ -62,22 +62,6 @@
             font-size: 14px;
         }
     }
-    .view-certificate-btn {
-        width: fit-content;
-        padding: 5px 20px;
-        font-size: 12px;
-        border-radius: 16px;
-        color: #fff;
-        background-color: #2AB9E2;
-        border: none;
-        cursor: pointer;
-        box-shadow: 3px 3px 10px #2abae271;
-        transition: all 0.3s ease-in-out;
-    }
-    .view-certificate-btn:hover {
-        transition: all 0.3s ease-in-out;
-        transform: scale(1.05);
-    }
 }
 
 #carouselExampleControls {
