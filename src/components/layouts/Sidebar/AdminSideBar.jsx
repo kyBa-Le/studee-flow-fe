@@ -39,8 +39,8 @@ export function AdminSideBar() {
   };
 
   return (
-    <div className="bg-gray-100 flex">
-      <div className="bg-white w-56 flex flex-col justify-between items-start p-6 shadow-md">
+    <div className="flex" style={{background: "#f5f5f5"}}>
+      <div className="bg-white w-56 flex flex-col justify-between items-start pt-4 px-6 pb-6 shadow-md rounded-tr-3xl mt-6">    
         {/* Menu Items */}
         <div className="space-y-8">
           {menuItems.map((item) => (
