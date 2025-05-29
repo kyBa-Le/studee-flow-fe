@@ -9,3 +9,13 @@ export async function getAllSubjects(classroomId) {
       return [];
     }
 }
+
+export async function createSubject(classroomId, formData) {
+    try {
+        const response = await apiClient.post(`/api/classrooms/${classroomId}/subjects`, formData);
+        return response;
+    } catch (error) {
+        console.error("Error while creating subject:", error);
+        throw error;
+    }
+}
