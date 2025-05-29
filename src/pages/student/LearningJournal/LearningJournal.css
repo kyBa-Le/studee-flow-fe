@@ -18,7 +18,7 @@
 }
 .learning-journal-headerr {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 .learning-journal-title-wrapper {
@@ -74,6 +74,19 @@
   position: relative;
 }
 
+.week-add-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  transition: all 0.5s ease; 
+}
+
+.week-add-button.moving {
+  left: -25%;
+}
+
 .learning-journal-week-selector select {
   background-color: #2CB9E2;
   color:#ffffff;
@@ -85,6 +98,9 @@
   font-size: 16px;
   box-sizing: border-box;
   outline: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 .learning-journal-week-selector option {
   background-color: white; 
@@ -109,6 +125,7 @@
   transform: translateY(-50%);
   color: white;
   pointer-events: none;
+  z-index: 2;
 }
 
 .learning-journal-title {
@@ -244,4 +261,36 @@ input[type="checkbox"]:checked::after {
   justify-content: end;
   width: 100%;
   margin-top: 5px;
+}
+
+.create-week-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.add-week-form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  font-size: 13px;
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
 }

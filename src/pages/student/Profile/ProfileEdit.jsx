@@ -132,7 +132,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
 
   return (
     <div className="profile-edit-container">
-      <form className="profile-edit" onSubmit={handleSubmit}>
+      <form autoComplete="off" className="profile-edit" onSubmit={handleSubmit}>
         <h2 className="profile-edit__title">Edit Profile</h2>
 
         <div className="profile-edit__avatar-upload">
@@ -176,6 +176,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
             <input
               type="password"
               name="current_password"
+              autoComplete="new-password"
               value={localProfile.current_password}
               onChange={handleChange}
               className="profile-edit__input"
