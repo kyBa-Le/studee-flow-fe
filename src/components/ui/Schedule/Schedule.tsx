@@ -10,10 +10,12 @@ import {
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense } from '@syncfusion/ej2-base';
+import { getAllStudentsByClassroomId } from "../../../services/UserService";
+import { AxiosResponse } from "axios";
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
-const Schedule = ({studentId}) => {
+const Schedule = ({studentId, classroomId}) => {
   const [events, setEvents] = useState<any[]>([]);
 
   const transformEvents = (data: any[]) => {
@@ -47,14 +49,32 @@ const Schedule = ({studentId}) => {
     });
   };
 
-  useEffect(() => {
-    getTask(studentId)
-      .then((response) => {
-        const transformedData = transformEvents(response.data);
-        setEvents(transformedData);
-      })
-      .catch((error) => console.error("Error fetching User:", error));
-  }, [studentId]);
+useEffect(() => {
+  const fetchEvents = async () => {
+    try {
+      const taskPromises: Promise<AxiosResponse<any>>[] = [];
+      if (studentId) {
+        taskPromises.push(getTask(studentId));
+      }
+      if (classroomId) {
+        taskPromises.push(getAllStudentsByClassroomId(classroomId));
+      }
+
+      const responses = await Promise.all(taskPromises);
+      
+      const allTransformedEvents = responses
+        .map((res) => transformEvents(res.data))
+        .flat();
+
+      setEvents(allTransformedEvents);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchEvents();
+}, [studentId, classroomId]);
+
 
   const eventSettings: EventSettingsModel = { dataSource: events };
 
