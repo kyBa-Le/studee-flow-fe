@@ -6,6 +6,7 @@ import { Link, useParams, useLocation } from 'react-router-dom';
 import { StudentList } from '../StudentList/StudentList';
 import { SubjectList } from '../SubjectList/SubjectList';
 import "./Classroom.css";
+import goalIcon from "../../../assests/images/goal-icon.png";
 
 export function Classroom() {
   const { classroomId } = useParams();
@@ -18,6 +19,7 @@ export function Classroom() {
   });
   const [loading, setLoading] = useState(true);
   const [isStudentList, setIsStudentList] = useState(true);
+  const totalStudent = data.students.length;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +87,7 @@ export function Classroom() {
               </Link>
               <h2 className="classroom-class-title">{data.className}</h2>
             </div>
-            <div className='classroom-header-navigation'>
+            <div className='classroom-header-navigation d-flex justify-content-between'>
               <div className="classroom-tabs">
                 <button
                   onClick={() => changeLayout(true)}
@@ -101,6 +103,20 @@ export function Classroom() {
                 >
                   Subjects
                 </button>
+              </div>
+              <div className='classroom-info-components' >
+                <div className="student-list-count-wrap cursor-pointer">
+                  <div className="weekly-checkup-block">
+                    <span className="weekly-checkup-icon"><img style={{width: "40px", height: "40px", aspectRatio: 1}} src={goalIcon} /></span>
+                    <span className="content"> Weekly checkup </span>
+                  </div>
+                </div>
+                <div className="student-list-count-wrap">
+                  <div className="student-list-count">
+                    <span className="student-list-count-icon"><i class="fa-solid fa-user-graduate"></i></span>
+                    <span className="count">{totalStudent > 1 ? totalStudent + " students" : totalStudent + " student"} </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
