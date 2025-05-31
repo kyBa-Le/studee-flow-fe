@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getAllStudentsByClassroomId } from '../../../services/UserService';
 import { getStudentProgerssByStudentId } from '../../../services/StudentProgressService';
 import { getAllSubjects } from "../../../services/SubjectService";
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
 import { StudentList } from '../StudentList/StudentList';
 import { SubjectList } from '../SubjectList/SubjectList';
 import "./Classroom.css";
@@ -20,6 +20,7 @@ export function Classroom() {
   const [loading, setLoading] = useState(true);
   const [isStudentList, setIsStudentList] = useState(true);
   const totalStudent = data.students.length;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,7 +106,7 @@ export function Classroom() {
                 </button>
               </div>
               <div className='classroom-info-components' >
-                <div className="student-list-count-wrap cursor-pointer">
+                <div className="student-list-count-wrap cursor-pointer" onClick={() => {navigate(`/teacher/classroom/${classroomId}/deadlines`)}}>
                   <div className="weekly-checkup-block">
                     <span className="weekly-checkup-icon"><img style={{width: "40px", height: "40px", aspectRatio: 1}} src={goalIcon} /></span>
                     <span className="content"> Weekly checkup </span>

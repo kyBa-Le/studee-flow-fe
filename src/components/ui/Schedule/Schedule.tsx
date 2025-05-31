@@ -10,12 +10,13 @@ import {
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense } from '@syncfusion/ej2-base';
-import { getAllStudentsByClassroomId } from "../../../services/UserService";
 import { AxiosResponse } from "axios";
+import { getAllDeadlinesByClassroomId } from "../../../services/ClassroomService";
+import { de } from "date-fns/locale";
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
-const Schedule = ({studentId, classroomId}) => {
+const Schedule = ({studentId, classroomId, deadlines}) => {
   const [events, setEvents] = useState<any[]>([]);
 
   const transformEvents = (data: any[]) => {
@@ -49,6 +50,21 @@ const Schedule = ({studentId, classroomId}) => {
     });
   };
 
+  const transformDeadlineToEvents = (deadlines: any[]) => {
+    return deadlines.map((deadline) => {
+      const [startHour, startMinute] = deadline.started_at.split(':').map(Number);
+      const [endHour, endMinute] = deadline.ended_at.split(':').map(Number);
+      const [year, month, day] = deadline.date.split('-').map(Number);
+  
+      return {
+        Subject: deadline.title,
+        StartTime: new Date(year, month - 1, day, startHour, startMinute),
+        EndTime: new Date(year, month - 1, day, endHour, endMinute),
+        student_id: null,
+      };
+    });
+  };
+
 useEffect(() => {
   const fetchEvents = async () => {
     try {
@@ -57,7 +73,7 @@ useEffect(() => {
         taskPromises.push(getTask(studentId));
       }
       if (classroomId) {
-        taskPromises.push(getAllStudentsByClassroomId(classroomId));
+        taskPromises.push(getAllDeadlinesByClassroomId(classroomId));
       }
 
       const responses = await Promise.all(taskPromises);
@@ -65,7 +81,11 @@ useEffect(() => {
       const allTransformedEvents = responses
         .map((res) => transformEvents(res.data))
         .flat();
-
+        
+      if (deadlines) {
+        const deadlineTransformedEvents = transformDeadlineToEvents(deadlines);
+        allTransformedEvents.push(...deadlineTransformedEvents);
+      }
       setEvents(allTransformedEvents);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -73,10 +93,11 @@ useEffect(() => {
   };
 
   fetchEvents();
-}, [studentId, classroomId]);
+}, [studentId, classroomId, deadlines]);
 
 
-  const eventSettings: EventSettingsModel = { dataSource: events };
+const eventSettings: EventSettingsModel = React.useMemo(() => ({ dataSource: events }), [events]);
+
 
   return (
     <ScheduleComponent
