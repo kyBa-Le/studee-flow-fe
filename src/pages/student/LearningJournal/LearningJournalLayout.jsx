@@ -3,7 +3,7 @@ import "./LearningJournal.css";
 import { WeeklyGoal } from "./WeeklyGoal";
 import { SelfStudy } from "./SelfStudy";
 import { InClass } from "./InClass";
-import { createWeek, getAllWeek } from "../../../services/WeekService";
+import { createWeek, getAllWeek, updateWeek } from "../../../services/WeekService";
 import { useParams } from "react-router-dom";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { UpdateButton } from "../../../components/ui/Button/Update/UpdateButton";
@@ -19,8 +19,15 @@ export function LearningJournalLayout() {
   const [isMoving, setIsMoving] = useState();
   const timeOutRef = useRef(null);
   const [openWeekForm, setOpenWeekForm] = useState(false);
+  const [isSubmited, setIsSubmited] = useState(false)
 
-
+  useEffect(() => {
+    if (currentWeek?.status === "submiting" || currentWeek?.status === "submited") {
+      setIsSubmited(true);
+    } else {
+      setIsSubmited(false);
+    }
+  }, [currentWeek.status]);
 
   useEffect(() => {
     const fetchWeeks = async () => {
@@ -52,6 +59,33 @@ export function LearningJournalLayout() {
       setIsMoving(false);
     }, 1300)
   }
+  
+const hanldeSubmited = async () => {
+  try {
+    await updateWeek(currentWeek.id, {
+      status: "submiting"
+    });
+    setIsSubmited(true);
+    toast.success("Submitted successfully!"); 
+  } catch (error) {
+    toast.error("Submit failed. Please try again!");
+    console.error("Submit error:", error);
+  }
+};
+
+const handleCancelSubmited = async () => {
+  try {
+    await updateWeek(currentWeek.id, {
+      status: "created"
+    });
+    setIsSubmited(false);
+    toast.success("Cancel submit successfully!");
+  } catch (error) {
+    toast.error("Failed to cancel submit. Please try again!");
+    console.error("Cancel submit error:", error);
+  }
+};
+
 
   return (
     <div className="learning-journal-container">
@@ -124,15 +158,17 @@ export function LearningJournalLayout() {
           </div>
 
           <div className="learning-journal-table-container">
-            {isSelfStudy ? <SelfStudy weekId={currentWeek.id} /> : <InClass weekId={currentWeek.id} />}
+            {isSelfStudy ? <SelfStudy weekId={currentWeek.id} isSubmited={isSubmited} /> : <InClass weekId={currentWeek.id} isSubmited={isSubmited} />}
           </div>
         </div>
 
         <div className="learning-journal-submit">
           {
-            !studentId && <button type="submit" className="learning-journal-submit-btn">
-              Submit
-            </button>
+            isSubmited ? !studentId && <button type="submit" className="learning-journal-submit-btn" onClick={handleCancelSubmited}>
+              Cancel Submit
+            </button> :  !studentId && <button type="submit" className="learning-journal-submit-btn" onClick={hanldeSubmited}>
+             Submit
+            </button>  
           }
         </div>
       </div>
