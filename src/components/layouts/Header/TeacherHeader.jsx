@@ -69,7 +69,9 @@ export function TeacherHeader() {
             </div>
           </div>
           <i className="fa-regular fa-circle-question"></i>
-          <i class="fa-regular fa-bell"></i>        
+          <Link to='/teacher/notification' className={`notification-link ${location.pathname === '/teacher/notification' ? 'active' : ''}`}>
+              <i className="fa-regular fa-bell"></i>
+          </Link>     
         </div>
       </div>
     </div>
