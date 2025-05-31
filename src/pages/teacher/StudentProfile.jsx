@@ -78,7 +78,7 @@ export function StudentProfile() {
           </div>
           <div className='student-profile-time-table'>
             <div className='student-profile-time-table-content'>
-              <Schedule studentId={studentId}/>
+              <Schedule classroomId={student.student_classroom_id} studentId={studentId}/>
             </div>
           </div>
           <hr />
