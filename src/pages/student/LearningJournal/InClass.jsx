@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   getInClassJournal,
   createInClassJournal,
@@ -13,7 +13,7 @@ import "./InClass.css";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
 import { useUpdateEffect } from "../../../components/hooks/useUpdateEffect";
-
+import { StudentComment } from "../StudentComment/StudentComment";
 export function InClass({ weekId }) {
   const [subjects, setSubjects] = useState([]);
   const [inClassJournal, setInClassJournal] = useState([]);
@@ -165,7 +165,41 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
     }
   }
 
+  const [showComment, setShowComment] = useState(false);
+  const [commentTarget, setCommentTarget] = useState(null);
+  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
+  
+  const handleRightClick = (e, fieldName) => {
+    e.preventDefault();
+    setCommentTarget(fieldName);
+    setCommentPosition({ x: e.clientX, y: e.clientY });
+    setShowComment(true);
+  };
+
+  const handleCommentSubmit = () => {
+    setShowComment(false);
+  };
+
+   const commentRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (commentRef.current && !commentRef.current.contains(event.target)) {
+        setShowComment(false);
+      }
+    }
+
+    if (showComment) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showComment]);
+
   return (
+    <>
     <form className="learning-journal-row in-class">
       <div className="learning-journal-cell">
         <input
@@ -197,6 +231,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'lesson')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -218,6 +253,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'difficulties')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -227,6 +263,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'plan')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -240,7 +277,25 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           <option value={0}>No</option>
         </select>
       </div>
+      {showComment && (
+          <div 
+          ref={commentRef}
+          style={{
+            position: 'absolute',
+            left: `${commentPosition.x}px`,
+            top: `${commentPosition.y}px`,
+            zIndex: 1000
+          }}>
+            <StudentComment 
+              targetField={commentTarget} 
+              onClose={handleCommentSubmit}
+              journalId={formData.id}
+              journalType="in_class"
+            />
+          </div>
+        )}
     </form>
+  </>
   );
 }
 
@@ -277,7 +332,41 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
     }
   }
 
+  const [showComment, setShowComment] = useState(false);
+  const [commentTarget, setCommentTarget] = useState(null);
+  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
+
+  const handleRightClick = (e, fieldName) => {
+    e.preventDefault();
+    setCommentTarget(fieldName);
+    setCommentPosition({ x: e.clientX, y: e.clientY });
+    setShowComment(true);
+  };
+
+  const handleCommentSubmit = () => {
+    setShowComment(false);
+  };
+
+  const commentRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (commentRef.current && !commentRef.current.contains(event.target)) {
+        setShowComment(false);
+      }
+    }
+
+    if (showComment) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showComment]);
+
   return (
+    <>
     <form className="learning-journal-row in-class">
       <div className="learning-journal-cell">
         <input
@@ -309,6 +398,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'lesson')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -330,6 +420,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'difficulties')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -339,6 +430,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          onContextMenu={(e) => handleRightClick(e, 'plan')}
         />
       </div>
       <div className="learning-journal-cell">
@@ -352,6 +444,24 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           <option value={0}>No</option>
         </select>
       </div>
+      {showComment && (
+          <div 
+          ref={commentRef}
+          style={{
+            position: 'absolute',
+            left: `${commentPosition.x}px`,
+            top: `${commentPosition.y}px`,
+            zIndex: 1000
+          }}>
+            <StudentComment 
+              targetField={commentTarget} 
+              onClose={handleCommentSubmit}
+              journalId={formData.id} 
+              journalType="in_class"
+            />
+          </div>
+        )}
     </form>
+  </>
   );
 }
