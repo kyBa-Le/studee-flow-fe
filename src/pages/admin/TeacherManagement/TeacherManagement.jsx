@@ -80,7 +80,7 @@ export function TeacherManagement() {
 
             {/* Add button and search box */}
             <div className="add-and-search-container">
-                <button id="add-button" onClick={()=>{toggleAddTeacherForm()}}>+ Add</button>
+                <button id="add-btn-teacher" onClick={()=>{toggleAddTeacherForm()}}>+ Add</button>
                 <form id="search-box">
                     <input type="text" placeholder="Search ..." />
                     <div id="search-icon">
@@ -142,11 +142,11 @@ export function TeacherManagement() {
                 {/* Pagination */}
                 <div className="pagination-place">
                     <div className="pagination-container">
-                        <i className="fa-solid fa-angles-left" onClick={() => handleArrowClick(-3)}></i>
+                        <i className="fa-solid fa-chevron-left" onClick={() => handleArrowClick(-3)}></i>
                         <div className="pagination-buttons">
                             {renderPaginationButtons()}
                         </div>
-                        <i className="fa-solid fa-angles-right" onClick={() => handleArrowClick(3)}></i>
+                        <i className="fa-solid fa-chevron-right" onClick={() => handleArrowClick(3)}></i>
                     </div>
                 </div>
             </div>

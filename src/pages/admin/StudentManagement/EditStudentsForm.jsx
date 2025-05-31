@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, data } from 'react-router-dom';
 import { getAllClassrooms, updateStudent } from '../../../services/UserService';
 import './EditStudentsForm.css';
+import { toast } from "react-toastify";
 
 export function EditStudentForm() {
   const navigate = useNavigate();
@@ -52,11 +53,11 @@ export function EditStudentForm() {
       };
 
       await updateStudent(updatedStudent);
-      alert('Student updated successfully!');
+      toast.success('Student updated successfully!');
       navigate('/admin/student-management');
     } catch (error) {
       console.error('Update failed:', data);
-      alert('Failed to update student!');
+      toast.error('Failed to update student!');
     } finally {
       setLoading(false);
     }

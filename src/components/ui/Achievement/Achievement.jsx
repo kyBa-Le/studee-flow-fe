@@ -56,7 +56,7 @@ export function Achievement({ achievements }) {
                       <div className="achievement-blog" key={idx}>
                         <img
                           className="certificate-img"
-                          src={Certificate}
+                          src={achievement.image_link}
                           alt="certificate"
                         />
                         <div className="achievement-blog-right">
@@ -71,9 +71,6 @@ export function Achievement({ achievements }) {
                               Semester {achievement.semester}
                             </div>
                           </div>
-                          <button className="view-certificate-btn">
-                            View Certificate
-                          </button>
                         </div>
                       </div>
                     ))}

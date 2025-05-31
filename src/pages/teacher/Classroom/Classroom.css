@@ -1,7 +1,8 @@
 .classroom-container {
-    background-color: #f5f5f56c;
+    background-color: rgb(245, 245, 245);
     padding: 20px;
     box-sizing: border-box;
+    padding-top: 95px;
 }
 
 .classroom-content {
@@ -13,7 +14,7 @@
 .classroom-header-top-row {
     display: flex;
     flex-direction: column;
-    padding: 0 0 40px 0;
+    padding: 0 0 20px 0;
 }
 
 .classroom-header-back-to-subject {
@@ -25,7 +26,7 @@
 }
 
 .back-button {
-  font-size: 40px;
+  font-size: 35px;
   color:#ff9900;
 }
 
@@ -73,4 +74,43 @@
     background-color: rgba(255, 153, 0, 0.1);
 }
 
+.student-list-count-wrap {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 10px 25px;
+}
 
+.classroom-info-components {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+  gap: 20px;
+}
+
+.student-list-count-icon {
+  margin-right: 15px;
+  color: #ff9900;
+  font-size: 18px;
+}
+
+.student-list-count .count {
+  color: #747373;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.weekly-checkup-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weekly-checkup-block .content {
+  font-size: 16px;
+  color: #747373;
+  font-weight: 600;
+}

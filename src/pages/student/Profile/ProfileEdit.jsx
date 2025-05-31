@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ProfileEdit.css';
+import { CancelButton } from "../../../components/ui/Button/Cancel/CancelButton";
+import { UpdateButton } from "../../../components/ui/Button/Update/UpdateButton";
 
 export default function ProfileEdit({ profile, onSave, onCancel, errorMessage }) {
   const [localProfile, setLocalProfile] = useState({
@@ -130,7 +132,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
 
   return (
     <div className="profile-edit-container">
-      <form className="profile-edit" onSubmit={handleSubmit}>
+      <form autoComplete="off" className="profile-edit" onSubmit={handleSubmit}>
         <h2 className="profile-edit__title">Edit Profile</h2>
 
         <div className="profile-edit__avatar-upload">
@@ -147,11 +149,11 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
             {loading ? (
               <p>Uploading...</p>
             ) : (
-              <img
-                src={localProfile.avatar_link || "https://via.placeholder.com/120?text=Avatar"}
-                alt="Avatar"
-                className="profile-edit__avatar-image"
-              />
+               <img
+                  src={localProfile.avatar_link || "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"}
+                  alt="Avatar"
+                  className="profile-edit__avatar-image"
+               />
             )}
           </div>
         </div>
@@ -174,6 +176,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
             <input
               type="password"
               name="current_password"
+              autoComplete="new-password"
               value={localProfile.current_password}
               onChange={handleChange}
               className="profile-edit__input"
@@ -187,7 +190,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
               value={localProfile.email}
               onChange={handleChange}
               className="profile-edit__input"
-              required
+              readOnly
             />
           </div>
         </div>
@@ -236,7 +239,7 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
               value={localProfile.className}
               onChange={handleChange}
               className="profile-edit__input"
-              required
+              disabled
             >
               <option value="PNV26A">PNV26A</option>
               <option value="PNV26B">PNV26B</option>
@@ -247,21 +250,21 @@ export default function ProfileEdit({ profile, onSave, onCancel, errorMessage })
         {localError && <p className="profile-edit__error">{localError}</p>}
 
         <div className="profile-edit__buttons">
-          <button
+          <CancelButton
             type="button"
             className="profile-edit__button profile-edit__button--cancel"
             onClick={onCancel}
             disabled={submitting}
           >
             Cancel
-          </button>
-          <button
+          </CancelButton>
+          <UpdateButton
             type="submit"
             className="profile-edit__button profile-edit__button--update"
             disabled={submitting}
           >
             {submitting ? 'Updating...' : 'Update'}
-          </button>
+          </UpdateButton>
         </div>
       </form>
     </div>

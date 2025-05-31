@@ -10,10 +10,11 @@ import {
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense } from '@syncfusion/ej2-base';
+import { getAllDeadlinesByClassroomId } from "../../../services/DeadlineService";
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
-const Schedule = () => {
+const Schedule = ({studentId, classroomId, deadlines}) => {
   const [events, setEvents] = useState<any[]>([]);
 
   const transformEvents = (data: any[]) => {
@@ -42,21 +43,64 @@ const Schedule = () => {
           parseInt(endTime[0]),
           parseInt(endTime[1])
         ),
-        student_id: event.student_id,
+        student_id: studentId,
+      };
+    });
+  };
+
+  const transformDeadlineToEvents = (deadlines: any[]) => {
+    return deadlines.map((deadline) => {
+      const [startHour, startMinute] = deadline.started_at.split(':').map(Number);
+      const [endHour, endMinute] = deadline.ended_at.split(':').map(Number);
+      const [year, month, day] = deadline.date.split('-').map(Number);
+  
+      return {
+        Subject: deadline.title,
+        StartTime: new Date(year, month - 1, day, startHour, startMinute),
+        EndTime: new Date(year, month - 1, day, endHour, endMinute),
+        student_id: null,
       };
     });
   };
 
   useEffect(() => {
-    getTask()
-      .then((response) => {
-        const transformedData = transformEvents(response.data);
-        setEvents(transformedData);
-      })
-      .catch((error) => console.error("Error fetching User:", error));
-  }, []);
+    const fetchEvents = async () => {
+      try {
+        const transformedEvents: any[] = [];
+  
+        // Nếu có studentId -> lấy task và convert
+        if (studentId) {
+          const taskRes = await getTask(studentId);
+          const taskEvents = transformEvents(taskRes.data); // task → transformEvents
+          transformedEvents.push(...taskEvents);
+        }
+  
+        // Nếu có classroomId -> lấy deadlines và convert
+        if (classroomId) {
+          const deadlineRes = await getAllDeadlinesByClassroomId(classroomId);
+          const classDeadlines = transformDeadlineToEvents(deadlineRes.data); // deadline → transformDeadlineToEvents
+          transformedEvents.push(...classDeadlines);
+        }
+  
+        // Nếu props.deadlines được truyền riêng → convert tiếp
+        if (deadlines) {
+          const extraDeadlines = transformDeadlineToEvents(deadlines);
+          transformedEvents.push(...extraDeadlines);
+        }
+  
+        setEvents(transformedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+  
+    fetchEvents();
+  }, [studentId, classroomId, deadlines]);
+  
 
-  const eventSettings: EventSettingsModel = { dataSource: events };
+
+const eventSettings: EventSettingsModel = React.useMemo(() => ({ dataSource: events }), [events]);
+
 
   return (
     <ScheduleComponent

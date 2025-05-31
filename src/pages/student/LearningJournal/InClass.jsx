@@ -13,15 +13,17 @@ import "./InClass.css";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
 import { useUpdateEffect } from "../../../components/hooks/useUpdateEffect";
+import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 import { StudentComment } from "../StudentComment/StudentComment";
-export function InClass({ weekId }) {
+export function InClass({ weekId, isSubmited }) {
   const [subjects, setSubjects] = useState([]);
   const [inClassJournal, setInClassJournal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [extraForms, setExtraForms] = useState([]);
   const {studentId} = useParams();
+  const isReadOnly = !!studentId;
 
-  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
+  const cellStyle = { width: "100%", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
 
   useEffect(() => {
@@ -87,6 +89,8 @@ export function InClass({ weekId }) {
                   subjects={subjects}
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
+                  isReadOnly={isReadOnly}
+                  isSubmited={isSubmited}
                 />
               ))
             }
@@ -99,6 +103,8 @@ export function InClass({ weekId }) {
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
                   weekId={weekId}
+                  isReadOnly={isReadOnly}
+                  isSubmited={isSubmited}
                 />
               ))
             }
@@ -109,17 +115,20 @@ export function InClass({ weekId }) {
                 cellStyle={cellStyle}
                 selectStyle={selectStyle}
                 weekId={weekId}
+                isReadOnly={isReadOnly}
+                isSubmited={isSubmited}
               />
             )}
           </>
         )}
       </div>
-      <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
+      <div className="add-form-button-places" >{!isReadOnly && <AddLearningJournalFormButton onClick={handleAddForm} />}</div>
     </div>
   );
 }
 
-function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
+function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId, isReadOnly, isSubmited }) {
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     date: null,
@@ -138,8 +147,10 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
 
   useUpdateEffect(() => {
-    if (!formData.date) return;
-    triggerAutoSubmit();
+    if (isUserUpdate) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleChange(e) {
@@ -148,6 +159,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
       ...prev,
       [name]: name === "is_problem_solved" ? parseInt(value) : value,
     }));
+    setIsUserUpdate(true)
   }
 
   async function handleAutoCreate() {
@@ -208,6 +220,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.date}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
         />
       </div>
       <div className="learning-journal-cell">
@@ -216,6 +229,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleChange}
+          disabled={isReadOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -225,12 +239,13 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
         </select>
       </div>
       <div className="learning-journal-cell">
-        <textarea
+        <textarea onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'lesson')}
         />
       </div>
@@ -240,6 +255,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.self_assessment}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly || isSubmited}
         >
           <option value="1">1</option>
           <option value="2">2</option>
@@ -248,21 +264,25 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="difficulties"
           rows="3"
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'difficulties')}
         />
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="plan"
           rows="3"
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'plan')}
         />
       </div>
@@ -272,6 +292,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.is_problem_solved}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly || isSubmited}
         >
           <option value={1}>Yes</option>
           <option value={0}>No</option>
@@ -300,7 +321,7 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId }) {
 }
 
 
-function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
+function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly, isSubmited }) {
   const [formData, setFormData] = useState(initialData);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate, 1500);
   const [isUserUpdate, setIsUserUpdate] = useState(false);
@@ -375,6 +396,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData?.date ? formData.date.slice(0, 10) : ""}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
         />
       </div>
       <div className="learning-journal-cell">
@@ -383,6 +405,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleChange}
+          disabled={isReadOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -393,11 +416,13 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="lesson"
           rows="3"
           style={cellStyle}
           value={formData.lesson}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'lesson')}
         />
       </div>
@@ -407,6 +432,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.self_assessment}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly || isSubmited}
         >
           <option value="1">1</option>
           <option value="2">2</option>
@@ -415,21 +441,25 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="difficulties"
           rows="3"
           style={cellStyle}
           value={formData.difficulties}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'difficulties')}
         />
       </div>
       <div className="learning-journal-cell">
         <textarea
+          onInput={(e) => autoResize(e)}
           name="plan"
           rows="3"
           style={cellStyle}
           value={formData.plan}
           onChange={handleChange}
+          readOnly={isReadOnly || isSubmited}
           onContextMenu={(e) => handleRightClick(e, 'plan')}
         />
       </div>
@@ -439,6 +469,7 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle }) {
           value={formData.is_problem_solved}
           onChange={handleChange}
           style={selectStyle}
+          disabled={isReadOnly || isSubmited}
         >
           <option value={1}>Yes</option>
           <option value={0}>No</option>

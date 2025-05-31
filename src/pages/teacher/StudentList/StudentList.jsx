@@ -4,12 +4,7 @@ import "./StudentList.css";
 export function StudentList({students, progressData, handleChangeFeedback}) {
     return (
         <div className='student-list'>
-            <div className="student-list-count-wrap">
-                <div className="student-list-count">
-                    <span className="student-list-count-icon"><i class="fa-solid fa-user-graduate"></i></span>
-                    <span className="count">{students.length > 1 ? students.length + " students" : students.length + " student" } </span>
-                </div>
-            </div>
+            
             <div className='student-list-body'>
                 <div className='student-list-body-header'>
                     <h2 className='student-list-body-header-title'>All Students</h2>
@@ -47,7 +42,7 @@ export function StudentList({students, progressData, handleChangeFeedback}) {
                         return (
                         <tr key={index}>
                             <td className="student-list-image-cell">
-                            <img src={student.avatar_link} alt="student" className="student-list-avatar" />
+                            <img  src={student.avatar_link || "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"} alt="Avatar" className="student-list-avatar" />
                             </td>
                             <td className="student-list-name-cell">{student.full_name}</td>
                             <td>

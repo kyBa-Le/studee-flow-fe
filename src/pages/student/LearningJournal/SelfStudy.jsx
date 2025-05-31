@@ -7,21 +7,23 @@ import { useDebouncedSubmit } from "../../../components/hooks/useDebounceSubmit"
 import { toast } from "react-toastify";
 import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddLearningJournalFormButton";
 import { useParams } from "react-router-dom";
+import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 
-export function SelfStudy({ weekId }) {
+export function SelfStudy({ weekId, isSubmited }) {
   const [subjects, setSubjects] = useState([]);
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [extraForms, setExtraForms] = useState([]);
-  const cellStyle = { width: "100%", resize: "none", outline: "none", height: "100%" };
+  const cellStyle = { width: "100%", outline: "none", height: "100%" };
   const selectStyle = { width: "100%", outline: "none" };
   const { studentId } = useParams();
+  const isReadOnly = !!studentId;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const student = (await(studentId ? getStudentById(studentId) : getUser())).data;
+        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
         const classroomId = student.student_classroom_id;
 
         const subjectsResponse = await getAllSubjects(classroomId);
@@ -32,7 +34,7 @@ export function SelfStudy({ weekId }) {
           setSelfStudies(selfStudies.data);
         }
       } catch (error) {
-        toast.error("Fail to load data")
+        toast.error("Fail to load data");
         console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
@@ -40,11 +42,11 @@ export function SelfStudy({ weekId }) {
     };
 
     fetchData();
-  }, [weekId]);
+  }, [weekId, studentId]);
 
   const handleAddForm = () => {
     setExtraForms((prev) => [...prev, { id: Date.now() }]);
-  }
+  };
 
   return (
     <div className="learning-journal-table-container">
@@ -53,72 +55,76 @@ export function SelfStudy({ weekId }) {
         <div className="learning-journal-row header-row">
           <div className="learning-journal-cell header">Date</div>
           <div className="learning-journal-cell header">Skills/Module</div>
-          <div className="learning-journal-cell header">
-            My lesson - What did I learn today?
-          </div>
+          <div className="learning-journal-cell header">My lesson - What did I learn today?</div>
           <div className="learning-journal-cell header">Time allocation</div>
           <div className="learning-journal-cell header">Learning resources</div>
-          <div className="learning-journal-cell header">
-            Learning activities
-          </div>
+          <div className="learning-journal-cell header">Learning activities</div>
           <div className="learning-journal-cell header">Concentration</div>
           <div className="learning-journal-cell header">Plan & follow plan</div>
-          <div className="learning-journal-cell header">
-            Evaluation of my work
-          </div>
-          <div className="learning-journal-cell header">
-            Reinforcing learning
-          </div>
+          <div className="learning-journal-cell header">Evaluation of my work</div>
+          <div className="learning-journal-cell header">Reinforcing learning</div>
           <div className="learning-journal-cell header">Notes</div>
         </div>
 
         {loading ? (
           <LoadingData content="Loading ..." />
         ) : (
-            <>
-              {selfStudies.map((study, index) => (
-                <div className="journal-form-container" key={index}>
-                  <SelfStudyForm
-                    subjects={subjects}
-                    study={study}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              ))}
+          <>
+            {selfStudies.map((study, index) => (
+              <div className="journal-form-container" key={index}>
+                <SelfStudyForm
+                  subjects={subjects}
+                  study={study}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                  readOnly={isReadOnly}
+                  isSubmited={isSubmited}
+                />
+              </div>
+            ))}
 
-              {extraForms.map((form) => (
-                <div className="journal-form-container" key={form.id}>
-                  <EmptyForm
-                    weekId={weekId}
-                    subjects={subjects}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              ))}
+            {!isReadOnly && extraForms.map((form) => (
+              <div className="journal-form-container" key={form.id}>
+                <EmptyForm
+                  weekId={weekId}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                  isSubmited={isSubmited}
+                />
+              </div>
+            ))}
 
-              {selfStudies.length === 0 && extraForms.length === 0 && (
-                <div>
-                  <EmptyForm
-                    weekId={weekId}
-                    subjects={subjects}
-                    cellStyle={cellStyle}
-                    selectStyle={selectStyle}
-                  />
-                </div>
-              )}
-            </>
+            {!isReadOnly && selfStudies.length === 0 && extraForms.length === 0 && (
+              <div>
+                <EmptyForm
+                  weekId={weekId}
+                  subjects={subjects}
+                  cellStyle={cellStyle}
+                  selectStyle={selectStyle}
+                  isSubmited={isSubmited}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
-      <div className="add-form-button-places" ><AddLearningJournalFormButton onClick={handleAddForm} /></div>
+
+      {!isReadOnly && (
+        <div className="add-form-button-places">
+          <AddLearningJournalFormButton onClick={handleAddForm} />
+        </div>
+      )}
     </div>
   );
 }
 
-export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
-  const [isNew, setIsNew] = useState(true)
+
+export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly = false, isSubmited }) {
+  const [isNew, setIsNew] = useState(true);
   const [id, setId] = useState(null);
+  const [isUserUpdate, setIsUserUpdate] = useState(false);
+
   const initialFormData = {
     id: null,
     student_id: null,
@@ -139,49 +145,46 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
   const [formData, setFormData] = useState(initialFormData);
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
 
-
   useEffect(() => {
-    if (!formData.date) return;
-    triggerAutoSubmit();
+    if (isUserUpdate && !readOnly) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleOnChange(e) {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
+    setIsUserUpdate(true);
   }
 
   function handlePlanChange(e) {
     const isFollowPlan = e.target.value === "true";
-
     setFormData((prev) => ({
       ...prev,
       is_follow_plan: isFollowPlan
     }));
+    setIsUserUpdate(true);
   }
-
 
   async function handleAutoCreate() {
     try {
       const response = await (isNew ? createSelfStudyJournal(formData) : updateSelfStudyJournal(id, formData));
       if (isNew) {
         setIsNew(false);
-        const newId = response.data.selfStudyId;
-        setId(newId);
-        toast.success("New learning journal created.")
+        setId(response.data.selfStudyId);
+        toast.success("New learning journal created.");
       }
     } catch (error) {
       toast.error("Please enter journal again, some error appeared!");
     }
-
   }
 
-
   return (
-    <form className="learning-journal-row" >
+    <form className="learning-journal-row">
       <div className="learning-journal-cell input-date">
         <input
           type="date"
@@ -189,6 +192,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
           style={cellStyle}
           value={formData.date}
           onChange={handleOnChange}
+          readOnly={readOnly || isSubmited}
         />
       </div>
 
@@ -198,6 +202,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleOnChange}
+          disabled={readOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -207,45 +212,19 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
         </select>
       </div>
 
-      <div className="learning-journal-cell">
-        <textarea
-          name="lesson"
-          rows="3"
-          style={cellStyle}
-          value={formData.lesson}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="time_allocation"
-          rows="3"
-          style={cellStyle}
-          value={formData.time_allocation}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="learning_resources"
-          rows="3"
-          style={cellStyle}
-          value={formData.learning_resources}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="learning_activities"
-          rows="3"
-          style={cellStyle}
-          value={formData.learning_activities}
-          onChange={handleOnChange}
-        />
-      </div>
+      {["lesson", "time_allocation", "learning_resources", "learning_activities", "evaluation", "reinforcing_learning", "notes"].map((field) => (
+        <div key={field} className="learning-journal-cell">
+          <textarea
+            onInput={(e) => autoResize(e)}
+            name={field}
+            rows="3"
+            style={cellStyle}
+            value={formData[field]}
+            onChange={handleOnChange}
+            readOnly={readOnly || isSubmited}
+          />
+        </div>
+      ))}
 
       <div className="learning-journal-cell">
         <select
@@ -253,6 +232,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.concentration}
           style={selectStyle}
           onChange={handleOnChange}
+          disabled={readOnly || isSubmited}
         >
           <option value="1">Not sure</option>
           <option value="0">No</option>
@@ -266,86 +246,50 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId }) {
           value={formData.is_follow_plan ? "true" : "false"}
           style={selectStyle}
           onChange={handlePlanChange}
+          disabled={readOnly || isSubmited}
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
       </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="evaluation"
-          rows="3"
-          style={cellStyle}
-          value={formData.evaluation}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="reinforcing_learning"
-          rows="3"
-          style={cellStyle}
-          value={formData.reinforcing_learning}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="notes"
-          rows="3"
-          style={cellStyle}
-          value={formData.notes}
-          onChange={handleOnChange}
-        />
-      </div>
     </form>
-
   );
 }
 
-export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
+
+export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnly = false, isSubmited }) {
   const [formData, setFormData] = useState(study);
   const debounceTimer = useRef(null);
   const [isUserUpdate, setIsUserUpdate] = useState(false);
+  const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate);
 
-  // Debounced submit logic
-  const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate)
-
-
-  // Auto submit after formData changed
   useEffect(() => {
-      if(isUserUpdate) {
-        triggerAutoSubmit();
-        setIsUserUpdate(false);
-      }
+    if (isUserUpdate && !readOnly) {
+      triggerAutoSubmit();
+      setIsUserUpdate(false);
+    }
   }, [formData]);
 
   function handleOnChange(e) {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
     setIsUserUpdate(true);
   }
 
   function handlePlanChange(e) {
     const isFollowPlan = e.target.value === "true";
-
     setFormData((prev) => ({
       ...prev,
-      is_follow_plan: isFollowPlan,
+      is_follow_plan: isFollowPlan
     }));
     setIsUserUpdate(true);
   }
 
-
   async function handleAutoUpdate() {
-    const response = await updateSelfStudyJournal(formData.id, formData);
+    await updateSelfStudyJournal(formData.id, formData);
   }
 
   useEffect(() => {
@@ -361,6 +305,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
           style={cellStyle}
           value={formData.date ? formData.date.slice(0, 10) : ""}
           onChange={handleOnChange}
+          readOnly={readOnly || isSubmited}
         />
       </div>
 
@@ -370,6 +315,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleOnChange}
+          disabled={readOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -379,45 +325,19 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
         </select>
       </div>
 
-      <div className="learning-journal-cell">
-        <textarea
-          name="lesson"
-          rows="3"
-          style={cellStyle}
-          value={formData.lesson}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="time_allocation"
-          rows="3"
-          style={cellStyle}
-          value={formData.time_allocation}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="learning_resources"
-          rows="3"
-          style={cellStyle}
-          value={formData.learning_resources}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="learning_activities"
-          rows="3"
-          style={cellStyle}
-          value={formData.learning_activities}
-          onChange={handleOnChange}
-        />
-      </div>
+      {["lesson", "time_allocation", "learning_resources", "learning_activities", "evaluation", "reinforcing_learning", "notes"].map((field) => (
+        <div key={field} className="learning-journal-cell">
+          <textarea
+            onInput={(e) => autoResize(e)}
+            name={field}
+            rows="3"
+            style={cellStyle}
+            value={formData[field]}
+            onChange={handleOnChange}
+            readOnly={readOnly || isSubmited}
+          />
+        </div>
+      ))}
 
       <div className="learning-journal-cell">
         <select
@@ -425,6 +345,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
           value={formData.concentration}
           style={selectStyle}
           onChange={handleOnChange}
+          disabled={readOnly || isSubmited}
         >
           <option value="1">Not sure</option>
           <option value="0">No</option>
@@ -438,41 +359,13 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle }) {
           value={formData.is_follow_plan ? "true" : "false"}
           style={selectStyle}
           onChange={handlePlanChange}
+          disabled={readOnly || isSubmited}
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
       </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="evaluation"
-          rows="3"
-          style={cellStyle}
-          value={formData.evaluation}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="reinforcing_learning"
-          rows="3"
-          style={cellStyle}
-          value={formData.reinforcing_learning}
-          onChange={handleOnChange}
-        />
-      </div>
-
-      <div className="learning-journal-cell">
-        <textarea
-          name="notes"
-          rows="3"
-          style={cellStyle}
-          value={formData.notes}
-          onChange={handleOnChange}
-        />
-      </div>
     </form>
   );
 }
+

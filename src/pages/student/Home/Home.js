@@ -6,6 +6,7 @@ import SmileBlue from '../../../assests/images/smile_icon_blue.png';
 import Schedule from '../../../components/ui/Schedule/Schedule.tsx';
 import { getUser } from '../../../services/UserService';
 import {Achievement} from '../../../components/ui/Achievement/Achievement.jsx';
+import { Link} from "react-router-dom";
 import "./Home.css";
 
 function Home() {
@@ -36,7 +37,7 @@ function Home() {
             <p className='banner-text'>
               A platform that helps students track their learning journey, set clear goals, and visualize progress every <br /> step of the way.
             </p>
-            <button className='banner-btn-goal'>LET'S MAKE YOUR GOALS</button>
+             <Link to='/student/semester-goal'><button className='banner-btn-goal'>LET'S MAKE YOUR GOALS</button></Link>
           </div>
         </div>
         {/* Main content */}
@@ -49,7 +50,7 @@ function Home() {
             {/* Time table */}
             <div className='time-table'>
               <div className='time-table-content'>
-                <Schedule/>
+                <Schedule classroomId={user.student_classroom_id} studentId={user.id}/>
               </div>
             </div>
             <div className='nav-blog-student'>
@@ -61,7 +62,7 @@ function Home() {
                       <i className="fa-solid fa-bullseye"></i> Goals
                     </div>
                     <div className='blog-text-content goal-text-content'>Complete 5 chapters of Java OOP</div>
-                    <button className='goal-btn'>EDIT GOALS</button>
+                    <Link to='/student/learning-journal'><button className='goal-btn'>EDIT GOALS</button></Link>
                   </div>
                   <img className='goal-blog-right' src={SmileGreen} alt='Green Smile' />
                 </div>
