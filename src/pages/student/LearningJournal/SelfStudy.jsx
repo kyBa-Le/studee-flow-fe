@@ -9,7 +9,7 @@ import { AddLearningJournalFormButton } from "../../../components/ui/Button/AddL
 import { useParams } from "react-router-dom";
 import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 
-export function SelfStudy({ weekId }) {
+export function SelfStudy({ weekId, isSubmited }) {
   const [subjects, setSubjects] = useState([]);
   const [selfStudies, setSelfStudies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,6 +78,7 @@ export function SelfStudy({ weekId }) {
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
                   readOnly={isReadOnly}
+                  isSubmited={isSubmited}
                 />
               </div>
             ))}
@@ -89,6 +90,7 @@ export function SelfStudy({ weekId }) {
                   subjects={subjects}
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
+                  isSubmited={isSubmited}
                 />
               </div>
             ))}
@@ -100,6 +102,7 @@ export function SelfStudy({ weekId }) {
                   subjects={subjects}
                   cellStyle={cellStyle}
                   selectStyle={selectStyle}
+                  isSubmited={isSubmited}
                 />
               </div>
             )}
@@ -117,7 +120,7 @@ export function SelfStudy({ weekId }) {
 }
 
 
-export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly = false }) {
+export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly = false, isSubmited }) {
   const [isNew, setIsNew] = useState(true);
   const [id, setId] = useState(null);
   const [isUserUpdate, setIsUserUpdate] = useState(false);
@@ -189,7 +192,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
           style={cellStyle}
           value={formData.date}
           onChange={handleOnChange}
-          readOnly={readOnly}
+          readOnly={readOnly || isSubmited}
         />
       </div>
 
@@ -199,7 +202,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleOnChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -218,7 +221,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
             style={cellStyle}
             value={formData[field]}
             onChange={handleOnChange}
-            readOnly={readOnly}
+            readOnly={readOnly || isSubmited}
           />
         </div>
       ))}
@@ -229,7 +232,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
           value={formData.concentration}
           style={selectStyle}
           onChange={handleOnChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           <option value="1">Not sure</option>
           <option value="0">No</option>
@@ -243,7 +246,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
           value={formData.is_follow_plan ? "true" : "false"}
           style={selectStyle}
           onChange={handlePlanChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
@@ -254,7 +257,7 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
 }
 
 
-export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnly = false }) {
+export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnly = false, isSubmited }) {
   const [formData, setFormData] = useState(study);
   const debounceTimer = useRef(null);
   const [isUserUpdate, setIsUserUpdate] = useState(false);
@@ -302,7 +305,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnl
           style={cellStyle}
           value={formData.date ? formData.date.slice(0, 10) : ""}
           onChange={handleOnChange}
-          readOnly={readOnly}
+          readOnly={readOnly || isSubmited}
         />
       </div>
 
@@ -312,7 +315,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnl
           value={formData.subject_id}
           style={selectStyle}
           onChange={handleOnChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           {subjects.map((subject) => (
             <option key={subject.id} value={subject.id}>
@@ -331,7 +334,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnl
             style={cellStyle}
             value={formData[field]}
             onChange={handleOnChange}
-            readOnly={readOnly}
+            readOnly={readOnly || isSubmited}
           />
         </div>
       ))}
@@ -342,7 +345,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnl
           value={formData.concentration}
           style={selectStyle}
           onChange={handleOnChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           <option value="1">Not sure</option>
           <option value="0">No</option>
@@ -356,7 +359,7 @@ export function SelfStudyForm({ subjects, study, cellStyle, selectStyle, readOnl
           value={formData.is_follow_plan ? "true" : "false"}
           style={selectStyle}
           onChange={handlePlanChange}
-          disabled={readOnly}
+          disabled={readOnly || isSubmited}
         >
           <option value="true">Yes</option>
           <option value="false">No</option>

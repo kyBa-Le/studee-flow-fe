@@ -19,3 +19,13 @@ export async function createWeek(weekData) {
         throw error;
     }
 }
+
+export async function updateWeek(weekId, weekData) {
+    try {
+        const response = await apiClient.put(`/api/student/weeks/${weekId}`, weekData);
+        return response;
+    } catch (error) {
+        console.error('Failed to create week:', error);
+        throw error;
+    }
+}
