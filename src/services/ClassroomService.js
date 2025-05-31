@@ -72,11 +72,3 @@ export async function getClassroomByClassroomId(id) {
       return [];
     }
 }
-
-export async function getAllDeadlinesByClassroomId(id) {
-  try {
-    return await apiClient.get(`/api/classrooms/${id}/deadlines`);
-  } catch (error) {
-    throw error;
-  }
-}

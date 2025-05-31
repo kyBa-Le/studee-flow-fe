@@ -70,7 +70,7 @@ export function ClassroomDeadline() {
         {loading ? (
           <p>Loading...</p>
         ) : (
-          <Schedule  deadlines={deadlines} />
+          <Schedule classroomId={classroomId} deadlines={deadlines} />
         )}
       </div>
       {isShowForm && <div className="form-create-timer-overlay">

@@ -9,3 +9,12 @@ export async function createDeadlinesByClassroomId(classroomId, formData) {
     throw error;
   }
 }
+
+
+export async function getAllDeadlinesByClassroomId(id) {
+  try {
+    return await apiClient.get(`/api/classrooms/${id}/deadlines`);
+  } catch (error) {
+    throw error;
+  }
+}

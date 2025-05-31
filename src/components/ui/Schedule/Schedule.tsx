@@ -10,9 +10,7 @@ import {
   EventSettingsModel,
 } from "@syncfusion/ej2-react-schedule";
 import { registerLicense } from '@syncfusion/ej2-base';
-import { AxiosResponse } from "axios";
-import { getAllDeadlinesByClassroomId } from "../../../services/ClassroomService";
-import { de } from "date-fns/locale";
+import { getAllDeadlinesByClassroomId } from "../../../services/DeadlineService";
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NNaF5cXmBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdmWXpedXRTRWBfWUNzV0pWYUA=');
 
@@ -65,35 +63,40 @@ const Schedule = ({studentId, classroomId, deadlines}) => {
     });
   };
 
-useEffect(() => {
-  const fetchEvents = async () => {
-    try {
-      const taskPromises: Promise<AxiosResponse<any>>[] = [];
-      if (studentId) {
-        taskPromises.push(getTask(studentId));
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const transformedEvents: any[] = [];
+  
+        // Nếu có studentId -> lấy task và convert
+        if (studentId) {
+          const taskRes = await getTask(studentId);
+          const taskEvents = transformEvents(taskRes.data); // task → transformEvents
+          transformedEvents.push(...taskEvents);
+        }
+  
+        // Nếu có classroomId -> lấy deadlines và convert
+        if (classroomId) {
+          const deadlineRes = await getAllDeadlinesByClassroomId(classroomId);
+          const classDeadlines = transformDeadlineToEvents(deadlineRes.data); // deadline → transformDeadlineToEvents
+          transformedEvents.push(...classDeadlines);
+        }
+  
+        // Nếu props.deadlines được truyền riêng → convert tiếp
+        if (deadlines) {
+          const extraDeadlines = transformDeadlineToEvents(deadlines);
+          transformedEvents.push(...extraDeadlines);
+        }
+  
+        setEvents(transformedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
       }
-      if (classroomId) {
-        taskPromises.push(getAllDeadlinesByClassroomId(classroomId));
-      }
-
-      const responses = await Promise.all(taskPromises);
-      
-      const allTransformedEvents = responses
-        .map((res) => transformEvents(res.data))
-        .flat();
-        
-      if (deadlines) {
-        const deadlineTransformedEvents = transformDeadlineToEvents(deadlines);
-        allTransformedEvents.push(...deadlineTransformedEvents);
-      }
-      setEvents(allTransformedEvents);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  fetchEvents();
-}, [studentId, classroomId, deadlines]);
+    };
+  
+    fetchEvents();
+  }, [studentId, classroomId, deadlines]);
+  
 
 
 const eventSettings: EventSettingsModel = React.useMemo(() => ({ dataSource: events }), [events]);
