@@ -2,4 +2,12 @@
     display: grid;
     width: 100%;
     grid-template-columns:  1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  }
+}
+
+.comment-box-container {
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comment-box-container:hover {
+    z-index: 100002 !important;
+}

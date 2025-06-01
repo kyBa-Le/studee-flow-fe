@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import {
   getInClassJournal,
   createInClassJournal,
@@ -15,99 +15,121 @@ import { useParams } from "react-router-dom";
 import { useUpdateEffect } from "../../../components/hooks/useUpdateEffect";
 import { autoResize } from "../../../components/utils/TextAreaAutoResize";
 import { StudentComment } from "../StudentComment/StudentComment";
+import { getCommentByJournalId } from "../../../services/CommentService";
+import CommentBox from "../StudentComment/CommentBox";
+
 export function InClass({ weekId, isSubmited }) {
   const [subjects, setSubjects] = useState([]);
   const [inClassJournal, setInClassJournal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [extraForms, setExtraForms] = useState([]);
-  const {studentId} = useParams();
-  const isReadOnly = !!studentId;
+  const [isShowCommentBox, setIsShowCommentBox] = useState(false);
 
-  const cellStyle = { width: "100%", outline: "none", height: "100%" };
-  const selectStyle = { width: "100%", outline: "none" };
+  const { studentId } = useParams();
+  const isReadOnly = useMemo(() => !!studentId, [studentId]);
 
+  // Memoize styles để tránh tạo object mới mỗi lần render
+  const cellStyle = useMemo(() => ({
+    width: "100%",
+    outline: "none",
+    height: "100%"
+  }), []);
+
+  const selectStyle = useMemo(() => ({
+    width: "100%",
+    outline: "none"
+  }), []);
+
+  // Fetch data một lần duy nhất khi weekId thay đổi
   useEffect(() => {
-    console.log(weekId);
+    if (!weekId) return;
+
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         setLoading(true);
-        const user = (await (studentId ? getStudentById(studentId) : getUser())).data;
-        const classroomId = user.student_classroom_id;
 
-        const subjectRes = await getAllSubjects(classroomId);
+        // Fetch user và subjects song song
+        const [userRes, subjectRes] = await Promise.all([
+          studentId ? getStudentById(studentId) : getUser(),
+          getAllSubjects(studentId ?
+            (await (studentId ? getStudentById(studentId) : getUser())).data.student_classroom_id :
+            (await getUser()).data.student_classroom_id
+          )
+        ]);
+
+        if (!isMounted) return;
+
+        const user = userRes.data;
         setSubjects(subjectRes.data);
-        if (weekId) {
-          const journalRes = await getInClassJournal(user.id, weekId);
-          const data = journalRes.data;
-          setInClassJournal(data.length > 0 ? data : []);
-        }
+
+        // Fetch journal data
+        const journalRes = await getInClassJournal(user.id, weekId);
+
+        if (!isMounted) return;
+
+        setInClassJournal(journalRes.data.length > 0 ? journalRes.data : []);
       } catch (error) {
-        toast.error("Fail to load data.")
-        console.log(error);
+        if (isMounted) {
+          toast.error("Fail to load data.");
+          console.error(error);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [weekId]);
 
-  const handleAddForm = () => {
-    setExtraForms((prev) => [...prev, { id: Date.now() }]);
-  }
+    return () => {
+      isMounted = false;
+    };
+  }, [weekId, studentId]);
+
+  const handleAddForm = useCallback(() => {
+    setExtraForms(prev => [...prev, { id: Date.now() }]);
+  }, []);
+
+  const toggleCommentBox = useCallback(() => {
+    setIsShowCommentBox(prev => !prev);
+  }, []);
 
   return (
     <div className="learning-journal-table-container">
       <div className="learning-journal-table">
-        <div className="learning-journal-row in-class header-row">
-          <div className="learning-journal-cell header">Date</div>
-          <div className="learning-journal-cell header">Skill/Module</div>
-          <div className="learning-journal-cell header">
-            My lesson <br /> What did I learn today?
-          </div>
-          <div className="learning-journal-cell header">
-            Self-assessment
-            <br />
-            1: I need more practice <br />
-            2: I sometimes find this difficult <br />
-            3: No problem!
-          </div>
-          <div className="learning-journal-cell header">My difficulties</div>
-          <div className="learning-journal-cell header">My plan</div>
-          <div className="learning-journal-cell header">Problem solved</div>
-        </div>
+        <HeaderRow />
 
         {loading ? (
           <LoadingData content="Loading ..." />
         ) : (
           <>
-            {
-              inClassJournal.map((journal) => (
-                <InClassForm
-                  key={journal.id}
-                  initialData={journal}
-                  subjects={subjects}
-                  cellStyle={cellStyle}
-                  selectStyle={selectStyle}
-                  isReadOnly={isReadOnly}
-                  isSubmited={isSubmited}
-                />
-              ))
-            }
+            {inClassJournal.map((journal) => (
+              <InClassForm
+                key={journal.id}
+                isShowCommentBox={isShowCommentBox}
+                initialData={journal}
+                subjects={subjects}
+                cellStyle={cellStyle}
+                selectStyle={selectStyle}
+                isReadOnly={isReadOnly}
+                isSubmited={isSubmited}
+              />
+            ))}
 
-            {
-              extraForms.map((form) => (
-                <EmptyInClassForm
-                  key={form.id}
-                  subjects={subjects}
-                  cellStyle={cellStyle}
-                  selectStyle={selectStyle}
-                  weekId={weekId}
-                  isReadOnly={isReadOnly}
-                  isSubmited={isSubmited}
-                />
-              ))
-            }
+            {extraForms.map((form) => (
+              <EmptyInClassForm
+                key={form.id}
+                subjects={subjects}
+                cellStyle={cellStyle}
+                selectStyle={selectStyle}
+                weekId={weekId}
+                isReadOnly={isReadOnly}
+                isSubmited={isSubmited}
+              />
+            ))}
 
             {inClassJournal.length === 0 && (
               <EmptyInClassForm
@@ -122,14 +144,41 @@ export function InClass({ weekId, isSubmited }) {
           </>
         )}
       </div>
-      <div className="add-form-button-places" >{!isReadOnly && <AddLearningJournalFormButton onClick={handleAddForm} />}</div>
+
+      <div className="add-form-button-places d-flex justify-content-between">
+        <div style={{ cursor: "pointer" }} onClick={toggleCommentBox}>
+          <div style={{ padding: "3px 6px", backgroundColor: "#FE9C3B", color: "white" }}>
+            <i className={`fa-solid ${isShowCommentBox ? 'fa-comment' : 'fa-comment-slash'}`} />
+          </div>
+        </div>
+        {!isReadOnly && <AddLearningJournalFormButton onClick={handleAddForm} />}
+      </div>
     </div>
   );
 }
 
+// Tách header thành component riêng để tránh re-render
+const HeaderRow = () => (
+  <div className="learning-journal-row in-class header-row">
+    <div className="learning-journal-cell header">Date</div>
+    <div className="learning-journal-cell header">Skill/Module</div>
+    <div className="learning-journal-cell header">
+      My lesson <br /> What did I learn today?
+    </div>
+    <div className="learning-journal-cell header">
+      Self-assessment<br />
+      1: I need more practice <br />
+      2: I sometimes find this difficult <br />
+      3: No problem!
+    </div>
+    <div className="learning-journal-cell header">My difficulties</div>
+    <div className="learning-journal-cell header">My plan</div>
+    <div className="learning-journal-cell header">Problem solved</div>
+  </div>
+);
+
 function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId, isReadOnly, isSubmited }) {
-  const [isUserUpdate, setIsUserUpdate] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     id: null,
     date: null,
     subject_id: subjects?.[0]?.id || "",
@@ -139,210 +188,229 @@ function EmptyInClassForm({ subjects, cellStyle, selectStyle, weekId, isReadOnly
     plan: "",
     is_problem_solved: 0,
     week_id: weekId,
-  });
+  }));
 
   const [isNew, setIsNew] = useState(true);
   const [id, setId] = useState(null);
+  const [isShowCommentModal, setIsShowCommentModal] = useState(false);
+  const [commentTarget, setCommentTarget] = useState(null);
+  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
 
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 1500);
+  const commentRef = useRef(null);
 
-  useUpdateEffect(() => {
-    if (isUserUpdate) {
-      triggerAutoSubmit();
-      setIsUserUpdate(false);
-    }
-  }, [formData]);
-
-  function handleChange(e) {
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: name === "is_problem_solved" ? parseInt(value) : value,
     }));
-    setIsUserUpdate(true)
-  }
+    triggerAutoSubmit();
+  }, [triggerAutoSubmit]);
 
   async function handleAutoCreate() {
+    setIsNew(false);
     try {
       const response = await (isNew ? createInClassJournal(formData) : updateInClassJournal(id, formData));
       if (isNew) {
         const newId = response.data.inClassId;
         setId(newId);
-        setIsNew(false);
         toast.success("New in-class journal created.");
       }
     } catch (error) {
       console.error(error);
+      setIsNew(true);
       toast.error("Error creating in-class journal.");
     }
   }
 
-  const [showComment, setShowComment] = useState(false);
-  const [commentTarget, setCommentTarget] = useState(null);
-  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
-  
-  const handleRightClick = (e, fieldName) => {
+  const handleRightClick = useCallback((e, fieldName) => {
     e.preventDefault();
+    if (isNew) {
+      toast.error("Please enter new journal before comment!");
+      return;
+    }
     setCommentTarget(fieldName);
     setCommentPosition({ x: e.clientX, y: e.clientY });
-    setShowComment(true);
-  };
+    setIsShowCommentModal(true);
+  }, [isNew]);
 
-  const handleCommentSubmit = () => {
-    setShowComment(false);
-  };
+  const handleCommentSubmit = useCallback(() => {
+    setIsShowCommentModal(false);
+  }, []);
 
-   const commentRef = useRef(null);
-
+  // Click outside handler
   useEffect(() => {
     function handleClickOutside(event) {
       if (commentRef.current && !commentRef.current.contains(event.target)) {
-        setShowComment(false);
+        setIsShowCommentModal(false);
       }
     }
 
-    if (showComment) {
+    if (isShowCommentModal) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showComment]);
+  }, [isShowCommentModal]);
 
   return (
     <>
-    <form className="learning-journal-row in-class">
-      <div className="learning-journal-cell">
-        <input
-          type="date"
-          name="date"
-          style={cellStyle}
-          value={formData.date}
-          onChange={handleChange}
-          readOnly={isReadOnly || isSubmited}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          name="subject_id"
-          value={formData.subject_id}
-          style={selectStyle}
-          onChange={handleChange}
-          disabled={isReadOnly || isSubmited}
-        >
-          {subjects.map((subject) => (
-            <option key={subject.id} value={subject.id}>
-              {subject.subject_name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="learning-journal-cell">
-        <textarea onInput={(e) => autoResize(e)}
-          name="lesson"
-          rows="3"
-          style={cellStyle}
-          value={formData.lesson}
-          onChange={handleChange}
-          readOnly={isReadOnly || isSubmited}
-          onContextMenu={(e) => handleRightClick(e, 'lesson')}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          name="self_assessment"
-          value={formData.self_assessment}
-          onChange={handleChange}
-          style={selectStyle}
-          disabled={isReadOnly || isSubmited}
-        >
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-      </div>
-      <div className="learning-journal-cell">
-        <textarea
-          onInput={(e) => autoResize(e)}
-          name="difficulties"
-          rows="3"
-          style={cellStyle}
-          value={formData.difficulties}
-          onChange={handleChange}
-          readOnly={isReadOnly || isSubmited}
-          onContextMenu={(e) => handleRightClick(e, 'difficulties')}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <textarea
-          onInput={(e) => autoResize(e)}
-          name="plan"
-          rows="3"
-          style={cellStyle}
-          value={formData.plan}
-          onChange={handleChange}
-          readOnly={isReadOnly || isSubmited}
-          onContextMenu={(e) => handleRightClick(e, 'plan')}
-        />
-      </div>
-      <div className="learning-journal-cell">
-        <select
-          name="is_problem_solved"
-          value={formData.is_problem_solved}
-          onChange={handleChange}
-          style={selectStyle}
-          disabled={isReadOnly || isSubmited}
-        >
-          <option value={1}>Yes</option>
-          <option value={0}>No</option>
-        </select>
-      </div>
-      {showComment && (
-          <div 
-          ref={commentRef}
-          style={{
-            position: 'absolute',
-            left: `${commentPosition.x}px`,
-            top: `${commentPosition.y}px`,
-            zIndex: 1000
-          }}>
-            <StudentComment 
-              targetField={commentTarget} 
+      <form className="learning-journal-row in-class">
+        <div className="learning-journal-cell">
+          <input
+            type="date"
+            name="date"
+            style={cellStyle}
+            value={formData.date || ""}
+            onChange={handleChange}
+            readOnly={isReadOnly || isSubmited}
+          />
+        </div>
+        <div className="learning-journal-cell">
+          <select
+            name="subject_id"
+            value={formData.subject_id}
+            style={selectStyle}
+            onChange={handleChange}
+            disabled={isReadOnly || isSubmited}
+          >
+            {subjects.map((subject) => (
+              <option key={subject.id} value={subject.id}>
+                {subject.subject_name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="learning-journal-cell">
+          <textarea
+            onInput={(e) => autoResize(e)}
+            name="lesson"
+            rows="3"
+            style={cellStyle}
+            value={formData.lesson}
+            onChange={handleChange}
+            readOnly={isReadOnly || isSubmited}
+            onContextMenu={(e) => handleRightClick(e, 'lesson')}
+          />
+        </div>
+        <div className="learning-journal-cell">
+          <select
+            name="self_assessment"
+            value={formData.self_assessment}
+            onChange={handleChange}
+            style={selectStyle}
+            disabled={isReadOnly || isSubmited}
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </div>
+        <div className="learning-journal-cell">
+          <textarea
+            onInput={(e) => autoResize(e)}
+            name="difficulties"
+            rows="3"
+            style={cellStyle}
+            value={formData.difficulties}
+            onChange={handleChange}
+            readOnly={isReadOnly || isSubmited}
+            onContextMenu={(e) => handleRightClick(e, 'difficulties')}
+          />
+        </div>
+        <div className="learning-journal-cell">
+          <textarea
+            onInput={(e) => autoResize(e)}
+            name="plan"
+            rows="3"
+            style={cellStyle}
+            value={formData.plan}
+            onChange={handleChange}
+            readOnly={isReadOnly || isSubmited}
+            onContextMenu={(e) => handleRightClick(e, 'plan')}
+          />
+        </div>
+        <div className="learning-journal-cell">
+          <select
+            name="is_problem_solved"
+            value={formData.is_problem_solved}
+            onChange={handleChange}
+            style={selectStyle}
+            disabled={isReadOnly || isSubmited}
+          >
+            <option value={1}>Yes</option>
+            <option value={0}>No</option>
+          </select>
+        </div>
+
+        {isShowCommentModal && (
+          <div
+            ref={commentRef}
+            style={{
+              position: 'absolute',
+              left: `${commentPosition.x}px`,
+              top: `${commentPosition.y}px`,
+              zIndex: 1000
+            }}>
+            <StudentComment
+              targetField={commentTarget}
               onClose={handleCommentSubmit}
               journalId={formData.id}
               journalType="in_class"
+              setIsShowCommentModal={setIsShowCommentModal}
             />
           </div>
         )}
-    </form>
-  </>
+      </form>
+    </>
   );
 }
 
-
-function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly, isSubmited }) {
+function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly, isSubmited, isShowCommentBox }) {
   const [formData, setFormData] = useState(initialData);
+  const [comments, setComments] = useState([]);
+  const [isShowCommentModal, setIsShowCommentModal] = useState(false);
+  const [commentTarget, setCommentTarget] = useState(null);
+  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
+
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoUpdate, 1500);
-  const [isUserUpdate, setIsUserUpdate] = useState(false);
+  const commentRef = useRef(null);
 
-  useUpdateEffect(
-    () => {
-      if (isUserUpdate) {
-        triggerAutoSubmit();
-        setIsUserUpdate(false);
+  // Fetch comments một lần duy nhất
+  useEffect(() => {
+    if (!formData.id) return;
+
+    let isMounted = true;
+
+    async function fetchComments() {
+      try {
+        const response = await getCommentByJournalId(formData.id, "in_class");
+        if (isMounted) {
+          setComments(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching comments:", error);
       }
-    }, [formData]
-  )
+    }
 
-  function handleChange(e) {
-    setIsUserUpdate(true);
+    fetchComments();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [formData.id]);
+
+  const handleChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: name === "is_problem_solved" ? parseInt(value) : value,
     }));
-  }
+    triggerAutoSubmit();
+  }, [triggerAutoSubmit]);
 
   async function handleAutoUpdate() {
     try {
@@ -353,42 +421,39 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly
     }
   }
 
-  const [showComment, setShowComment] = useState(false);
-  const [commentTarget, setCommentTarget] = useState(null);
-  const [commentPosition, setCommentPosition] = useState({ x: 0, y: 0 });
-
-  const handleRightClick = (e, fieldName) => {
+  const handleRightClick = useCallback((e, fieldName) => {
     e.preventDefault();
+    const form = e.target.closest("form");
+    if (!form) return;
+
+    const formRect = form.getBoundingClientRect();
+    const relativeX = e.clientX - formRect.left;
+    const relativeY = e.clientY - formRect.top;
+
     setCommentTarget(fieldName);
-    setCommentPosition({ x: e.clientX, y: e.clientY });
-    setShowComment(true);
-  };
+    setCommentPosition({ x: relativeX, y: relativeY });
+    setIsShowCommentModal(true);
+  }, []);
 
-  const handleCommentSubmit = () => {
-    setShowComment(false);
-  };
-
-  const commentRef = useRef(null);
-
+  // Click outside handler
   useEffect(() => {
     function handleClickOutside(event) {
       if (commentRef.current && !commentRef.current.contains(event.target)) {
-        setShowComment(false);
+        setIsShowCommentModal(false);
       }
     }
 
-    if (showComment) {
+    if (isShowCommentModal) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showComment]);
+  }, [isShowCommentModal]);
 
   return (
-    <>
-    <form className="learning-journal-row in-class">
+    <form style={{ position: "relative" }} className="learning-journal-row in-class">
       <div className="learning-journal-cell">
         <input
           type="date"
@@ -475,24 +540,42 @@ function InClassForm({ initialData, subjects, cellStyle, selectStyle, isReadOnly
           <option value={0}>No</option>
         </select>
       </div>
-      {showComment && (
-          <div 
+
+      {comments.map((comment) => (
+        <div
+          key={comment.id}
+          className="comment-box-container"
+          style={{
+            visibility: isShowCommentBox ? 'visible' : 'hidden',
+            position: 'absolute',
+            left: `${comment.relative_x}px`,
+            top: `${comment.relative_y}px`,
+            zIndex: 10000
+          }}>
+          <CommentBox comment={comment} />
+        </div>
+      ))}
+
+      {isShowCommentModal && (
+        <div
           ref={commentRef}
           style={{
             position: 'absolute',
             left: `${commentPosition.x}px`,
             top: `${commentPosition.y}px`,
-            zIndex: 1000
+            zIndex: 10000
           }}>
-            <StudentComment 
-              targetField={commentTarget} 
-              onClose={handleCommentSubmit}
-              journalId={formData.id} 
-              journalType="in_class"
-            />
-          </div>
-        )}
+          <StudentComment
+            field={commentTarget}
+            journalId={formData?.id}
+            journalType="in_class"
+            relativeX={commentPosition.x}
+            relativeY={commentPosition.y}
+            setIsShowCommentModal={setIsShowCommentModal}
+            setComments={setComments}
+          />
+        </div>
+      )}
     </form>
-  </>
   );
 }

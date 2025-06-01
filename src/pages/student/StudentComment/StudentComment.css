@@ -2,7 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 100px;
+    padding: 15px;
+    font-size: 12px !important;
 }
 
 .student-comment-content {
@@ -10,10 +11,9 @@
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
     font-family: sans-serif;
 }
 
@@ -44,6 +44,7 @@
     outline: none;
     transition: border 0.2s;
     border-radius: 40px !important;
+    font-size: 12px;
 }
 
 .comment-input:focus {
@@ -65,6 +66,7 @@
     cursor: pointer;
     background-color: white;
     transition: background-color 0.2s;
+    font-size: 12px;
 }
 
 .student-comment-btn-cancel {

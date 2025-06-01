@@ -152,9 +152,9 @@
   font-size: 14px;
 }
 
-.learning-journal-table-container {
+/* .learning-journal-table-container {
   overflow-x: auto;
-}
+} */
 
 .learning-journal-table {
   display: flex;

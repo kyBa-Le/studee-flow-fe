@@ -18,6 +18,7 @@ export function SelfStudy({ weekId, isSubmited }) {
   const selectStyle = { width: "100%", outline: "none" };
   const { studentId } = useParams();
   const isReadOnly = !!studentId;
+  const [isShowCommentBox, setIsShowCommentBox] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +112,12 @@ export function SelfStudy({ weekId, isSubmited }) {
       </div>
 
       {!isReadOnly && (
-        <div className="add-form-button-places">
+        <div className="add-form-button-places d-flex justify-content-between">
+          <div style={{ cursor: "pointer" }} onClick={() => setIsShowCommentBox(prev => !prev)}>
+            <div style={{ padding: "3px 6px", backgroundColor: "#FE9C3B", color: "white" }}>
+              {isShowCommentBox ? <i class="fa-solid fa-comment"></i> : <i class="fa-solid fa-comment-slash"></i>}
+            </div>
+          </div>
           <AddLearningJournalFormButton onClick={handleAddForm} />
         </div>
       )}
@@ -172,9 +178,9 @@ export function EmptyForm({ subjects, cellStyle, selectStyle, weekId, readOnly =
 
   async function handleAutoCreate() {
     try {
+      setIsNew(false);
       const response = await (isNew ? createSelfStudyJournal(formData) : updateSelfStudyJournal(id, formData));
       if (isNew) {
-        setIsNew(false);
         setId(response.data.selfStudyId);
         toast.success("New learning journal created.");
       }

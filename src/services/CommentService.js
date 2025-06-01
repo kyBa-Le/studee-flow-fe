@@ -1,8 +1,8 @@
 import apiClient from "./apiClient";
 
-export async function getCommentById(id) {
+export async function getCommentByJournalId(id, type) {
   try {
-    const response = await apiClient.get(`/api/comment/${id}`);
+    const response = await apiClient.get(`/api/comments?type=${type}&journal_id=${id}`);
     return response;
   } catch (error) {
     throw error;
@@ -11,7 +11,7 @@ export async function getCommentById(id) {
 
 export async function createComment(data) {
   try {
-    const response = await apiClient.post("/api/comment", data);
+    const response = await apiClient.post("/api/comments", data);
     return response;
   } catch (error) {
     throw error;
