@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getNotifications, markNotificationAsRead } from '../../../services/NotificationService';
+import { customGetToken, getNotifications, markNotificationAsRead } from '../../../services/NotificationService';
 import { CancelButton } from '../../../components/ui/Button/Cancel/CancelButton';
 import './NotificationTeacher.css';
 import NoNotification from "../../../assests/images/NoNotification.png";
+import { onMessage } from 'firebase/messaging';
+import { messaging } from '../../../services/firebase';
 
 const NOTIFICATION_DETAILS = {
   5: {
@@ -33,6 +35,10 @@ export function NotificationTeacher() {
   const [activeFilter, setActiveFilter] = useState('all');
 
   useEffect(() => {
+    customGetToken();
+        onMessage(messaging, (payload) => {
+          setNotifications((prev) => [payload.data, ...prev]);
+        })
     fetchNotifications();
   }, []);
 

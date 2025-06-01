@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getNotifications, markNotificationAsRead } from '../../../services/NotificationService';
+import { customGetToken, getNotifications, markNotificationAsRead } from '../../../services/NotificationService';
 import { CancelButton } from '../../../components/ui/Button/Cancel/CancelButton';
 import './Notification.css';
 import NoNotification from "../../../assests/images/NoNotification.png";
+import { onMessage } from 'firebase/messaging';
+import { messaging } from '../../../services/firebase';
 
 const availableImages = [
   'https://anhnail.vn/wp-content/uploads/2024/10/meme-meo-khoc-2.webp',
@@ -55,6 +57,10 @@ export function Notification() {
   const [activeFilter, setActiveFilter] = useState('all');
 
   useEffect(() => {
+    customGetToken();
+    onMessage(messaging, (payload) => {
+      setNotifications((prev) => [payload.data, ...prev]);
+    })
     fetchNotifications();
   }, []);
 
@@ -70,22 +76,14 @@ export function Notification() {
   const handleMarkAsRead = async (notificationId) => {
     try {
       await markNotificationAsRead(notificationId);
-      setNotifications(prev => prev.map(n => 
-        n.id === notificationId ? {...n, is_read: true} : n
+      setNotifications(prev => prev.map(n =>
+        n.id === notificationId ? { ...n, is_read: true } : n
       ));
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
   };
 
-  const getNotificationDetails = (notificationId) => {
-    return NOTIFICATION_DETAILS[notificationId] || {
-      subject: 'General',
-      deadline: 'N/A',
-      teacher: 'N/A',
-      requirement: 'N/A'
-    };
-  };
 
   const filteredNotifications = notifications.filter(notification => {
     if (activeFilter === 'all') return true;
@@ -98,133 +96,134 @@ export function Notification() {
   return (
     <div className="notification-container">
       <div className="notification-main">
-      <h2 className="notification-title">NOTIFICATIONS</h2>
-      <hr />
-      <div className="notification-filters">
-        <button 
-          className={`filter ${activeFilter === 'all' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('all')}
-        >
-          All
-        </button>
-        <button 
-          className={`filter ${activeFilter === 'unread' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('unread')}
-        >
-          Unread
-        </button>
-        <button 
-          className={`filter ${activeFilter === 'deadline' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('deadline')}
-        >
-          Deadline
-        </button>
-        <button 
-          className={`filter ${activeFilter === 'feedback' ? 'active' : ''}`}
-          onClick={() => setActiveFilter('feedback')}
-        >
-          Feedback
-        </button>
-      </div>
-      <div className='notification-content'>
-        <div className="notification-list">
-          {filteredNotifications.length > 0 ? (
-            filteredNotifications.map((item) => (
-              <div className={`notification-item ${!item.is_read ? 'unread' : ''}`} key={item.id}>
-                <div className="notification-left">
-                  {!item.is_read && <span className="orange-dot"></span>}
-                  <div className="notification-text-content">
-                    <h4 className="notification-title-item">{item.title}</h4>
-                    <p className="notification-message">{item.content}</p>
-                    <div className="notification-icon">
-                      <img 
-                        src={getRandomImage()} 
-                        alt="Notification icon" 
-                        style={{ width: '50px', height: '50px', borderRadius: '30px' }}
-                      />
+        <h2 className="notification-title">NOTIFICATIONS</h2>
+        <hr />
+        <div className="notification-filters">
+          <button
+            className={`filter ${activeFilter === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('all')}
+          >
+            All
+          </button>
+          <button
+            className={`filter ${activeFilter === 'unread' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('unread')}
+          >
+            Unread
+          </button>
+          <button
+            className={`filter ${activeFilter === 'deadline' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('deadline')}
+          >
+            Deadline
+          </button>
+          <button
+            className={`filter ${activeFilter === 'feedback' ? 'active' : ''}`}
+            onClick={() => setActiveFilter('feedback')}
+          >
+            Feedback
+          </button>
+        </div>
+        <div className='notification-content'>
+          <div className="notification-list">
+            {console.log(filteredNotifications)
+            }
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map((item) => (
+                <div className={`notification-item ${!item.is_read ? 'unread' : ''}`} key={item.id}>
+                  <div className="notification-left">
+                    {!item.is_read && <span className="orange-dot"></span>}
+                    <div className="notification-text-content">
+                      <h4 className="notification-title-item">{item.title}</h4>
+                      <p className="notification-message">{item.content}</p>
+                      <div className="notification-icon">
+                        <img
+                          src={getRandomImage()}
+                          alt="Notification icon"
+                          style={{ width: '50px', height: '50px', borderRadius: '30px' }}
+                        />
+                      </div>
                     </div>
                   </div>
+                  <div className="notification-right">
+                    <button
+                      className="notification-btn blue"
+                      onClick={() => {
+                        setSelectedNotification(item);
+                        if (!item.is_read) {
+                          handleMarkAsRead(item.id);
+                        }
+                      }}
+                    >
+                      View detail
+                    </button>
+                  </div>
                 </div>
-                <div className="notification-right">
-                  <button 
-                    className="notification-btn blue"
-                    onClick={() => {
-                      setSelectedNotification(item);
-                      if (!item.is_read) {
-                        handleMarkAsRead(item.id);
-                      }
-                    }}
-                  >
-                    View detail
-                  </button>
-                </div>
+              ))
+            ) : (
+              <div className="no-notifications">
+                <p>No notifications found</p>
+                <img src={NoNotification}></img>
               </div>
-            ))
-          ) : (
-            <div className="no-notifications">
-              <p>No notifications found</p>
-              <img src={NoNotification}></img>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Notification Detail Modal */}
-      {selectedNotification && (
-        <div className="notification-detail-modal">
-          <div className="detail-modal-content">
-            <div className="detail-modal-header">
-              <h3>Notification details</h3>
-            </div>
-            
-            <div className="detail-modal-body">
-              <h4 className="detail-title">{selectedNotification.title}</h4>
-              <p className="detail-message">{selectedNotification.content}</p>
-              
-              <div className="detail-info">
-                <div className="detail-row">
-                  <span className="detail-icon"><i className="fa-solid fa-book"></i></span>
-                  <span className="detail-label">Subject:</span>
-                  <span>{getNotificationDetails(selectedNotification.id).subject}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon"><i className="fa-solid fa-clock"></i></span>
-                  <span className="detail-label">Deadline:</span>
-                  <span>{getNotificationDetails(selectedNotification.id).deadline}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon"><i className="fa-solid fa-user"></i></span>
-                  <span className="detail-label">Teacher:</span>
-                  <span>{getNotificationDetails(selectedNotification.id).teacher}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon"><i className="fa-solid fa-file"></i></span>
-                  <span className="detail-label">Requirement:</span>
-                  <span>{getNotificationDetails(selectedNotification.id).requirement}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="detail-modal-footer">
-              <CancelButton
-                className="detail-btn cancel"
-                onClick={() => setSelectedNotification(null)}
-              >
-                Cancel
-              </CancelButton>
-              <button 
-                className="actionButton GotoexciseClassButton"
-                onClick={() => {
-                  window.location.href = selectedNotification.link;
-                }}
-              >
-                Go to exercise
-              </button>
-            </div>
+            )}
           </div>
         </div>
-      )}
-    </div>
+
+        {/* Notification Detail Modal */}
+        {selectedNotification && (
+          <div className="notification-detail-modal">
+            <div className="detail-modal-content">
+              <div className="detail-modal-header">
+                <h3>Notification details</h3>
+              </div>
+
+              <div className="detail-modal-body">
+                <h4 className="detail-title">{selectedNotification.title}</h4>
+                <p className="detail-message">{selectedNotification.content}</p>
+                {selectedNotification.type === "deadline" &&
+                  <div className="detail-info">
+
+                    <div className="detail-row">
+                      <span className="detail-icon"><i className="fa-solid fa-book"></i></span>
+                      <span className="detail-label">Subject:</span>
+                      <span>{selectedNotification.subject || "General"}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-icon"><i className="fa-solid fa-clock"></i></span>
+                      <span className="detail-label">Deadline:</span>
+                      <span>{selectedNotification.deadline}</span>
+                    </div>
+                    <div className="detail-row">
+                      <span className="detail-icon"><i className="fa-solid fa-user"></i></span>
+                      <span className="detail-label">Teacher:</span>
+                      <span>{selectedNotification.creator}</span>
+                    </div>
+                  </div>
+
+                }
+
+              </div>
+
+              <div className="detail-modal-footer">
+                <CancelButton
+                  className="detail-btn cancel"
+                  onClick={() => setSelectedNotification(null)}
+                >
+                  Cancel
+                </CancelButton>
+                <button
+                  className="actionButton GotoexciseClassButton"
+                  onClick={() => {
+                    window.location.href = selectedNotification.link;
+                  }}
+                >
+                  Go to the page
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
