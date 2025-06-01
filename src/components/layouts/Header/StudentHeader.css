@@ -145,3 +145,16 @@
     flex-direction: column;
     margin-top: 10px;
 }
+.notification-link {
+  color: inherit;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.notification-link:hover {
+  color:  #FE9A3B; 
+}
+
+.notification-link.active {
+  color: #FE9A3B; 
+}

@@ -71,7 +71,9 @@ function StudentHeader() {
             </div>
           </div>
           <i className="fa-regular fa-circle-question"></i>
-          <i class="fa-regular fa-bell"></i>        
+          <Link to='/student/notification' className={`notification-link ${location.pathname === '/student/notification' ? 'active' : ''}`}>
+            <i className="fa-regular fa-bell"></i>
+          </Link>
         </div>
       </div>
     </div>
