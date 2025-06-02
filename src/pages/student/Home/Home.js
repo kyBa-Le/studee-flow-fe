@@ -7,6 +7,7 @@ import Schedule from '../../../components/ui/Schedule/Schedule.tsx';
 import { getUser } from '../../../services/UserService';
 import {Achievement} from '../../../components/ui/Achievement/Achievement.jsx';
 import { Link} from "react-router-dom";
+import { logUserVisit } from '../../../services/DashboardService';
 import "./Home.css";
 
 function Home() {
@@ -14,6 +15,7 @@ function Home() {
   const [user, setUser] = useState({});
   
   useEffect(() => {
+    logUserVisit();
     getUser()
       .then(response => {
         setUser(response.data);

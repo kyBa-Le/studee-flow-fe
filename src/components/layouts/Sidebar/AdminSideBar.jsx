@@ -4,6 +4,7 @@ import { Logout } from "../../../services/AuthService";
 import "./AdminSideBar.css";
 
 const menuItems = [
+  { path: "/admin/dashboard", icon: "home", label: "Dashboard" },
   { path: "/admin/student-management", icon: "user", label: "Students" },
   { path: "/admin/teacher-management", icon: "users", label: "Teachers" },
   { path: "/admin/notification", icon: "bell", label: "Notifications" },
