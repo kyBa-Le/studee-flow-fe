@@ -89,3 +89,81 @@
   color:#ffff;
 }
 
+/* Thêm vào file StudentComment.css */
+
+.comment-input-wrapper {
+    position: relative;
+}
+
+.teacher-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.teacher-suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.teacher-suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.teacher-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.teacher-suggestion-item img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tagged-teacher {
+    margin-top: 8px;
+    padding: 4px 8px;
+    background-color: #e8f4fd;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #1976d2;
+}
+
+.tagged-teacher img {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tagged-teacher button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.tagged-teacher button:hover {
+    color: #333;
+}
