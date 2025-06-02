@@ -118,16 +118,11 @@ const handleCancelSubmited = async () => {
 
         <div className="learning-journal-goal-content">
           <div className="learning-journal-header">
-            <div className="learning-journal-title-wrapper">
-              <h2 className="learning-journal-title" style={{ paddingTop: "20px" }}>
-                Weekly Goal
-              </h2>
-            </div>
           </div>
 
           <div className="learning-journal-goal-section">
 
-            <WeeklyGoal weekId={currentWeek.id} />
+            <WeeklyGoal weekId={currentWeek.id} isSubmitted={isSubmited} />
 
           </div>
 

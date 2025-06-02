@@ -1,0 +1,144 @@
+/* Container cho table với scroll horizontal */
+.learning-journal-table-container.self-study{
+    position: relative;
+    overflow-x: auto;
+  }
+  
+  /* Table layout với frozen columns */
+  .learning-journal-table {
+    display: flex;
+    flex-direction: column;
+    min-width: fit-content;
+  }
+  
+  /* Row layout với frozen columns */
+  .learning-journal-row {
+    display: flex;
+    width: 100%;
+    min-width: fit-content;
+  }
+  
+  /* Frozen columns (2 cột đầu) */
+  .learning-journal-cell.frozen {
+    position: sticky;
+    background-color: white;
+    z-index: 10;
+  }
+  
+  .learning-journal-cell.frozen.header {
+    background-color: #DCEEFC;
+    z-index: 11;
+  }
+  
+  /* Frozen column 1 - Date */
+  .learning-journal-cell.frozen:nth-child(1) {
+    left: 0;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+  
+  /* Frozen column 2 - Skills/Module */
+  .learning-journal-cell.frozen:nth-child(2) {
+    left: 120px;
+    width: 150px;
+    min-width: 150px;
+    max-width: 150px;
+  }
+  
+  /* Scrollable columns (các cột còn lại) */
+  .learning-journal-cell.scrollable {
+    width: 300px; /* Gấp 3 lần so với trước (100px -> 300px) */
+    min-width: 200px;
+    max-width: 500px;
+    resize: horizontal;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Resize handle cho các cột có thể kéo */
+  .learning-journal-cell.scrollable::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #ddd;
+    cursor: col-resize;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .learning-journal-cell.scrollable:hover::after {
+    opacity: 1;
+  }
+  
+  /* Base cell styles */
+  .learning-journal-cell {
+    padding: 10px;
+    text-align: center;
+    word-break: break-word;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .learning-journal-cell.header {
+    background-color: #DCEEFC;
+    font-weight: 600;
+    white-space: pre-wrap;
+  }
+  
+  /* Input và textarea styles */
+  .learning-journal-cell input,
+  .learning-journal-cell textarea,
+  .learning-journal-cell select {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    resize: none;
+    font-size: 14px;
+    padding: 4px;
+  }
+  
+  .learning-journal-cell input[type="date"] {
+    width: 100% !important;
+    font-size: 12px;
+  }
+  
+  /* Scrollbar styling */
+  .learning-journal-table-container::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .learning-journal-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  .learning-journal-table-container::-webkit-scrollbar-thumb {
+    background: #2CB9E2;
+    border-radius: 4px;
+  }
+  
+  .learning-journal-table-container::-webkit-scrollbar-thumb:hover {
+    background: #1a9bc4;
+  }
+  
+  /* Fixed position for add form button */
+  .add-form-button-places {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 12;
+    padding: 5px 0;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { getAllSubjects } from "../../../services/SubjectService";
 import {
   getSemesterGoalsByUser,
@@ -21,65 +21,22 @@ export function SemesterGoal() {
   const [selectedSemester, setSelectedSemester] = useState("");
   const [semesters, setSemesters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { studentId } = useParams();
   const [semesterId, setSemesterId] = useState();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
-        const classroomId = student.student_classroom_id;
+  const { studentId } = useParams();
 
-        const allSemesters = await getAllSemestersByClassroomId(classroomId);
-        setSemesters(allSemesters.data);
+  // Cache user data để tránh gọi API lặp lại
+  const [cachedUser, setCachedUser] = useState(null);
 
-        const currentSemester = (await getCurrentSemesterByClassroomId(classroomId)).data[0];
-        setSelectedSemester(currentSemester.name);
-        setSemesterId(currentSemester.id);
-
-        const subjects = (await getAllSubjects(classroomId)).data;
-        setSubjects(subjects);
-
-        const semesterGoals = (await getSemesterGoalsByUser(student.id, currentSemester.id)).data;
-        setSemesterGoals(semesterGoals);
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to load data");
-      }
-    };
-
-    fetchInitialData();
-  }, []);
-
-  useEffect(() => {
-    const fetchGoalsForSelectedSemester = async () => {
-      try {
-        const student = (await (studentId ? getStudentById(studentId) : getUser())).data;
-        const selected = semesters.find((s) => s.name === selectedSemester);
-        if (!selected) return;
-        setSemesterId(selected.id);
-
-        const goals = (await getSemesterGoalsByUser(student.id, selected.id)).data;
-        setSemesterGoals(goals);
-      } catch (error) {
-        console.error("Error fetching semester goals by selected semester:", error);
-        toast.error("Failed to load semester goals for selected semester.");
-      }
-    };
-
-    if (selectedSemester && semesters.length > 0) {
-      fetchGoalsForSelectedSemester();
-    }
-  }, [selectedSemester, semesters]);
-
-  const autoResize = (e) => {
+  // Memoized function để resize textarea
+  const autoResize = useCallback((e) => {
     e.target.style.height = "auto";
     e.target.style.height = `${e.target.scrollHeight}px`;
-  };
+  }, []);
 
-  const handleGoalChange = (subjectId, field, value) => {
+  // Memoized function để handle goal change
+  const handleGoalChange = useCallback((subjectId, field, value) => {
     setSemesterGoals((prev) => {
       const existingGoalIndex = prev.findIndex((goal) => goal.subject_id === subjectId);
 
@@ -104,11 +61,84 @@ export function SemesterGoal() {
         ];
       }
     });
-  };
+  }, []);
 
-  const handleSubmit = async () => {
+  // Helper function để get user data
+  const getUserData = useCallback(async () => {
+    if (cachedUser) return cachedUser;
+
+    const userData = (await (studentId ? getStudentById(studentId) : getUser())).data;
+    setCachedUser(userData);
+    return userData;
+  }, [studentId, cachedUser]);
+
+  // Fetch initial data
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const student = await getUserData();
+        const classroomId = student.student_classroom_id;
+
+        // Gọi API song song để tăng tốc độ
+        const [allSemestersResult, currentSemesterResult, subjectsResult] = await Promise.all([
+          getAllSemestersByClassroomId(classroomId),
+          getCurrentSemesterByClassroomId(classroomId),
+          getAllSubjects(classroomId)
+        ]);
+
+        const allSemesters = allSemestersResult.data;
+        const currentSemester = currentSemesterResult.data[0];
+        const subjects = subjectsResult.data;
+
+        setSemesters(allSemesters);
+        setSelectedSemester(currentSemester.name);
+        setSemesterId(currentSemester.id);
+        setSubjects(subjects);
+
+        // Fetch semester goals sau khi có đủ thông tin
+        const semesterGoals = (await getSemesterGoalsByUser(student.id, currentSemester.id)).data;
+        setSemesterGoals(semesterGoals);
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load data");
+        setIsLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, []); // Chỉ chạy một lần khi component mount
+
+  // Fetch goals khi thay đổi semester
+  useEffect(() => {
+    const fetchGoalsForSelectedSemester = async () => {
+      if (!selectedSemester || semesters.length === 0 || !cachedUser) return;
+
+      try {
+        const selected = semesters.find((s) => s.name === selectedSemester);
+        if (!selected) return;
+
+        setSemesterId(selected.id);
+
+        const goals = (await getSemesterGoalsByUser(cachedUser.id, selected.id)).data;
+        setSemesterGoals(goals);
+      } catch (error) {
+        console.error("Error fetching semester goals by selected semester:", error);
+        toast.error("Failed to load semester goals for selected semester.");
+      }
+    };
+
+    fetchGoalsForSelectedSemester();
+  }, [selectedSemester, semesters, cachedUser]);
+
+  // Memoized submit function
+  const handleSubmit = useCallback(async () => {
+    if (isSubmitting) return; // Prevent double submission
+
+    setIsSubmitting(true);
     try {
-      const user = (await getUser()).data;
+      const user = cachedUser || (await getUser()).data;
       const studentId = user.id;
 
       const goalsToSubmit = subjects.map((subject) => {
@@ -126,42 +156,131 @@ export function SemesterGoal() {
         };
       });
 
-      for (const goal of goalsToSubmit) {
+      // Batch API calls để tăng hiệu suất
+      const updatePromises = [];
+      const createPromises = [];
+
+      goalsToSubmit.forEach(goal => {
         if (goal.id) {
-          await updateSemesterGoals(goal.id, goal);
+          updatePromises.push(updateSemesterGoals(goal.id, goal));
         } else {
-          await createSemesterGoal(goal);
+          createPromises.push(createSemesterGoal(goal));
         }
-      }
+      });
+
+      // Thực hiện tất cả API calls song song
+      await Promise.all([...updatePromises, ...createPromises]);
 
       toast.success("Semester goals submitted successfully!");
 
+      // Refresh goals sau khi submit
       const updatedGoals = (await getSemesterGoalsByUser(studentId, semesterId)).data;
       setSemesterGoals(updatedGoals);
     } catch (error) {
       console.error(error);
       toast.error("Failed to submit semester goals.");
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }, [subjects, semesterGoals, semesterId, cachedUser, isSubmitting]);
+
+  // Memoized rendered subjects để tránh re-render không cần thiết
+  const renderedSubjects = useMemo(() => {
+    if (isLoading) return null;
+
+    return subjects.map((subject) => {
+      let goal = semesterGoals.find((g) => g.subject_id === subject.id);
+      goal = goal ?? {
+        subject_id: subject.id,
+        teacher_goals: "",
+        course_goals: "",
+        self_goals: "",
+        is_achieved: false,
+      };
+
+      return (
+        <div key={subject.id} className="semester-goal-row">
+          <input
+            type="hidden"
+            name="is_achieved"
+            value={goal.is_achieved ?? false}
+            readOnly={!!studentId}
+          />
+          <input
+            type="hidden"
+            name="semester_goal_id"
+            value={goal.id ?? ""}
+            readOnly={!!studentId}
+          />
+          <div className="semester-goal-cell title">
+            {subject.subject_name}
+          </div>
+          <div className="semester-goal-cell">
+            <textarea
+              name="teacher_goals"
+              onInput={autoResize}
+              value={goal.teacher_goals}
+              onChange={(e) =>
+                handleGoalChange(subject.id, "teacher_goals", e.target.value)
+              }
+              readOnly={!!studentId}
+            />
+          </div>
+          <div className="semester-goal-cell">
+            <textarea
+              name="course_goals"
+              onInput={autoResize}
+              value={goal.course_goals}
+              onChange={(e) =>
+                handleGoalChange(subject.id, "course_goals", e.target.value)
+              }
+              readOnly={!!studentId}
+            />
+          </div>
+          <div className="semester-goal-cell">
+            <textarea
+              name="self_goals"
+              onInput={autoResize}
+              value={goal.self_goals}
+              onChange={(e) =>
+                handleGoalChange(subject.id, "self_goals", e.target.value)
+              }
+              readOnly={!!studentId}
+            />
+          </div>
+        </div>
+      );
+    });
+  }, [subjects, semesterGoals, isLoading, studentId, autoResize, handleGoalChange]);
+
+  // Memoized semester options
+  const semesterOptions = useMemo(() => {
+    return semesters.map((sem) => (
+      <option key={sem.id} value={sem.name}>
+        {sem.name}
+      </option>
+    ));
+  }, [semesters]);
 
   return (
     <div className="semester-goal-container">
       <div className="semester-goal">
         <div className="semester-goal-btn">
-          {studentId && <button className="student-profile-back-btn" onClick={() => window.history.back()}>
-            <i className="fa-solid fa-circle-arrow-left"></i>
-          </button>}
+          {studentId && (
+            <button
+              className="student-profile-back-btn"
+              onClick={() => window.history.back()}
+            >
+              <i className="fa-solid fa-circle-arrow-left"></i>
+            </button>
+          )}
           <div></div>
           <div className="semester-goal-btn-select">
             <select
               value={selectedSemester}
               onChange={(e) => setSelectedSemester(e.target.value)}
             >
-              {semesters.map((sem) => (
-                <option key={sem.id} value={sem.name}>
-                  {sem.name}
-                </option>
-              ))}
+              {semesterOptions}
             </select>
             <i className="icon-semester fa-solid fa-angle-right"></i>
           </div>
@@ -180,7 +299,7 @@ export function SemesterGoal() {
             </div>
 
             <div className="semester-goal-title">
-              {selectedSemester || "?"}
+              {selectedSemester || "Semester"}
             </div>
 
             <div className="semester-goal-table">
@@ -197,86 +316,23 @@ export function SemesterGoal() {
                 </div>
               </div>
 
-              {!isLoading &&
-                subjects.map((subject) => {
-                  let goal = semesterGoals.find((g) => g.subject_id === subject.id);
-                  goal = goal ?? {
-                    subject_id: subject.id,
-                    teacher_goals: "",
-                    course_goals: "",
-                    self_goals: "",
-                    is_achieved: false,
-                  };
-
-                  return (
-                    <div key={subject.id} className="semester-goal-row">
-                      <input
-                        type="hidden"
-                        name="is_achieved"
-                        value={goal.is_achieved ?? false}
-                        readOnly={!!studentId}
-                      />
-                      <input
-                        type="hidden"
-                        name="semester_goal_id"
-                        value={goal.id ?? ""}
-                        readOnly={!!studentId}
-                      />
-                      <div className="semester-goal-cell title">
-                        {subject.subject_name}
-                      </div>
-                      <div className="semester-goal-cell">
-                        <textarea
-                          name="teacher_goals"
-                          onInput={autoResize}
-                          value={goal.teacher_goals}
-                          onChange={(e) =>
-                            handleGoalChange(subject.id, "teacher_goals", e.target.value)
-                          }
-                          readOnly={!!studentId}
-                        />
-                      </div>
-                      <div className="semester-goal-cell">
-                        <textarea
-                          name="course_goals"
-                          onInput={autoResize}
-                          value={goal.course_goals}
-                          onChange={(e) =>
-                            handleGoalChange(subject.id, "course_goals", e.target.value)
-                          }
-                          readOnly={!!studentId}
-                        />
-                      </div>
-                      <div className="semester-goal-cell">
-                        <textarea
-                          name="self_goals"
-                          onInput={autoResize}
-                          value={goal.self_goals}
-                          onChange={(e) =>
-                            handleGoalChange(subject.id, "self_goals", e.target.value)
-                          }
-                          readOnly={!!studentId}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
+              {renderedSubjects}
             </div>
           </div>
         </div>
 
         <div className="semester-goal-btn">
           <div></div>
-          {
-            !studentId && <button
+          {!studentId && (
+            <button
               onClick={handleSubmit}
               type="button"
               className="semester-goal-btn-submit"
-              disabled={!!studentId}
+              disabled={!!studentId || isSubmitting}
             >
-              Save
+              {isSubmitting ? "Saving..." : "Save"}
             </button>
-          }
+          )}
         </div>
       </div>
       <ToastContainer />

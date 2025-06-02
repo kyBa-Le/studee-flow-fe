@@ -152,9 +152,9 @@
   font-size: 14px;
 }
 
-.learning-journal-table-container {
+/* .learning-journal-table-container {
   overflow-x: auto;
-}
+} */
 
 .learning-journal-table {
   display: flex;
@@ -209,7 +209,6 @@
 
 .learning-journal-goal-section{
   max-width: 100%;
-  padding: 10px 60px;
 }
 
 .learning-journal-row:not(.header-row).journal-form-container:last-of-type {
@@ -220,7 +219,7 @@ input[type="checkbox"] {
   appearance: none;
   width: 18px;
   height: 18px;
-  border: 2px solid #fff;
+  border: 2px solid #2ab9e2;
   border-radius: 4px;
   background-color: white;
   cursor: pointer;
