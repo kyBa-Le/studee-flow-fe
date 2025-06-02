@@ -28,13 +28,13 @@ export default function CommentBox({comment}) {
             {/* Content */}
             <div className="d-flex flex-column">
                 {/* Header */}
-                <div className="d-flex gap-2" style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                <div className="d-flex gap-2" style={{ fontSize: '12px', fontWeight: 'bold' }}>
                     <div>{user.full_name}</div>
                     <div style={{ color: 'gray', fontWeight: 'normal' }}>{comment.created_at}</div>
                 </div>
 
                 {/* Comment text */}
-                <div style={{ marginTop: '4px', fontSize: '14px' }}>{comment.content}</div>
+                <div style={{ marginTop: '4px', fontSize: '12px' }}>{comment.content}</div>
             </div>
         </div>
     );
