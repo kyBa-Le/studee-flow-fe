@@ -1,33 +1,31 @@
-import React from 'react';
-import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 import { login } from '../../../services/AuthService';
+import { toast } from 'react-toastify';
+import { useState } from 'react';
+import {LoadingData} from "../../../components/ui/Loading/LoadingData";
 
 const Login = () => {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     const email = event.target.email.value;
     const password = event.target.password.value;
     
-    login(email, password)
-      .then((response) => {
-        console.log('Login successful:', response);
-        let token = response.data.access_token;
-        localStorage.setItem('token', token);
-        window.location.href = '/';
-      })
-      .catch((error) => {
-        console.error('Login failed:', error);
-        setErrorMessage('Email or password is incorrect!');
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 2000);
-      });
-    console.log('Login button clicked');
+    try {
+      setIsLoading(true);
+      const response = await login(email, password);
+      console.log('Login successful:', response);
+      let token = response.data.access_token;
+      localStorage.setItem('token', token);
+      window.location.href = '/';
+    } catch (error) {
+      setIsLoading(false);
+      console.error('Login failed:', error);
+      toast.error("Email or password is incorrect!");
+    }
   }
 
   return (
@@ -60,17 +58,6 @@ const Login = () => {
                 className="form-control login-input"
               />
             </div>
-            {errorMessage && (
-              <div
-                className="text-center mb-3 d-flex align-items-center justify-content-center"
-                style={{
-                  color: 'red',
-                }}
-              >
-                <span style={{ fontSize: '12px', marginRight: '8px' }}>❗</span>
-                {errorMessage}
-              </div>
-            )}
             <div className="d-flex justify-content-between align-items-center mb-4 login-options">
               <div className="form-check">
                 <input
@@ -88,12 +75,15 @@ const Login = () => {
             </div>
 
             <div className="text-center login-submit">
-              <button
-                type="submit"
-                className="btn btn-light fw-bold px-4"
-              >
-                LOGIN
-              </button>
+              { isLoading ? 
+                <LoadingData/> :
+                <button
+                  type="submit"
+                  className="btn btn-light fw-bold px-4"
+                >
+                  LOGIN
+                </button>
+              }
             </div>
 
           </form>

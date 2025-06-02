@@ -365,7 +365,7 @@ const EmptyInClassForm = React.memo(function EmptyInClassForm({
   const initialFormData = useMemo(() => ({
     id: null,
     date: null,
-    subject_id: subjects?.[0]?.id || "",
+    subject_id: "",
     lesson: "",
     self_assessment: "1",
     difficulties: "",
@@ -384,6 +384,15 @@ const EmptyInClassForm = React.memo(function EmptyInClassForm({
 
   const triggerAutoSubmit = useDebouncedSubmit(handleAutoCreate, 500);
   const commentRef = useRef(null);
+
+  useEffect(() => {
+    if (subjects?.length > 0 && !formData.subject_id) {
+      setFormData(prev => ({
+        ...prev,
+        subject_id: subjects[0].id,
+      }));
+    }
+  }, [subjects, formData.subject_id]);
 
   const handleChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -499,7 +508,7 @@ const EmptyInClassForm = React.memo(function EmptyInClassForm({
         <div className="learning-journal-cell">
           <select
             name="subject_id"
-            value={formData.subject_id}
+            value={formData.subject_id || (subjects?.[0]?.id || "")}
             style={selectStyle}
             onChange={handleChange}
             disabled={isReadOnly || isSubmited}
@@ -751,7 +760,7 @@ const InClassForm = React.memo(function InClassForm({
       <div className="learning-journal-cell">
         <select
           name="subject_id"
-          value={formData.subject_id}
+          value={formData.subject_id || (subjects?.[0]?.id || "")}
           style={selectStyle}
           onChange={handleChange}
           disabled={isReadOnly || isSubmited}
