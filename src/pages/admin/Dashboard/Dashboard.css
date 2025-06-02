@@ -1,0 +1,173 @@
+.dashboard {
+  padding: 30px 20px;
+  background-color: #f0f4f8;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  height: 100vh; /* Đảm bảo chiều cao toàn bộ trang */
+  overflow-y: auto; /* Cho phép cuộn dọc */
+}
+
+.dashboard__cards {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
+  flex-wrap: wrap; /* Cho phép các thẻ card xuống dòng khi không đủ không gian */
+  width: 100%;
+  max-width: 1500px;
+  margin-bottom: 40px;
+}
+
+.dashboard__card {
+  flex: 1;
+  max-width: 320px; /* Giảm chiều rộng card một chút */
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.dashboard__card:hover {
+  transform: translateY(-10px); /* Thêm hiệu ứng nổi lên khi hover */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard__card-title {
+  margin: 0;
+  font-size: 28px; /* Tăng kích thước tiêu đề */
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.dashboard__card-subtitle {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #888;
+}
+
+.dashboard__chart {
+  margin-top: 60px;
+  margin-bottom: 60px;
+  height: 400px;
+  width: 100%;
+  max-width: 1300px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .dashboard__cards {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .dashboard__chart {
+    height: 300px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}
+
+/* Cải thiện Pie chart */
+.chartjs-render-monitor {
+  border-radius: 12px;
+}
+
+@keyframes cardHover {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.dashboard__date-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 40px auto 24px auto;
+  background: #ffffff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+}
+
+.dashboard__date-picker label {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.dashboard__date-picker input[type="date"] {
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 250px;
+  transition: border-color 0.3s ease;
+}
+
+.dashboard__date-picker input[type="date"]:focus {
+  border-color: #36A2EB;
+  outline: none;
+}
+
+.dashboard__user-log {
+  max-width: 900px;
+  margin: 0 auto 60px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard__user-log h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #2c3e50;
+}
+
+.dashboard__user-log table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.dashboard__user-log thead {
+  background-color: #f0f0f0;
+}
+
+.dashboard__user-log th,
+.dashboard__user-log td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 16px;
+}
+
+.dashboard__user-log tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.dashboard__user-log td[colspan="3"] {
+  color: #888;
+  font-style: italic;
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllClassrooms } from "../../../services/ClassroomService";
 import { getAllStudentsByClassroomId } from "../../../services/UserService";
+import { logUserVisit } from '../../../services/DashboardService';
 import "./TeacherHome.css";
 
 export function TeacherHome() {
@@ -11,6 +12,7 @@ export function TeacherHome() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    logUserVisit();
     if (window.feather) {
       window.feather.replace();
     }

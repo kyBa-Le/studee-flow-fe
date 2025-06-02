@@ -1,6 +1,7 @@
 import { Route } from "react-router-dom";
 import { CreateStudentsForm } from "../pages/admin/StudentManagement/CreateStudentsForm";
 import { ProtectedRoute } from "./ProtectedRoutes";
+import { Dashboard } from "../pages/admin/Dashboard/Dashboard";
 import { StudentManagement } from "../pages/admin/StudentManagement/StudentManagement";
 import { TeacherManagement } from "../pages/admin/TeacherManagement/TeacherManagement";
 import { AdminLayout } from "../components/layouts/MainLayouts/AdminLayout";
@@ -8,6 +9,7 @@ import { EditStudentForm } from "../pages/admin/StudentManagement/EditStudentsFo
 import { ClassroomManagement } from "../pages/admin/ClassroomManagement/ClassroomManagement";
 
 const adminRoutes = [
+    { path: '/admin/dashboard', element: <Dashboard />, pageTitle: "DASHBOARD" },
     { path: '/admin/teacher-management', element: <TeacherManagement />, pageTitle: "TEACHER MANAGEMENT" },
     { path: '/admin/student-management', element: <StudentManagement />, pageTitle: "STUDENT MANAGEMENT" },
     { path: '/admin/create-student-accounts', element: <CreateStudentsForm />, pageTitle: "STUDENT MANAGEMENT" },
