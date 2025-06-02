@@ -37,6 +37,7 @@ export function NotificationTeacher() {
   useEffect(() => {
     customGetToken();
         onMessage(messaging, (payload) => {
+          console.log('Message received. ', payload);
           setNotifications((prev) => [payload.data, ...prev]);
         })
     fetchNotifications();
@@ -164,19 +165,19 @@ export function NotificationTeacher() {
 
                 <div className="detail-info">
                   <div className="detail-row">
+                    <span className="detail-icon"><i className="fa-solid fa-user"></i></span>
+                    <span className="detail-label fw-bold">Student:</span>
+                    <span>{selectedNotification.creator}</span>
+                  </div>
+                  <div className="detail-row">
                     <span className="detail-icon"><i className="fa-solid fa-book"></i></span>
-                    <span className="detail-label">Subject:</span>
-                    <span>{getNotificationDetails(selectedNotification.id).subject}</span>
+                    <span className="detail-label fw-bold">Content</span>
+                    <span>{selectedNotification.content}</span>
                   </div>
                   <div className="detail-row">
                     <span className="detail-icon"><i className="fa-solid fa-clock"></i></span>
-                    <span className="detail-label">Deadline:</span>
-                    <span>{getNotificationDetails(selectedNotification.id).deadline}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-icon"><i className="fa-solid fa-user"></i></span>
-                    <span className="detail-label">Student:</span>
-                    <span>{getNotificationDetails(selectedNotification.id).student}</span>
+                    <span className="detail-label fw-bold">Notice at: </span>
+                    <span>{selectedNotification.created_at}</span>
                   </div>
                 </div>
               </div>
