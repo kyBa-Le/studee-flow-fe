@@ -1,1 +1,0 @@
-// This folder is to define the front end routes

@@ -1,0 +1,192 @@
+.student-table {
+  padding: 24px;
+  width: 100vw;
+  background-color: #f7f7f7;
+  font-family: sans-serif;
+}
+
+.student-table__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.student-table__add-button {
+  background-color: var(--button-blue-background-color);
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.student-table__content {
+  background-color: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  padding: 10px 10px;
+  box-sizing: border-box;
+}
+
+.student-table__scroll-wrapper {
+  max-height: 65vh;
+  scrollbar-gutter: stable;
+  width: 100%;
+}
+
+.student-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.student-table__table th {
+  background-color: var(--primary-orange-color);
+  color:#ffff;
+}
+
+.student-table__table th,
+.student-table__table td {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  padding: 15px 7px;
+  box-sizing: border-box;
+}
+
+.student-table__table tbody tr:hover {
+  background-color: #f0f8ff;
+}
+
+.student-table__cell--datetime {
+  font-size: 12px;
+  color: #777;
+  white-space: nowrap;
+}
+
+.student-table__action {
+  margin-right: 16px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.student-table__action--edit {
+  background-color: #00aaff;
+  color: white;
+}
+
+.student-table__action--edit:hover {
+  background-color: #007acc;
+}
+
+.student-table__action--delete {
+  background-color: #ff4d4f;
+  color: white;
+}
+
+.student-table__action--delete:hover {
+  background-color: #e60023;
+}
+
+.student-table__page,
+.student-table__page-nav {
+  padding: 6px 12px;
+  border: none;
+  background-color: #e0f2ff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.student-table__page--active {
+  background-color: #00aaff;
+  color: white;
+}
+
+.student-table__table th:nth-child(1) {
+  border-top-left-radius: 20px;
+}
+
+.student-table__table td:nth-child(3),
+.student-table__table th:nth-child(3) {
+  width: 200px;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word;
+}
+
+.student-table__table th:nth-child(8) {
+  border-top-right-radius: 20px;
+}
+
+.student-table__table thead tr {
+  font-size: 14px;
+  padding: 10px 15px;
+}
+
+.student-table__table tbody tr {
+  font-size: 12px;
+  padding:0 5px;
+}
+
+@media (max-width: 1024px) {
+  .student-table__table th,
+  .student-table__table td {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .student-table__search {
+    width: 160px;
+  }
+}
+
+.edit-button,
+.delete-button {
+  width: 35px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  color: white;
+  font-size: 14px;
+  padding: 15px;
+}
+
+.edit-button {
+  background-color: #2AB9E2;
+}
+
+.edit-button:hover {
+  background-color: #71d4f0;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  background-color: #DC3545;
+}
+
+.delete-button:hover {
+  background-color: #ed6e7b;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  margin-left: 8px;
+}
+
+.student-table__table tbody tr {
+  border-bottom: 1px solid #ccc; 
+}
+

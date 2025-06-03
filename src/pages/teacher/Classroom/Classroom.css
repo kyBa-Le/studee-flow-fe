@@ -1,0 +1,116 @@
+.classroom-container {
+    background-color: rgb(245, 245, 245);
+    padding: 20px;
+    box-sizing: border-box;
+    padding-top: 95px;
+}
+
+.classroom-content {
+    overflow: hidden;
+    padding:30px;
+    min-height: 99vh;
+}
+
+.classroom-header-top-row {
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 20px 0;
+}
+
+.classroom-header-back-to-subject {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 60px; 
+  padding-bottom: 35px;
+}
+
+.back-button {
+  font-size: 35px;
+  color:#ff9900;
+}
+
+.classroom-class-title {
+  position: absolute;
+  left: 50%;
+  color:#ff9900;
+  transform: translateX(-50%);
+  margin: 0;
+}
+
+.classroom-header-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; 
+  margin-top: 15px; 
+}
+
+.classroom-tabs {
+    display: flex;
+    border: 1px solid #ff9900;
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.classroom-tab {
+    flex: 1;
+    padding: 10px 35px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 16px;
+    color: #ff9900;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.classroom-tab.active {
+    background-color: #ff9900;
+    color: #ffffff;
+}
+
+.classroom-tab:not(.active):hover {
+    background-color: rgba(255, 153, 0, 0.1);
+}
+
+.student-list-count-wrap {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 10px 25px;
+}
+
+.classroom-info-components {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+  gap: 20px;
+}
+
+.student-list-count-icon {
+  margin-right: 15px;
+  color: #ff9900;
+  font-size: 18px;
+}
+
+.student-list-count .count {
+  color: #747373;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.weekly-checkup-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weekly-checkup-block .content {
+  font-size: 16px;
+  color: #747373;
+  font-weight: 600;
+}

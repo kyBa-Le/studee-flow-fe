@@ -1,0 +1,126 @@
+.profile__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 100px;
+}
+
+.profile__card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 800px;
+}
+
+.profile__avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile__avatar-section img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile__button-container {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 20px;
+}
+
+.profile__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile__name {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.profile__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 16px;
+}
+
+.profile__group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.profile__label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #000000;
+    font-weight: 300;
+}
+
+.profile__input,
+.profile__select {
+    width: 100%;
+    height: 44px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-weight: 300;
+}
+
+.profile__input:focus,
+.profile__select:focus {
+    border-color: #FE9C3B;
+    outline: none;
+}
+
+.profile__group-row {
+    display: flex;
+    gap: 120px;
+}
+
+.profile__group-row .profile__group {
+    flex: 2;
+}
+
+.profile__button {
+    width: 150px;
+    height: 30px;
+    background-color: #2AB9E2;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile__button:hover {
+    background-color: #53b0c9;
+}
+
+.profile__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23555' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px 16px;
+    font-weight: 300;
+}

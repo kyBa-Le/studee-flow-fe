@@ -1,0 +1,169 @@
+.student-comment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    font-size: 12px !important;
+}
+
+.student-comment-content {
+    width: 320px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    font-family: sans-serif;
+}
+
+.student-comment-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.username {
+    font-weight: 500;
+    color: #333;
+}
+
+.comment-input {
+    margin-top:10px;
+    border: 1px solid #ccc;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s;
+    border-radius: 40px !important;
+    font-size: 12px;
+}
+
+.comment-input:focus {
+    border-color: #888;
+}
+
+.student-comment-button-group {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.student-comment-btn {
+    padding: 6px 16px;
+    font-size: 13px;
+    border-radius: 40px;
+    border: 1px solid;
+    cursor: pointer;
+    background-color: white;
+    transition: background-color 0.2s;
+    font-size: 12px;
+}
+
+.student-comment-btn-cancel {
+    color: #e53935;
+    border-color: #e53935;
+}
+
+.student-comment-btn-cancel:hover {
+  background-color: #e53935;
+  color:#ffff;
+}
+
+.student-comment-btn-submit {
+    color: #1e88e5;
+    border-color: #1e88e5;
+}
+
+.student-comment-btn-submit:hover {
+  background-color: #1e88e5;
+  color:#ffff;
+}
+
+/* Thêm vào file StudentComment.css */
+
+.comment-input-wrapper {
+    position: relative;
+}
+
+.teacher-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.teacher-suggestion-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.teacher-suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.teacher-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.teacher-suggestion-item img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tagged-teacher {
+    margin-top: 8px;
+    padding: 4px 8px;
+    background-color: #e8f4fd;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #1976d2;
+}
+
+.tagged-teacher img {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tagged-teacher button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    color: #666;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.tagged-teacher button:hover {
+    color: #333;
+}

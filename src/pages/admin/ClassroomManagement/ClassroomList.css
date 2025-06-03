@@ -1,0 +1,83 @@
+.classroom-list-container {
+    flex: 2;
+    margin-right: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.classroom-list-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.classroom-list-container thead th {
+    background-color: var(--primary-orange-color);
+    font-weight: 600;
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+.classroom-list-container tbody td {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.classroom-list-container tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.classroom-main-content-container {
+    width: 100%;
+    height: 80vh;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 2vw;
+    > div.content {
+      background-color: white;
+      border-radius: 20px;
+    }
+  }
+  
+  .content.classroom-list-container table {
+    width: 100%;
+    border-radius: 20px;
+    border-collapse: collapse;
+    overflow: hidden;
+    table-layout: fixed;
+  }
+  
+  .content.classroom-list-container {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+  }
+  
+  .content.classroom-list-container table th,
+  .content.classroom-list-container table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 15px 7px;
+  }
+
+  .content.classroom-list-container table td {
+    font-size: 12px;
+  }
+  
+  .content.classroom-list-container table thead {
+    background-color: var(--primary-orange-color);
+    color: white;
+  }
+  
+  .content.classroom-list-container :first-child {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .selected-classroom {
+    background-color: #f9f9f9;
+  }

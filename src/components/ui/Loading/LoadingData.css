@@ -1,0 +1,16 @@
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-size: 10px;
+}
+
+.loading-icon {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}

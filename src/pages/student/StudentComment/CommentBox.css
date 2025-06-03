@@ -1,0 +1,3 @@
+.comment-box-container:hover.comment-box-container {
+    z-index: 10000;
+}
