@@ -1,150 +1,77 @@
-## 📁 Project Structure – React App
-This document explains the structure of the src folder in this React project, clarifying the purpose and sample usage of each subdirectory.
+# StudeeFlow Frontend
 
-### 📂 assets/
-Role:
-Contains static resources such as images, fonts, SVGs, and possibly CSS files.
+**StudeeFlow Frontend** is a React-based web application designed for the **Student Progress and Goal Tracking System**. It provides a modern, user-friendly interface for Admins, Teachers, and Students to manage academic progress, set learning goals, and visualize performance data.
 
-Why We Need It:
-Centralizes all static and visual assets for easy management and import across the app.
+## 🚀 Live Demo & Credentials
 
-Sample Structure:
+Check out the live application here: **[StudeeFlow Live Preview](https://studee-flow-fe.vercel.app/)**
 
-```
-assets/
-├── images/
-│   └── logo.png
-├── fonts/
-│   └── Roboto-Regular.ttf
-└── styles/
-    └── global.css
-```
-Sample Usage:
+To explore the role-based features, you can use the following demo accounts:
 
-```
-import logo from '../assets/images/logo.png';
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Teacher** | `teacher@example.com` | `password` |
+| **Student** | `student@example.com` | `password` |
 
-<img src={logo} alt="Logo" />
-```
+## Project Purpose
 
-### 📂 components/
-Houses all the reusable UI and logic building blocks.
+The purpose of this application is to provide a responsive and interactive user interface that allows users to:
+* Track student progress effectively.
+* Manage academic goals.
+* View performance insights through clear data visualization.
+* Facilitate role-based workflows for different user types.
 
-### 📁 layouts/
-Role:
-Defines application layouts used across different pages (e.g., main layout, auth layout).
+## 👥 User Roles
 
-Why We Need It:
-Keeps layout logic reusable and separate from content logic.
+* **Admin:**
+    * Manage users and system data.
+    * Monitor overall system activity.
+* **Teacher:**
+    * Track student progress.
+    * Manage goals and schedules.
+    * Review performance analytics.
+* **Student:**
+    * View academic progress.
+    * Track personal goals and achievements.
+    * Review feedback and schedules.
 
-Sample Usage:
+## ⚙️ Installation
 
-```
-// components/layouts/MainLayout.jsx
-const MainLayout = ({ children }) => (
-  <div>
-    <Header />
-    <main>{children}</main>
-    <Footer />
-  </div>
-);
-```
+### Prerequisites
+* **Node.js** (v18 or later recommended)
+* **NPM**
+* **Laravel Backend API** (must be running locally or remotely)
 
-### 📁 ui/
-Role:
-Holds low-level UI components like buttons, inputs, modals, etc.
+### Setup Steps
 
-Why We Need It:
-Promotes UI consistency and reuse across the application.
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/kyBa-Le/studee-flow-fe
+    cd studee-flow-fe
+    ```
 
-Sample Usage:
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
 
-```
-// components/ui/Button.jsx
-const Button = ({ label, onClick }) => (
-  <button onClick={onClick}>{label}</button>
-);
-```
+3.  **Environment Configuration**
+    Create a `.env` file in the project root to configure your backend connection.
+    ```env
+    REACT_APP_API_BASE_URL=http://localhost:8000/api
+    ```
 
-### 📁 utils/
-Role:
-Houses utility/helper components related to rendering logic or state management helpers.
+4.  **Start the development server**
+    ```bash
+    npm start
+    ```
+    The application will be available at: `http://localhost:3000`
 
-Why We Need It:
-Keeps non-visual helpers modular and testable.
+## 📜 Available Scripts
 
-Sample Usage:
+In the project directory, you can run:
 
-```
-// components/utils/ProtectedRoute.jsx
-import { Navigate } from 'react-router-dom';
-
-const ProtectedRoute = ({ children, isAuthenticated }) =>
-  isAuthenticated ? children : <Navigate to="/login" />;
-```
-
-### 📂 pages/
-Each folder here represents a route/view in the application.
-
-- 📁 Home/ and 📁 Login/
-Role:
-Contain logic and UI for their respective routes.
-
-Why We Need It:
-Encapsulates route-specific logic and makes each page self-contained.
-
-Sample Usage:
-
-```
-// pages/Home/index.jsx
-const Home = () => (
-  <div>
-    <h1>Welcome Home!</h1>
-    <p>This is the main landing page.</p>
-  </div>
-);
-```
-
-### 📂 routes/
-Role:
-Defines the routing configuration for the application using react-router-dom.
-
-Why We Need It:
-Centralizes route management, making navigation structure easier to modify and maintain.
-
-Sample Usage:
-
-```
-// routes/index.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-
-const AppRoutes = () => (
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-    </Routes>
-  </BrowserRouter>
-);
-```
-
-### 📂 services/
-Role:
-Manages all API calls and external services integrations.
-
-Why We Need It:
-Keeps data-fetching logic decoupled from UI for scalability and easier testing.
-
-Sample Usage:
-
-```
-// services/authService.js
-import axios from 'axios';
-```
-
-export const login = (email, password) => 
-  axios.post('/api/login', { email, password });
-### ✅ Summary
-This structure keeps code modular, scalable, and maintainable. Each folder has a clear responsibility, aligning with the Separation of Concerns principle in software development.
+* `npm start`: Runs the app in development mode.
+* `npm run build`: Builds the app for production to the `build` folder.
+* `npm test`: Launches the test runner in interactive watch mode.
+* `npm run eject`: **Note:** this is a one-way operation to eject configuration files.
